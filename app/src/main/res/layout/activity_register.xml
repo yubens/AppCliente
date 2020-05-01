@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.449">
+
+        <EditText
+            android:id="@+id/editClientId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:hint="@string/customerId"
+            android:inputType="textPersonName"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editClientName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:hint="@string/customerName"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editClientAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:hint="@string/customerAddress"
+            android:importantForAutofill="no"
+            android:inputType="textPostalAddress" />
+
+        <EditText
+            android:id="@+id/editClientEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:hint="@string/customerEmail"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/editClientPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:ems="10"
+            android:hint="@string/customerPhone"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="10" />
+
+        <EditText
+            android:id="@+id/editClientPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:hint="@string/customerPass"
+            android:importantForAutofill="no"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/editClientPassRep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:hint="@string/customerPassRep"
+            android:inputType="textPassword"
+            android:importantForAutofill="no" />
+
+        <Button
+            android:id="@+id/btnConfirm"
+            style="@style/IdusButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center"
+            android:text="@string/btnConfirm" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
