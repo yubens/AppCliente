@@ -19,6 +19,7 @@
 
 
     <string name="msgErrorEmptyId">Coloque un ID válido para poder ingresar</string>
+    <string name="msgErrorEmptyIdPass">Coloque un ID y una contraseñas válidos para poder ingresar</string>
     <string name="msgMandatoryData">Debe completar los datos obligatorios</string>
     <string name="msgErrInternet">No tiene conexión a internet. Verifique la red WIFI o los datos del equipo</string>
     <string name="msgErrClientData">No pudieron obtenerse los datos del cliente</string>

@@ -11,12 +11,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import ar.com.idus.www.appcliente.models.Client;
+import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
@@ -154,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
                         id = editIdCustomer.getText().toString();
                         pass = editPassCustomer.getText().toString();
 
-                        if (id.isEmpty())
-                            showMsg(R.string.msgErrorEmptyId);
+                        if (id.isEmpty() || pass.isEmpty())
+                            showMsg(R.string.msgErrorEmptyIdPass);
 
                         else {
                             Utilities.saveData(sharedPreferences,"idCustomer", id);
@@ -318,5 +324,71 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return client;
+    }
+
+    private String [] getCustomer(final String id, final String token){
+        String response [];
+
+        final AtomicReference<String> resultString = new AtomicReference<>();
+        final AtomicReference<String> resultCode = new AtomicReference<>();
+
+        if (Utilities.checkConnection(getApplicationContext())) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    URL url;
+                    int response;
+                    String linea;
+                    StringBuilder result = new StringBuilder();
+                    HttpURLConnection cnx = null;
+                    super.run();
+
+                    try {
+                        url = new URL(Constants.URL + "getCustomer.php?token=" + token + "&idCustomer=" + id);
+                        cnx = (HttpURLConnection) url.openConnection();
+
+                        response = cnx.getResponseCode();
+
+                        if (response == Constants.OK) {
+                            InputStream in = new BufferedInputStream(cnx.getInputStream());
+                            BufferedReader leer = new BufferedReader(new InputStreamReader(in));
+
+                            while ((linea = leer.readLine()) != null) {
+                                result.append(linea);
+                            }
+
+                            System.out.println("cliente obtenido " + linea);
+                            resultString.set(result.toString());
+
+                        } else
+                            resultString.set(Constants.NO_RESULT);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultString.set(Constants.NO_RESULT);
+
+                    } finally {
+                        if (cnx != null) {
+                            resultString.set(result.toString());
+                            cnx.disconnect();
+                        }
+
+                    }
+                }
+            };
+
+            try {
+                thread.start();
+                thread.join(1000);
+//                response = resultString.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        } else
+            return null;
     }
 }
