@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import ar.com.idus.www.appcliente.R;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public abstract class Utilities {
 
     public static boolean checkConnection(Context context) {
@@ -57,7 +59,35 @@ public abstract class Utilities {
         return sharedPreferences.getString(key, Constants.NO_RESULT);
     }
 
-    public static String getToken(Context context) {
+    public static ResponseObject getNewToken(Context context, SharedPreferences sharedPreferences) {
+        String token = getData(sharedPreferences, "token"), data;
+        ResponseObject responseObject = new ResponseObject();
+        int code;
+
+        if (token.equals(Constants.NO_RESULT)) {
+            System.out.println("token no encontrado");
+
+//            token = Utilities.getToken(context); // primer intento de obtencion
+
+            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 10);
+
+            if (responseObject.getResponseCode() == Constants.SERVER_ERROR || responseObject.getResponseCode() == Constants.EXCEPTION)
+                responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 20);
+
+
+
+            System.out.println("token " + token);
+
+        } else {//TODO borrar, solo para test
+            System.out.println("token encontrado " + token);
+            responseObject.setResponseCode(Constants.OK);
+            responseObject.setResponseData(token);
+        }
+
+        return responseObject;
+    }
+
+    public static String getToken(final Context context) {
         String token = Constants.NO_RESULT;
         final AtomicReference <String> tokenString = new AtomicReference<>();
 
@@ -71,6 +101,7 @@ public abstract class Utilities {
                     StringBuilder result = new StringBuilder();
                     HttpURLConnection cnx = null;
                     super.run();
+
 
                     try {
                         url = new URL(Constants.URL + "/getToken.php?idApp=BuyIdus");
@@ -140,13 +171,13 @@ public abstract class Utilities {
 
                     try {
 
-                        urlOpen = new URL(url);
+                        urlOpen = new URL(Constants.URL + url);
                         cnx = (HttpURLConnection) urlOpen.openConnection();
                         status = cnx.getResponseCode();
 
                         resultCode.set(status);
 
-                        if (status == Constants.OK){
+                        if (status == Constants.OK) {
                             InputStream in = new BufferedInputStream(cnx.getInputStream());
                             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 

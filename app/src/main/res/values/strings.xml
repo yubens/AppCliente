@@ -28,6 +28,8 @@
     <string name="msgErrPass">Ambas contraseñas deben coincidir</string>
     <string name="msgErrToken">No pudo obternse el token de seguridad, por favor intenta abrir la aplicacion nuevamente en unos minutos</string>
     <string name="msgErrFind">No pudo verificarse el dispositivo, por favor intenta abrir la aplicacion nuevamente en unos minutos</string>
+    <string name="msgErrException">Se produjo una excepcion, por favor intenta abrir la aplicacion nuevamente en unos minutos. </string>
+    <string name="msgErrEServer">Se produjo un error de servidor, por favor intenta abrir la aplicacion nuevamente en unos minutos. </string>
     <string name="msgDisabledPhone">Dispositivo deshabilitado para ingresar, por favor comunicate con tu distribuidora</string>
 
 
