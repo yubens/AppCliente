@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import ar.com.idus.www.appcliente.R;
 
-import static android.content.Context.MODE_PRIVATE;
+import static ar.com.idus.www.appcliente.R.string.msgErrToken;
 
 public abstract class Utilities {
 
@@ -33,12 +33,12 @@ public abstract class Utilities {
                     return true;
             }
 
-            Toast.makeText(context, R.string.msgErrInternet, Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, R.string.msgErrInternet, Toast.LENGTH_LONG).show();
             return false;
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, R.string.msgErrInternet, Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, R.string.msgErrInternet, Toast.LENGTH_LONG).show();
             return false;
         }
     }
@@ -53,6 +53,7 @@ public abstract class Utilities {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, data);
         editor.commit();
+        System.out.println("guardado " + key + " " + data);
     }
 
     public static String getData(SharedPreferences sharedPreferences, String key) {
@@ -69,12 +70,43 @@ public abstract class Utilities {
 
 //            token = Utilities.getToken(context); // primer intento de obtencion
 
-            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 10);
+            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 1000);
 
-            if (responseObject.getResponseCode() == Constants.SERVER_ERROR || responseObject.getResponseCode() == Constants.EXCEPTION)
-                responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 20);
+            code = responseObject.getResponseCode();
 
+            if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+                responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 2000);
 
+            if (responseObject != null) {
+                switch (responseObject.getResponseCode()) {
+                    case Constants.OK:
+//                        token = responseObject.getResponseData();
+                        saveData(sharedPreferences, "token", responseObject.getResponseData());
+                        System.out.println("token guardado " + responseObject.getResponseData());
+                        break;
+
+                    case Constants.NO_DATA:
+                        responseObject.setResponseCode(Constants.SHOW_EXIT);
+                        responseObject.setResponseData(context.getString(msgErrToken));
+                        break;
+
+                    case Constants.EXCEPTION:
+                        responseObject.setResponseCode(Constants.SHOW_EXIT);
+                        responseObject.setResponseData(context.getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                        break;
+
+                    case Constants.SERVER_ERROR:
+                        responseObject.setResponseCode(Constants.SHOW_EXIT);
+                        responseObject.setResponseData(context.getString((R.string.msgErrServer)));
+                        break;
+
+                    case Constants.NO_INTERNET:
+                        responseObject.setResponseCode(Constants.SHOW_EXIT);
+                        responseObject.setResponseData(context.getString((R.string.msgErrInternet)));
+                        break;
+                }
+
+            }
 
             System.out.println("token " + token);
 
@@ -229,11 +261,9 @@ public abstract class Utilities {
 
             return responseObject;
 
-        } else {
-
+        } else
             responseObject.setResponseCode(Constants.NO_INTERNET);
 
-        }
 
         return responseObject;
 

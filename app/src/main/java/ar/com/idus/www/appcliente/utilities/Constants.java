@@ -13,7 +13,9 @@ public  abstract class  Constants {
     public static final int EXCEPTION = 300;
     public static final int NO_INTERNET = 301;
 
+
     public static final int DISABLED = 1000;
+    public static final int SHOW_EXIT = 2000;
 
 
 
