@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.utilities.Constants;
+import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 import static ar.com.idus.www.appcliente.R.string.msgErrToken;
@@ -35,6 +37,18 @@ public class MainActivity extends AppCompatActivity {
     Client client;
     SharedPreferences sharedPreferences;
 
+
+    private void testingAPI() {
+        String url;
+        ResponseObject response;
+
+//            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
+//            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
+        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
+        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
+
+        System.out.println("llego");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +64,26 @@ public class MainActivity extends AppCompatActivity {
         editIdCustomer = findViewById(R.id.editIdCustomer);
         editPassCustomer = findViewById(R.id.editPassCustomer);
         sharedPreferences = getPreferences(MODE_PRIVATE);
+
+        if (!Utilities.checkConnection(getApplicationContext())) {
+            editPassCustomer.setVisibility(View.GONE);
+            editIdCustomer.setVisibility(View.GONE);
+            txtIdCustomer.setText(R.string.msgErrInternet);
+            btnEnter.setText(R.string.btnExit);
+
+            btnEnter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    System.out.println("salio");
+                    System.exit(0);
+                }
+            });
+
+//            return;
+        } else {
+            //todo lo demas
+
+
 
         token = getToken();
 
@@ -192,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     System.exit(0);
                 }
             });
+        }
         }
 
 

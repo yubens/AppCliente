@@ -7,16 +7,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import ar.com.idus.www.appcliente.R;
@@ -33,6 +30,8 @@ public abstract class Utilities {
                 if (net .getState() == NetworkInfo.State.CONNECTED)
                     return true;
             }
+
+            Toast.makeText(context, R.string.msgErrInternet, Toast.LENGTH_LONG).show();
             return false;
 
         } catch (Exception e) {
@@ -122,5 +121,93 @@ public abstract class Utilities {
             return token;
 
     }
+
+    public static ResponseObject getResponse(Context context, final String url, long waitTime) {
+        ResponseObject responseObject = new ResponseObject();
+        final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
+        final AtomicReference <String> resultString = new AtomicReference<>();
+
+        if (checkConnection(context)) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    int status;
+                    String line;
+                    URL urlOpen;
+                    StringBuilder result = new StringBuilder();
+                    HttpURLConnection cnx = null;
+                    super.run();
+
+                    try {
+
+                        urlOpen = new URL(url);
+                        cnx = (HttpURLConnection) urlOpen.openConnection();
+                        status = cnx.getResponseCode();
+
+                        resultCode.set(status);
+
+                        if (status == Constants.OK){
+                            InputStream in = new BufferedInputStream(cnx.getInputStream());
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                            while ((line = reader.readLine()) != null) {
+                                result.append(line);
+                            }
+
+                            if (result.toString().equals("[]"))
+                                resultCode.set(Constants.NO_DATA);
+
+                            resultString.set(result.toString());
+
+
+//                            throw new Exception("hola");
+
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultString.set(e.getMessage());
+                        resultCode.set(Constants.EXCEPTION);
+
+                    } finally {
+                        if (cnx != null) {
+//                            resultString.set(result.toString());
+                            cnx.disconnect();
+                        }
+
+                    }
+                }
+            };
+
+            try {
+                thread.start();
+                thread.join(waitTime);
+                responseObject = new ResponseObject();
+                responseObject.setResponseCode(resultCode.get());
+                responseObject.setResponseData(resultString.get());
+
+//                throw  new InterruptedException("hi");
+
+//                token = resultString.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                responseObject.setResponseCode(Constants.EXCEPTION);
+                responseObject.setResponseData(e.getMessage());
+            }
+
+            return responseObject;
+
+        } else {
+
+            responseObject.setResponseCode(Constants.NO_INTERNET);
+
+        }
+
+        return responseObject;
+
+    }
+
+
 
 }
