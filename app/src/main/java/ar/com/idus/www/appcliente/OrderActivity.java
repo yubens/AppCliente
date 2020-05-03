@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,27 +49,14 @@ public class OrderActivity extends AppCompatActivity {
             return;
         }
 
-        sharedPreferences = getPreferences(MODE_PRIVATE);
-        responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
-
-        if (responseToken == null) {
-            showExit(getString(R.string.msgErrToken));
-            return;
-        }
-
-        if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
-            showExit(responseToken.getResponseData());
-            return;
-        }
-
-        token = responseToken.getResponseData();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if (customer == null) {
             showExit(getString(R.string.msgErrClientData));
             return;
         }
 
-        responseCompany = getCompany(token, customer.getEmpresaId());
+        responseCompany = getCompany(customer.getEmpresaId());
 
         if (responseCompany != null) {
             switch (responseCompany.getResponseCode()) {
@@ -93,8 +81,8 @@ public class OrderActivity extends AppCompatActivity {
 //        }
     }
 
-    private ResponseObject getCompany (String token, String id) {
-        String url = "/getCompany.php?token=" + token + "&idCompany=" + id;
+    private ResponseObject getCompany (String id) {
+        String url = "/getCompany.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idCompany=" + id;
         ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
         ResponseObject responseToken;
 

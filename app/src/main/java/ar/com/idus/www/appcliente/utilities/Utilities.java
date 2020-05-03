@@ -65,60 +65,52 @@ public abstract class Utilities {
         return sharedPreferences.getString(key, Constants.NO_RESULT);
     }
 
+    public static void deleteData (SharedPreferences sharedPreferences, String key) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.commit();
+    }
+
     public static ResponseObject getNewToken(Context context, SharedPreferences sharedPreferences) {
-        String token = getData(sharedPreferences, "token"), data;
-        ResponseObject responseObject = new ResponseObject();
+        ResponseObject responseObject;
         int code;
 
-        if (token.equals(Constants.NO_RESULT)) {
-            System.out.println("token no encontrado");
+        deleteData(sharedPreferences, "token");
 
-//            token = Utilities.getToken(context); // primer intento de obtencion
+        responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 1000);
 
-            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 1000);
+        code = responseObject.getResponseCode();
 
-            code = responseObject.getResponseCode();
+        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 2000);
 
-            if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 2000);
+        if (responseObject != null) {
+            switch (responseObject.getResponseCode()) {
+                case Constants.OK:
+                    saveData(sharedPreferences, "token", responseObject.getResponseData());
+                    System.out.println("token guardado " + responseObject.getResponseData());
+                    break;
 
-            if (responseObject != null) {
-                switch (responseObject.getResponseCode()) {
-                    case Constants.OK:
-//                        token = responseObject.getResponseData();
-                        saveData(sharedPreferences, "token", responseObject.getResponseData());
-                        System.out.println("token guardado " + responseObject.getResponseData());
-                        break;
+                case Constants.NO_DATA:
+                    responseObject.setResponseCode(Constants.SHOW_EXIT);
+                    responseObject.setResponseData(context.getString(msgErrToken));
+                    break;
 
-                    case Constants.NO_DATA:
-                        responseObject.setResponseCode(Constants.SHOW_EXIT);
-                        responseObject.setResponseData(context.getString(msgErrToken));
-                        break;
+                case Constants.EXCEPTION:
+                    responseObject.setResponseCode(Constants.SHOW_EXIT);
+                    responseObject.setResponseData(context.getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                    break;
 
-                    case Constants.EXCEPTION:
-                        responseObject.setResponseCode(Constants.SHOW_EXIT);
-                        responseObject.setResponseData(context.getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
-                        break;
+                case Constants.SERVER_ERROR:
+                    responseObject.setResponseCode(Constants.SHOW_EXIT);
+                    responseObject.setResponseData(context.getString((R.string.msgErrServer)));
+                    break;
 
-                    case Constants.SERVER_ERROR:
-                        responseObject.setResponseCode(Constants.SHOW_EXIT);
-                        responseObject.setResponseData(context.getString((R.string.msgErrServer)));
-                        break;
-
-                    case Constants.NO_INTERNET:
-                        responseObject.setResponseCode(Constants.SHOW_EXIT);
-                        responseObject.setResponseData(context.getString((R.string.msgErrInternet)));
-                        break;
-                }
-
+                case Constants.NO_INTERNET:
+                    responseObject.setResponseCode(Constants.SHOW_EXIT);
+                    responseObject.setResponseData(context.getString((R.string.msgErrInternet)));
+                    break;
             }
-
-            System.out.println("token " + token);
-
-        } else {//TODO borrar, solo para test
-            System.out.println("token encontrado " + token);
-            responseObject.setResponseCode(Constants.OK);
-            responseObject.setResponseData(token);
         }
 
         return responseObject;

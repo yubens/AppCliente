@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editIdCustomer, editPassCustomer;
     Client client;
     Customer customer;
+    String token;
     SharedPreferences sharedPreferences;
     boolean firstEntry = false;
 
@@ -60,9 +62,20 @@ public class MainActivity extends AppCompatActivity {
 
         token = "1";
         id = "1";
-        sharedPreferences = getPreferences(MODE_PRIVATE);
 
-        response = getCustomer(token, id);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        token = Utilities.getData(sharedPreferences, "token");
+
+        Utilities.saveData(sharedPreferences, "token", "12132154");
+
+        token = Utilities.getData(sharedPreferences, "token");
+
+        Utilities.deleteData(sharedPreferences, "token");
+
+        token = Utilities.getData(sharedPreferences, "token");
+
+        response = getCustomer(id);
 
         System.out.println("llego");
     }
@@ -72,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         int result;
-//       , back = false;
+        ResponseObject responseToken;
         String token = null, idPhone, idCustomer;
         int msg = 0;
 
@@ -82,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
         txtIdCustomer = findViewById(R.id.txtIdCustomer);
         editIdCustomer = findViewById(R.id.editIdCustomer);
         editPassCustomer = findViewById(R.id.editPassCustomer);
-        sharedPreferences = getPreferences(MODE_PRIVATE);
+//        sharedPreferences = getPreferences(MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if (!Utilities.checkConnection(getApplicationContext())) {
 //            showMsg((R.string.msgErrInternet));
@@ -92,45 +106,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         System.out.println("pasando internet off");
-//        token = getToken();
 
-        ResponseObject responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
 
-        if (responseToken == null) {
-            showExit(getString(R.string.msgErrToken));
-            return;
+        if(Utilities.getData(sharedPreferences, "token").equals(Constants.NO_RESULT)) {
+            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+            if (responseToken == null) {
+                showExit(getString(R.string.msgErrToken));
+                return;
+            }
+
+            System.out.println("pasando response token null");
+
+            if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+                showExit(responseToken.getResponseData());
+                return;
+            }
         }
-
-        System.out.println("pasando response token null");
-
-        if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
-            showExit(responseToken.getResponseData());
-            return;
-        }
-
-        System.out.println("pasando exit");
-
-//                else
-        token = responseToken.getResponseData();
-
-//                switch (responseToken.getResponseCode()) {
-//                    case Constants.OK:
-//                        token = responseToken.getResponseData();
-//                        Utilities.saveData(sharedPreferences, "token", token);
-//                        System.out.println("token guardado " + token);
-//                        break;
-//
-//                    case Constants.NO_DATA:
-//                        showExit(getString(msgErrToken));
-//                        break;
-//
-//                    case Constants.EXCEPTION:
-//                        showExit(getString(R.string.msgErrException) + " (" + responseToken.getResponseData() + ")");
-//
-//                    case Constants.SERVER_ERROR:
-//                        showExit(getString(R.string.msgErrEServer));
-//                }
-
 
         idPhone = getIdPhone();
         idCustomer = Utilities.getData(sharedPreferences,"idCustomer");
@@ -138,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         if (idCustomer.equals(Constants.NO_RESULT))
             idCustomer = "";
 
-        final ResponseObject responsePhone = findPhone2(token, idPhone);
+        final ResponseObject responsePhone = findPhone2(idPhone);
 
         if (responsePhone == null) {
             showExit(getString(R.string.msgErrFind));
@@ -155,17 +147,12 @@ public class MainActivity extends AppCompatActivity {
 
         setFirstEntry(responsePhone.getResponseCode() == Constants.CREATED );
 
-
-
         editIdCustomer.setText(idCustomer);
 
         if (!getFirstEntry())
             txtIdCustomer.setVisibility(View.GONE);
         else
             editPassCustomer.setVisibility(View.GONE);
-
-
-        final String tokenAux = token;
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,8 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 boolean firstTime =  getFirstEntry();
                 ResponseObject responseCustomer;
 
-//                firstEntry
-
                 id = editIdCustomer.getText().toString();
                 pass = editPassCustomer.getText().toString();
 
@@ -185,15 +170,12 @@ public class MainActivity extends AppCompatActivity {
                 } else if (!firstTime && (id.isEmpty() || pass.isEmpty())){
                     showMsg(getString(R.string.msgErrorEmptyIdPass));
                 } else {
-
-                    client = getClient(id);
-
-                    responseCustomer = getCustomer(id, tokenAux);
+//                    client = getClient(id);
+                    responseCustomer = getCustomer(id);
 
                     if (responseCustomer != null) {
                         switch (responseCustomer.getResponseCode()) {
                             case Constants.OK:
-//                                parseCustomer();
                                 Utilities.saveData(sharedPreferences,"idCustomer", id);
                                 checkCustomer(responseCustomer.getResponseData(), id, pass, firstTime);
                                 System.out.println(responseCustomer.getResponseData());
@@ -208,149 +190,9 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                         }
                     }
-
                 }
-
             }
         });
-
-
-
-
-//        // primer intento de busqueda
-//        result = findPhone(token, idPhone);
-//
-//            if (result == 0 || result == Constants.INVALID_TOKEN) {
-//                System.out.println("A - segundo intento de busqueda " + result);
-//                token = getToken();
-//                result = findPhone(token, idPhone);
-//            }
-//
-//            if (result == 0 || result == Constants.INVALID_TOKEN) { // segundo intento
-//                System.out.println("B - segundo intento de busqueda " + result);
-//                token = getToken();
-//                result = findPhone(token, idPhone);
-//            }
-//
-//            switch (result) {
-//                case 0:
-//                    System.out.println("segundo intento fallido");
-//                    msg = R.string.msgErrFind;
-//                    back = true;
-//                    break;
-//
-//                case Constants.INVALID_TOKEN:
-//                    System.out.println("segundo token invalido");
-//                    msg = R.string.msgErrFind;
-//                    back = true;
-//                    break;
-//
-//                case Constants.DISABLED:
-//                    msg = R.string.msgDisabledPhone;
-//                    back = true;
-//                    break;
-//
-//                case Constants.SERVER_ERROR:
-//                    msg = R.string.msgErrFind;
-//                    back = true;
-//                    break;
-//
-//                case Constants.CREATED: // primer ingreso
-//                    Utilities.saveData(sharedPreferences, "idPhone", idPhone);
-//                    System.out.println("primer ingreso");
-//                    firstEntry = true;
-//                    break;
-//
-//                case Constants.OK:// ingresos posteriores
-//                    System.out.println("ingresos posteriores");
-//                    break;
-//
-//                default:
-//                    System.out.println("error" + result);
-//                    break;
-//
-//            }
-
-//            if (msg == 0) {
-//                Utilities.saveData(sharedPreferences, "token", token);
-//                System.out.println("token guardado in " + token);
-//
-//                if (firstEntry) {
-//                    editPassCustomer.setVisibility(View.GONE);
-//
-//                    btnEnter.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            String id;
-//
-//                            id = editIdCustomer.getText().toString();
-//
-//                            if (id.isEmpty())
-//                                showMsg(R.string.msgErrorEmptyId);
-//
-//                            else {
-//                                Utilities.saveData(sharedPreferences,"idCustomer", id);
-//                                client = getClient(id);
-//
-//                                if (client != null)
-//                                    callActivity();
-//                                else
-//                                    showMsg(R.string.msgErrClientData);
-//
-//                            }
-//
-//                        }
-//                    });
-//                }
-//                else {
-//                    txtIdCustomer.setVisibility(View.GONE);
-//                    editIdCustomer.setText(idCustomer);
-//
-//                    btnEnter.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            String id;
-//                            String pass;
-//
-//                            id = editIdCustomer.getText().toString();
-//                            pass = editPassCustomer.getText().toString();
-//
-//                            if (id.isEmpty() || pass.isEmpty())
-//                                showMsg(R.string.msgErrorEmptyIdPass);
-//
-//                            else {
-//                                Utilities.saveData(sharedPreferences,"idCustomer", id);
-//                                client = getClient(id);
-//
-//                                if (client != null)
-//                                    callActivity();
-//                                else
-//                                    showMsg(R.string.msgErrClientData);
-//
-//                            }
-//
-//                        }
-//                    });
-//                }
-//
-//            } else {
-//                showMsg(msg);
-//                editPassCustomer.setVisibility(View.GONE);
-//                editIdCustomer.setVisibility(View.GONE);
-//                txtIdCustomer.setText(msg);
-//                btnEnter.setText(R.string.btnExit);
-//
-//                btnEnter.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        System.out.println("salio");
-//                        System.exit(0);
-//                    }
-//                });
-//            }
-//        }
-
-
     }
 
     private void checkCustomer (String data, String id, String pass, boolean firstTime) {
@@ -374,8 +216,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (firstTime || customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty())
             callRegister();
-
-
+        else
+            callOrder();
     }
 
     private void showExit(String msg) {
@@ -398,9 +240,9 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(msg);
     }
 
-    private ResponseObject findPhone2(String token, String idPhone) {
+    private ResponseObject findPhone2(String idPhone) {
         int code;
-        String url = "/findtelephone.php?token=" + token + "&idTelephone=" + idPhone;
+        String url = "/findtelephone.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idTelephone=" + idPhone;
         ResponseObject responseToken;
 
         ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
@@ -410,10 +252,6 @@ public class MainActivity extends AppCompatActivity {
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
             responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
 
-//        if (responsePhone.getResponseCode() == Constants.INVALID_TOKEN)
-
-
-
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
 
@@ -421,8 +259,6 @@ public class MainActivity extends AppCompatActivity {
                 responseObject.setResponseCode(Constants.SHOW_EXIT);
                 responseObject.setResponseData(getString(R.string.msgErrToken));
 
-//                showExit();
-//                return;
             } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
                 responseObject.setResponseCode(Constants.SHOW_EXIT);
                 responseObject.setResponseData(responseToken.getResponseData());
@@ -438,6 +274,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         switch (responseObject.getResponseCode()) {
+            case Constants.OK:
+                Utilities.saveData(sharedPreferences, "idPhone", idPhone);
+                break;
+
             case Constants.NO_INTERNET:
                 responseObject.setResponseCode(Constants.SHOW_EXIT);
                 responseObject.setResponseData(getString(R.string.msgErrInternet));
@@ -476,7 +316,6 @@ public class MainActivity extends AppCompatActivity {
                 responseObject.setResponseCode(Constants.SHOW_EXIT);
                 responseObject.setResponseData(getString((R.string.msgErrToken)));
                 break;
-
         }
 
         return responseObject;
@@ -543,29 +382,29 @@ public class MainActivity extends AppCompatActivity {
         return idPhone;
     }
 
-    private String getToken() {
-        String token = Utilities.getData(sharedPreferences, "token");
-        ResponseObject responseObject;
-
-        if (token.equals(Constants.NO_RESULT)) {
-            System.out.println("token no encontrado");
-
-            token = Utilities.getToken(getApplicationContext()); // primer intento de obtencion
-
-            responseObject = Utilities.getResponse(getApplicationContext(), "/getToken.php?idApp=BuyIdus", 1000);
-
-            if (token == null || token.equals(Constants.NO_RESULT)) {
-                token = Utilities.getToken(getApplicationContext()); // segundo intento
-                System.out.println("segundo intento token " + token);
-            }
-
-            System.out.println("token " + token);
-
-        } else //TODO borrar, solo para test
-            System.out.println("token encontrado " + token);
-
-        return token;
-    }
+//    private String getToken() {
+//        String token = Utilities.getData(sharedPreferences, "token");
+//        ResponseObject responseObject;
+//
+//        if (token.equals(Constants.NO_RESULT)) {
+//            System.out.println("token no encontrado");
+//
+//            token = Utilities.getToken(getApplicationContext()); // primer intento de obtencion
+//
+//            responseObject = Utilities.getResponse(getApplicationContext(), "/getToken.php?idApp=BuyIdus", 1000);
+//
+//            if (token == null || token.equals(Constants.NO_RESULT)) {
+//                token = Utilities.getToken(getApplicationContext()); // segundo intento
+//                System.out.println("segundo intento token " + token);
+//            }
+//
+//            System.out.println("token " + token);
+//
+//        } else //TODO borrar, solo para test
+//            System.out.println("token encontrado " + token);
+//
+//        return token;
+//    }
 
     private void callRegister() {
         Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
@@ -573,11 +412,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void callRegister2() {
-
+    private void callOrder() {
+        Intent intent = new Intent(getApplicationContext(), OrderActivity.class);
+        intent.putExtra("customer", customer);
+        startActivity(intent);
     }
-
-
 
     private Client getClient(String id) {
         Client client = null;
@@ -606,8 +445,8 @@ public class MainActivity extends AppCompatActivity {
         return client;
     }
 
-    private ResponseObject getCustomer(String id, String token){
-        String url = "/getCustomer.php?token=" + token + "&idCustomer=" + id;
+    private ResponseObject getCustomer(String id){
+        String url = "/getCustomer.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idCustomer=" + id;
         ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
         ResponseObject responseToken;
 
@@ -671,7 +510,6 @@ public class MainActivity extends AppCompatActivity {
                 responseObject.setResponseData(getString((R.string.msgErrToken)));
                 break;
         }
-
 
         return responseObject;
     }

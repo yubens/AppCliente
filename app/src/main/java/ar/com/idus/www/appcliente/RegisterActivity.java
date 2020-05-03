@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,14 +31,14 @@ public class RegisterActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ArrayList<Distributor> distributors = new ArrayList<>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        ResponseObject responseToken;
 
-        final String token;
-        sharedPreferences = getPreferences(MODE_PRIVATE);
+//        final String token;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         btnConfirm  = findViewById(R.id.btnConfirm);
         editAddress = findViewById(R.id.editAddress);
@@ -67,20 +68,6 @@ public class RegisterActivity extends AppCompatActivity {
             showExit(getString(R.string.msgErrClientData));
             return;
         }
-
-        ResponseObject responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
-
-        if (responseToken == null) {
-            showExit(getString(R.string.msgErrToken));
-            return;
-        }
-
-        if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
-            showExit(responseToken.getResponseData());
-            return;
-        }
-
-        token = responseToken.getResponseData();
 
         editId.setText(customer.getIdCliente());
         editId.setKeyListener(null);
@@ -131,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
                         customer.setTelefonoOtorgado(phone);
                         customer.setContrasena(pass);
 
-                        responseUpdate = updateCustomer(token);
+                        responseUpdate = updateCustomer();
 
                         if (responseUpdate != null) {
                             switch (responseUpdate.getResponseCode()) {
@@ -159,26 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
 //                            Toast.makeText(getApplicationContext(), R.string.msgErrDistribData, Toast.LENGTH_SHORT).show();
                     }
                 }
-
-//                    if (!checkEmail(email)) {
-//                        allOK = false;
-//                        editEmail.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_light)));;
-//                    }
-//
-//                    if (!checkPhone(phone)) {
-//                        allOK = false;
-//                        editPhone.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_light)));
-//
-//                    }
-//
-//                    if (!checkPass(pass)) {
-//                        allOK = false;
-////                        editPass.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_light)));
-//                        setEditColor(editPass, false);
-//
-//                    } else
-//                        setEditColor(editPass, true);
-
 
             }
         });
@@ -238,8 +205,8 @@ public class RegisterActivity extends AppCompatActivity {
         return response;
     }
 
-    private ResponseObject updateCustomer(String token) {
-        String url = "/putAditionalCustomerData.php?token=" + token + "&idCustomer=" + customer.getIdCliente() +
+    private ResponseObject updateCustomer() {
+        String url = "/putAditionalCustomerData.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idCustomer=" + customer.getIdCliente() +
                     "&direccion=" + customer.getDireccionOtorgada() + "&telefono=" + customer.getTelefonoOtorgado() +
                     "&eMail=" + customer.getEmailOtorgado() + "&contraseña=" + customer.getContrasena();
 
@@ -283,6 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             case Constants.OK:
                 responseObject.setResponseData(getString(R.string.msgSuccUpdateData));
+                callOrder();
                 break;
 
             case Constants.EXCEPTION:
@@ -317,6 +285,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(), c);
         intent.putExtra("distributors", distributors);
+        startActivity(intent);
+    }
+
+    private void callOrder() {
+        Intent intent = new Intent(getApplicationContext(), OrderActivity.class);
+        intent.putExtra("customer", customer);
         startActivity(intent);
     }
 
