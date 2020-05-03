@@ -20,17 +20,18 @@
         app:layout_constraintVertical_bias="0.449">
 
         <EditText
-            android:id="@+id/editClientId"
+            android:id="@+id/editCustomerId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:backgroundTint="@color/colorPrimaryLight"
+            android:importantForAutofill="no"
             android:hint="@string/customerId"
             android:inputType="textPersonName"
-            android:importantForAutofill="no" />
+            />
 
         <EditText
-            android:id="@+id/editClientName"
+            android:id="@+id/editCustomerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -40,17 +41,47 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editClientAddress"
+            android:id="@+id/editGivenAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:backgroundTint="@color/colorPrimaryLight"
-            android:hint="@string/customerAddress"
+            android:hint="@string/customerGivenAddress"
             android:importantForAutofill="no"
             android:inputType="textPostalAddress" />
 
         <EditText
-            android:id="@+id/editClientEmail"
+            android:id="@+id/editGivenEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/customerGivenEmail"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:importantForAutofill="no"/>
+
+        <EditText
+            android:id="@+id/editGivenPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/customerGivenPhone"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:importantForAutofill="no"/>
+
+        <EditText
+            android:id="@+id/editAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPostalAddress"
+            android:hint="@string/customerAddress"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:importantForAutofill="no"/>
+
+        <EditText
+            android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -60,7 +91,7 @@
             android:inputType="textEmailAddress" />
 
         <EditText
-            android:id="@+id/editClientPhone"
+            android:id="@+id/editPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorPrimaryLight"
@@ -71,7 +102,7 @@
             android:maxLength="10" />
 
         <EditText
-            android:id="@+id/editClientPass"
+            android:id="@+id/editPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -81,7 +112,7 @@
             android:inputType="textPassword" />
 
         <EditText
-            android:id="@+id/editClientPassRep"
+            android:id="@+id/editPassRep"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -89,6 +120,14 @@
             android:hint="@string/customerPassRep"
             android:inputType="textPassword"
             android:importantForAutofill="no" />
+
+        <TextView
+            android:id="@+id/txtMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="18sp"
+             />
 
         <Button
             android:id="@+id/btnConfirm"
@@ -98,6 +137,8 @@
             android:layout_marginTop="15dp"
             android:layout_gravity="center"
             android:text="@string/btnConfirm" />
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

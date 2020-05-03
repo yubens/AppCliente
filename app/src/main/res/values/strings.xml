@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">AppCliente</string>
+    <string name="register_title">Registro</string>
+    <string name="order_title">Carga de Pedidos</string>
+    <string name="basket_title">Carrito de Compra</string>
+    <string name="dist_select_title">Seleccion de Distribuidor</string>
+    <string name="order_inquiry_title">Consulta de Pedidos</string>
 
     <string name="btnEnter">Ingresar</string>
     <string name="btnExit">Salir</string>
@@ -8,8 +13,11 @@
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
     <string name="customerId">Id del Cliente</string>
     <string name="customerName">Nombre del Cliente</string>
-    <string name="customerAddress">Direccion del Cliente</string>
-    <string name="customerEmail">Email del Cliente <font color='red'>*</font></string>
+    <string name="customerGivenAddress">Direccion (Brindada por la distribuidora)</string>
+    <string name="customerGivenEmail">Email (Brindado por la distribuidora)</string>
+    <string name="customerGivenPhone">Telefono (Brindado por la distribuidora)</string>
+    <string name="customerAddress">Direccion<font color='red'>*</font></string>
+    <string name="customerEmail">Email<font color='red'>*</font></string>
     <string name="customerPhone">Celular con codigo de area (sin 0 y sin 15) <font color='red'>*</font></string>
     <string name="customerPass">Ingrese Contraseña <font color='red'>*</font></string>
     <string name="customerPassRep">Repita Contraseña <font color='red'>*</font></string>
@@ -19,18 +27,21 @@
 
 
     <string name="msgErrorEmptyId">Coloque un ID válido para poder ingresar</string>
-    <string name="msgErrorEmptyIdPass">Coloque un ID y una contraseñas válidos para poder ingresar</string>
+    <string name="msgErrorEmptyIdPass">Coloque un ID y una contraseña válidos para poder ingresar</string>
     <string name="msgMandatoryData">Debe completar los datos obligatorios</string>
     <string name="msgErrInternet">No tiene conexión a internet. Verifique la red WIFI o los datos del equipo</string>
     <string name="msgErrClientData">No pudieron obtenerse los datos del cliente</string>
+    <string name="msgErrCustomerData">No pudieron obtenerse los datos del cliente. Verifique el ID ingresado</string>
     <string name="msgErrDistribData">No pudieron obtenerse los datos del distribuidor</string>
-    <string name="msgErrDataIn">Verifica los datos ingresados</string>
+    <string name="msgErrDataIn">Verifique los datos ingresados</string>
     <string name="msgErrPass">Ambas contraseñas deben coincidir</string>
-    <string name="msgErrToken">No pudo obternse el token de seguridad, por favor intenta abrir la aplicacion nuevamente en unos minutos</string>
-    <string name="msgErrFind">No pudo verificarse el dispositivo, por favor intenta abrir la aplicacion nuevamente en unos minutos</string>
-    <string name="msgErrException">Se produjo una excepcion, por favor intenta abrir la aplicacion nuevamente en unos minutos. </string>
-    <string name="msgErrServer">Se produjo un error de servidor, por favor intenta abrir la aplicacion nuevamente en unos minutos. </string>
-    <string name="msgDisabledPhone">Dispositivo deshabilitado para ingresar, por favor comunicate con tu distribuidora</string>
+    <string name="msgErrWrongPass">La contraseña ingresada no es la correcta</string>
+    <string name="msgErrToken">No pudo obternse el token de seguridad, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
+    <string name="msgErrFind">No pudo verificarse el dispositivo, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
+    <string name="msgErrException">Se produjo una excepcion, por favor intente abrir la aplicacion nuevamente en unos minutos. </string>
+    <string name="msgErrServer">Se produjo un error de servidor, por favor intente abrir la aplicacion nuevamente en unos minutos. </string>
+    <string name="msgDisabledPhone">Dispositivo deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
+    <string name="msgDisabledCustomer">Cliente deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
 
 
 </resources>

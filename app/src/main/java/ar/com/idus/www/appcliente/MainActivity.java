@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         id = "1";
         sharedPreferences = getPreferences(MODE_PRIVATE);
 
-        response = findPhone2(token, id);
+        response = getCustomer(token, id);
 
         System.out.println("llego");
     }
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         if (idCustomer.equals(Constants.NO_RESULT))
             idCustomer = "";
 
-        ResponseObject responsePhone = findPhone2(token, idPhone);
+        final ResponseObject responsePhone = findPhone2(token, idPhone);
 
         if (responsePhone == null) {
             showExit(getString(R.string.msgErrFind));
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // TODO testing....
-        responsePhone.setResponseCode(Constants.CREATED);
+//        responsePhone.setResponseCode(Constants.CREATED);
 
         setFirstEntry(responsePhone.getResponseCode() == Constants.CREATED );
 
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             editPassCustomer.setVisibility(View.GONE);
 
 
+        final String tokenAux = token;
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 String id;
                 String pass;
                 boolean firstTime =  getFirstEntry();
-
+                ResponseObject responseCustomer;
 
 //                firstEntry
 
@@ -178,17 +181,33 @@ public class MainActivity extends AppCompatActivity {
                 pass = editPassCustomer.getText().toString();
 
                 if (firstTime && id.isEmpty()) {
-                    showMsg(R.string.msgErrorEmptyId);
+                    showMsg(getString(R.string.msgErrorEmptyId));
                 } else if (!firstTime && (id.isEmpty() || pass.isEmpty())){
-                    showMsg(R.string.msgErrorEmptyIdPass);
+                    showMsg(getString(R.string.msgErrorEmptyIdPass));
                 } else {
-                    Utilities.saveData(sharedPreferences,"idCustomer", id);
+
                     client = getClient(id);
 
-                    if (client != null)
-                        callActivity();
-                    else
-                        showMsg(R.string.msgErrClientData);
+                    responseCustomer = getCustomer(id, tokenAux);
+
+                    if (responseCustomer != null) {
+                        switch (responseCustomer.getResponseCode()) {
+                            case Constants.OK:
+//                                parseCustomer();
+                                Utilities.saveData(sharedPreferences,"idCustomer", id);
+                                checkCustomer(responseCustomer.getResponseData(), id, pass, firstTime);
+                                System.out.println(responseCustomer.getResponseData());
+                                break;
+
+                            case Constants.SHOW_ERROR:
+                                showMsg(responseCustomer.getResponseData());
+                                break;
+
+                            case Constants.SHOW_EXIT:
+                                showExit(responseCustomer.getResponseData());
+                                break;
+                        }
+                    }
 
                 }
 
@@ -334,6 +353,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void checkCustomer (String data, String id, String pass, boolean firstTime) {
+        Gson gson = new Gson();
+        Customer[] customers;
+
+        customers = gson.fromJson(data, Customer[].class);
+        customer = customers[0];
+
+        if (!customer.getHabilidado().equals(Constants.ENABLED) ) {
+            showExit(getString(R.string.msgDisabledCustomer));
+            return;
+        }
+
+        customer.setIdCliente(id);
+
+        if (!firstTime && !customer.getContrasena().equals(pass)) {
+            showMsg(getString(R.string.msgErrWrongPass));
+            return;
+        }
+
+        if (firstTime || customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty())
+            callRegister();
+
+
+
+    }
+
     private void showExit(String msg) {
         editPassCustomer.setVisibility(View.GONE);
         editIdCustomer.setVisibility(View.GONE);
@@ -349,9 +394,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void showMsg(int msg) {
-        Toast.makeText(getApplicationContext(), getString(msg), Toast.LENGTH_LONG).show();
-        System.out.println(getString(msg));
+    private void showMsg(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        System.out.println(msg);
     }
 
     private ResponseObject findPhone2(String token, String idPhone) {
@@ -523,16 +568,16 @@ public class MainActivity extends AppCompatActivity {
         return token;
     }
 
-    private void callActivity() {
+    private void callRegister() {
         Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
 
-//        intent.putExtra("clientId", client.getId());
-//        intent.putExtra("clientName", client.getName());
-//        intent.putExtra("clientAddress", client.getAddress());
-//        intent.putExtra("clientEmail", client.getEmail());
-//        intent.putExtra("clientPhone", client.getPhone());
-        intent.putExtra("client", client);
+        intent.putExtra("customer", customer);
+
         startActivity(intent);
+
+    }
+
+    private void callRegister2() {
 
     }
 
@@ -565,9 +610,73 @@ public class MainActivity extends AppCompatActivity {
         return client;
     }
 
-    private ResponseObject getCustomer(final String id, final String token){
+    private ResponseObject getCustomer(String id, String token){
         String url = "/getCustomer.php?token=" + token + "&idCustomer=" + id;
         ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+        ResponseObject responseToken;
+
+        int code = responseObject.getResponseCode();
+
+
+        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+
+
+        if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
+            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+            if (responseToken == null) {
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(getString(R.string.msgErrToken));
+
+            } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(responseToken.getResponseData());
+            } else {
+                url = "/getCustomer.php?token=" + responseToken.getResponseData() + "&idCustomer=" + id;
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+
+                code = responseObject.getResponseCode();
+
+                if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+            }
+        }
+
+        switch (responseObject.getResponseCode()) {
+            case Constants.NO_INTERNET:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrInternet));
+                break;
+
+            case Constants.SHOW_EXIT:
+                break;
+
+            case Constants.DISABLED:
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(getString(R.string.msgDisabledPhone));
+                break;
+
+            case Constants.NO_DATA:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrCustomerData));
+                break;
+
+            case Constants.EXCEPTION:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                break;
+
+            case Constants.SERVER_ERROR:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrServer)));
+                break;
+
+            case Constants.INVALID_TOKEN:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrToken)));
+                break;
+        }
 
 
         return responseObject;

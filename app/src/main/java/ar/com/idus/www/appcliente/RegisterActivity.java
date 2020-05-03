@@ -3,26 +3,27 @@ package ar.com.idus.www.appcliente;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.icu.text.UnicodeSetSpanner;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import ar.com.idus.www.appcliente.models.Client;
+import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class RegisterActivity extends AppCompatActivity {
     Button btnConfirm;
-    EditText editName, editAddress, editPhone, editPass, editPassRep, editId, editEmail;
+    EditText editName, editAddress, editPhone, editPass, editPassRep, editId, editEmail, editGivenAddress, editGivenEmail, editGivenPhone;
+    TextView txtMsg;
     Client client;
+    Customer customer;
     ArrayList<Distributor> distributors = new ArrayList<>();
 
 
@@ -32,30 +33,51 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         btnConfirm  = findViewById(R.id.btnConfirm);
-        editAddress = findViewById(R.id.editClientAddress);
-        editId = findViewById(R.id.editClientId);
-        editName = findViewById(R.id.editClientName);
-        editPhone = findViewById(R.id.editClientPhone);
-        editEmail = findViewById(R.id.editClientEmail);
-        editPass = findViewById(R.id.editClientPass);
-        editPassRep = findViewById(R.id.editClientPassRep);
+        editAddress = findViewById(R.id.editAddress);
+        editId = findViewById(R.id.editCustomerId);
+        editName = findViewById(R.id.editCustomerName);
+        editPhone = findViewById(R.id.editPhone);
+        editEmail = findViewById(R.id.editEmail);
+        editPass = findViewById(R.id.editPass);
+        editPassRep = findViewById(R.id.editPassRep);
+        editGivenAddress = findViewById(R.id.editGivenAddress);
+        editGivenEmail = findViewById(R.id.editGivenEmail);
+        editGivenPhone = findViewById(R.id.editGivenPhone);
+        txtMsg = findViewById(R.id.txtMsg);
+
 
         Bundle bundle = getIntent().getExtras();
+//        bundle = null;
 
-        if (bundle != null) {
-            client = (Client) bundle.getSerializable("client");
 
-            if (client != null) {
-                editId.setText(client.getId());
-                editId.setKeyListener(null);
-                editName.setText(client.getName());
-                editName.setKeyListener(null);
-                editAddress.setText(client.getAddress());
-                editAddress.setKeyListener(null);
-                editEmail.setText(client.getEmail());
-                editPhone.setText(client.getPhone());
-            }
+        if (bundle == null) {
+//            Toast.makeText(getApplicationContext(), R.string.msgErrCustomerData, Toast.LENGTH_LONG).show();
+            showExit(getString(R.string.msgErrClientData));
+            return;
         }
+
+        customer = (Customer) bundle.getSerializable("customer");
+
+        if (customer == null) {
+            showExit(getString(R.string.msgErrClientData));
+            return;
+        }
+
+        editId.setText(customer.getIdCliente());
+        editId.setKeyListener(null);
+        editName.setText(customer.getNombre());
+        editName.setKeyListener(null);
+        editGivenAddress.setText(customer.getDomicilio());
+        editGivenAddress.setKeyListener(null);
+        editGivenEmail.setText(customer.getEmailDistribuidora());
+        editGivenEmail.setKeyListener(null);
+        editGivenPhone.setText(customer.getTelefonoDistribuidora());
+        editGivenPhone.setKeyListener(null);
+        editEmail.setText(customer.getEmailOtorgado());
+        editAddress.setText(customer.getDireccionOtorgada());
+        editPass.setText(customer.getContrasena());
+        editPassRep.setText(customer.getContrasena());
+        editPhone.setText(customer.getTelefonoOtorgado());
 
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +135,32 @@ public class RegisterActivity extends AppCompatActivity {
 //                        setEditColor(editPass, true);
 
 
+            }
+        });
+    }
+
+    private void showExit(String msg) {
+        editName.setVisibility(View.GONE);
+        editAddress.setVisibility(View.GONE);
+        editPhone.setVisibility(View.GONE);
+        editPass.setVisibility(View.GONE);
+        editPassRep.setVisibility(View.GONE);
+        editPassRep.setVisibility(View.GONE);
+        editId.setVisibility(View.GONE);
+        editEmail.setVisibility(View.GONE);
+        editGivenPhone.setVisibility(View.GONE);
+        editGivenAddress.setVisibility(View.GONE);
+        editGivenEmail.setVisibility(View.GONE);
+
+
+        txtMsg.setText(msg);
+        btnConfirm.setText(R.string.btnExit);
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("salio");
+                System.exit(0);
             }
         });
     }

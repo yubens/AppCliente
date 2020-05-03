@@ -13,9 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".OrderActivity"></activity>
-        <activity android:name=".DistributorSelectionActivity" />
-        <activity android:name=".RegisterActivity" />
+
+        <activity
+            android:name=".OrderActivity"
+            android:label="@string/order_title">
+        </activity>
+
+        <activity android:name=".DistributorSelectionActivity"
+            android:label="@string/dist_select_title"/>
+
+        <activity android:name=".RegisterActivity"
+            android:label="@string/register_title"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

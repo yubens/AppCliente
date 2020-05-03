@@ -1,185 +1,248 @@
 package ar.com.idus.www.appcliente.models;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class Customer implements Serializable {
     @SerializedName("CODIGO")
+    @Expose
     private String codigo;
-    private String EMPRESA_ID;
-    private String NOMBRE;
-    private String DOMICILIO;
-    private String CUIT;
-    private String DNI;
-    private String SALDOCUENTACORRIENTE;
-    private String TELEFONO_DISTRI;
-    private String EMAIL_DISTRI;
-    private String CODE_LISTA;
-    private String NOMBRE_VENDEDOR;
-    private String CANAL;
-    private String LATITUD = null;
-    private String LONGITUD = null;
-    private String direccion_otorgada;
-    private String email_otorgado;
-    private String telefono_otorgado;
-    private String contraseña;
-    private String HABILITADO;
 
+    @SerializedName("EMPRESA_ID")
+    @Expose
+    private String empresaId;
 
-    // Getter Methods
+    @SerializedName("NOMBRE")
+    @Expose
+    private String nombre;
+
+    @SerializedName("DOMICILIO")
+    @Expose
+    private String domicilio;
+
+    @SerializedName("CUIT")
+    @Expose
+    private String cuit;
+
+    @SerializedName("DNI")
+    @Expose
+    private String dni;
+
+    @SerializedName("SALDOCUENTACORRIENTE")
+    @Expose
+    private String saldoCuentaCorriente;
+
+    @SerializedName("TELEFONO_DISTRI")
+    @Expose
+    private String telefonoDistribuidora;
+
+    @SerializedName("EMAIL_DISTRI")
+    @Expose
+    private String emailDistribuidora;
+
+    @SerializedName("CODE_LISTA")
+    @Expose
+    private String codigoLista;
+
+    @SerializedName("NOMBRE_VENDEDOR")
+    @Expose
+    private String nombreVendedor;
+
+    @SerializedName("CANAL")
+    @Expose
+    private String canal;
+
+    @SerializedName("LATITUD")
+    @Expose
+    private Object latitud;
+
+    @SerializedName("LONGITUD")
+    @Expose
+    private Object longitud;
+
+    @SerializedName("direccion_otorgada")
+    @Expose
+    private String direccionOtorgada;
+
+    @SerializedName("email_otorgado")
+    @Expose
+    private String emailOtorgado;
+
+    @SerializedName("telefono_otorgado")
+    @Expose
+    private String telefonoOtorgado;
+
+    @SerializedName("contrase\u00f1a")
+    @Expose
+    private String contrasena;
+
+    @SerializedName("HABILITADO")
+    @Expose
+    private String habilidado;
+
+    private String idCliente;
+
+    private final static long serialVersionUID = -4264745338845686666L;
 
     public String getCodigo() {
         return codigo;
     }
 
-    public String getEMPRESA_ID() {
-        return EMPRESA_ID;
-    }
-
-    public String getNOMBRE() {
-        return NOMBRE;
-    }
-
-    public String getDOMICILIO() {
-        return DOMICILIO;
-    }
-
-    public String getCUIT() {
-        return CUIT;
-    }
-
-    public String getDNI() {
-        return DNI;
-    }
-
-    public String getSALDOCUENTACORRIENTE() {
-        return SALDOCUENTACORRIENTE;
-    }
-
-    public String getTELEFONO_DISTRI() {
-        return TELEFONO_DISTRI;
-    }
-
-    public String getEMAIL_DISTRI() {
-        return EMAIL_DISTRI;
-    }
-
-    public String getCODE_LISTA() {
-        return CODE_LISTA;
-    }
-
-    public String getNOMBRE_VENDEDOR() {
-        return NOMBRE_VENDEDOR;
-    }
-
-    public String getCANAL() {
-        return CANAL;
-    }
-
-    public String getLATITUD() {
-        return LATITUD;
-    }
-
-    public String getLONGITUD() {
-        return LONGITUD;
-    }
-
-    public String getDireccion_otorgada() {
-        return direccion_otorgada;
-    }
-
-    public String getEmail_otorgado() {
-        return email_otorgado;
-    }
-
-    public String getTelefono_otorgado() {
-        return telefono_otorgado;
-    }
-
-    public String getContraseña() {
-        return contraseña;
-    }
-
-    public String getHABILITADO() {
-        return HABILITADO;
-    }
-
-    // Setter Methods
-
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
-    public void setEMPRESA_ID(String EMPRESA_ID) {
-        this.EMPRESA_ID = EMPRESA_ID;
+    public String getEmpresaId() {
+        return empresaId;
     }
 
-    public void setNOMBRE(String NOMBRE) {
-        this.NOMBRE = NOMBRE;
+    public void setEmpresaId(String empresaId) {
+        this.empresaId = empresaId;
     }
 
-    public void setDOMICILIO(String DOMICILIO) {
-        this.DOMICILIO = DOMICILIO;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setCUIT(String CUIT) {
-        this.CUIT = CUIT;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setDNI(String DNI) {
-        this.DNI = DNI;
+    public String getDomicilio() {
+        return domicilio;
     }
 
-    public void setSALDOCUENTACORRIENTE(String SALDOCUENTACORRIENTE) {
-        this.SALDOCUENTACORRIENTE = SALDOCUENTACORRIENTE;
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
     }
 
-    public void setTELEFONO_DISTRI(String TELEFONO_DISTRI) {
-        this.TELEFONO_DISTRI = TELEFONO_DISTRI;
+    public String getCuit() {
+        return cuit;
     }
 
-    public void setEMAIL_DISTRI(String EMAIL_DISTRI) {
-        this.EMAIL_DISTRI = EMAIL_DISTRI;
+    public void setCuit(String cuit) {
+        this.cuit = cuit;
     }
 
-    public void setCODE_LISTA(String CODE_LISTA) {
-        this.CODE_LISTA = CODE_LISTA;
+    public String getDni() {
+        return dni;
     }
 
-    public void setNOMBRE_VENDEDOR(String NOMBRE_VENDEDOR) {
-        this.NOMBRE_VENDEDOR = NOMBRE_VENDEDOR;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
-    public void setCANAL(String CANAL) {
-        this.CANAL = CANAL;
+    public String getSaldoCuentaCorriente() {
+        return saldoCuentaCorriente;
     }
 
-    public void setLATITUD(String LATITUD) {
-        this.LATITUD = LATITUD;
+    public void setSaldoCuentaCorriente(String saldoCuentaCorriente) {
+        this.saldoCuentaCorriente = saldoCuentaCorriente;
     }
 
-    public void setLONGITUD(String LONGITUD) {
-        this.LONGITUD = LONGITUD;
+    public String getTelefonoDistribuidora() {
+        return telefonoDistribuidora;
     }
 
-    public void setDireccion_otorgada(String direccion_otorgada) {
-        this.direccion_otorgada = direccion_otorgada;
+    public void setTelefonoDistribuidora(String telefonoDistribuidora) {
+        this.telefonoDistribuidora = telefonoDistribuidora;
     }
 
-    public void setEmail_otorgado(String email_otorgado) {
-        this.email_otorgado = email_otorgado;
+    public String getEmailDistribuidora() {
+        return emailDistribuidora;
     }
 
-    public void setTelefono_otorgado(String telefono_otorgado) {
-        this.telefono_otorgado = telefono_otorgado;
+    public void setEmailDistribuidora(String emailDistribuidora) {
+        this.emailDistribuidora = emailDistribuidora;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public String getCodigoLista() {
+        return codigoLista;
     }
 
-    public void setHABILITADO(String HABILITADO) {
-        this.HABILITADO = HABILITADO;
+    public void setCodigoLista(String codigoLista) {
+        this.codigoLista = codigoLista;
+    }
+
+    public String getNombreVendedor() {
+        return nombreVendedor;
+    }
+
+    public void setNombreVendedor(String nombreVendedor) {
+        this.nombreVendedor = nombreVendedor;
+    }
+
+    public String getCanal() {
+        return canal;
+    }
+
+    public void setCanal(String canal) {
+        this.canal = canal;
+    }
+
+    public Object getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(Object latitud) {
+        this.latitud = latitud;
+    }
+
+    public Object getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(Object longitud) {
+        this.longitud = longitud;
+    }
+
+    public String getDireccionOtorgada() {
+        return direccionOtorgada;
+    }
+
+    public void setDireccionOtorgada(String direccionOtorgada) {
+        this.direccionOtorgada = direccionOtorgada;
+    }
+
+    public String getEmailOtorgado() {
+        return emailOtorgado;
+    }
+
+    public void setEmailOtorgado(String emailOtorgado) {
+        this.emailOtorgado = emailOtorgado;
+    }
+
+    public String getTelefonoOtorgado() {
+        return telefonoOtorgado;
+    }
+
+    public void setTelefonoOtorgado(String telefonoOtorgado) {
+        this.telefonoOtorgado = telefonoOtorgado;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
+
+    public String getHabilidado() {
+        return habilidado;
+    }
+
+    public void setHabilidado(String habilidado) {
+        this.habilidado = habilidado;
+    }
+
+    public String getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(String idCliente) {
+        this.idCliente = idCliente;
     }
 }
