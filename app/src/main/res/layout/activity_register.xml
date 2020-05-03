@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:backgroundTint="@color/colorPrimaryLight"
-            android:hint="@string/customerPass"
+            android:hint="@string/helpPass"
             android:importantForAutofill="no"
             android:inputType="textPassword" />
 

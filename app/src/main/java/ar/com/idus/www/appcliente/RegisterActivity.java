@@ -3,6 +3,7 @@ package ar.com.idus.www.appcliente;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import java.util.regex.Pattern;
 import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
+import ar.com.idus.www.appcliente.utilities.Constants;
+import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -24,6 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     TextView txtMsg;
     Client client;
     Customer customer;
+    SharedPreferences sharedPreferences;
     ArrayList<Distributor> distributors = new ArrayList<>();
 
 
@@ -31,6 +35,9 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        final String token;
+        sharedPreferences = getPreferences(MODE_PRIVATE);
 
         btnConfirm  = findViewById(R.id.btnConfirm);
         editAddress = findViewById(R.id.editAddress);
@@ -45,10 +52,8 @@ public class RegisterActivity extends AppCompatActivity {
         editGivenPhone = findViewById(R.id.editGivenPhone);
         txtMsg = findViewById(R.id.txtMsg);
 
-
         Bundle bundle = getIntent().getExtras();
 //        bundle = null;
-
 
         if (bundle == null) {
 //            Toast.makeText(getApplicationContext(), R.string.msgErrCustomerData, Toast.LENGTH_LONG).show();
@@ -62,6 +67,20 @@ public class RegisterActivity extends AppCompatActivity {
             showExit(getString(R.string.msgErrClientData));
             return;
         }
+
+        ResponseObject responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+        if (responseToken == null) {
+            showExit(getString(R.string.msgErrToken));
+            return;
+        }
+
+        if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+            showExit(responseToken.getResponseData());
+            return;
+        }
+
+        token = responseToken.getResponseData();
 
         editId.setText(customer.getIdCliente());
         editId.setKeyListener(null);
@@ -82,6 +101,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ResponseObject responseUpdate;
                 boolean errorEmail, errorPhone, errorPass;
                 String id, name, email, phone, pass, passRep, address;
                 id = editName.getText().toString();
@@ -92,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
                 pass = editPass.getText().toString();
                 passRep = editPassRep.getText().toString();
 
-                if (email.isEmpty() || phone.isEmpty() || pass.isEmpty() || passRep.isEmpty())
+                if (email.isEmpty() || phone.isEmpty() || address.isEmpty() || pass.isEmpty() || passRep.isEmpty())
                     Toast.makeText(getApplicationContext(), R.string.msgMandatoryData,
                             Toast.LENGTH_LONG).show();
                 else {
@@ -106,12 +126,37 @@ public class RegisterActivity extends AppCompatActivity {
                     else if (!pass.equals(passRep))
                         Toast.makeText(getApplicationContext(), R.string.msgErrPass, Toast.LENGTH_SHORT).show();
                     else {
-                        distributors = getDistributors(email);
+                        customer.setDireccionOtorgada(address);
+                        customer.setEmailOtorgado(email);
+                        customer.setTelefonoOtorgado(phone);
+                        customer.setContrasena(pass);
 
-                        if (!distributors.isEmpty()) {
-                            callActivity();
-                        } else
-                            Toast.makeText(getApplicationContext(), R.string.msgErrDistribData, Toast.LENGTH_SHORT).show();
+                        responseUpdate = updateCustomer(token);
+
+                        if (responseUpdate != null) {
+                            switch (responseUpdate.getResponseCode()) {
+                                case Constants.OK:
+                                    showMsg(responseUpdate.getResponseData());
+
+                                    System.out.println(responseUpdate.getResponseData());
+                                    break;
+
+                                case Constants.SHOW_ERROR:
+                                    showMsg(responseUpdate.getResponseData());
+                                    break;
+
+                                case Constants.SHOW_EXIT:
+                                    showExit(responseUpdate.getResponseData());
+                                    break;
+                            }
+                        }
+
+//                        distributors = getDistributors(email);
+//
+//                        if (!distributors.isEmpty()) {
+//                            callActivity();
+//                        } else
+//                            Toast.makeText(getApplicationContext(), R.string.msgErrDistribData, Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -139,6 +184,11 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void showMsg(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        System.out.println(msg);
+    }
+
     private void showExit(String msg) {
         editName.setVisibility(View.GONE);
         editAddress.setVisibility(View.GONE);
@@ -151,8 +201,6 @@ public class RegisterActivity extends AppCompatActivity {
         editGivenPhone.setVisibility(View.GONE);
         editGivenAddress.setVisibility(View.GONE);
         editGivenEmail.setVisibility(View.GONE);
-
-
         txtMsg.setText(msg);
         btnConfirm.setText(R.string.btnExit);
 
@@ -188,6 +236,77 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         return response;
+    }
+
+    private ResponseObject updateCustomer(String token) {
+        String url = "/putAditionalCustomerData.php?token=" + token + "&idCustomer=" + customer.getIdCliente() +
+                    "&direccion=" + customer.getDireccionOtorgada() + "&telefono=" + customer.getTelefonoOtorgado() +
+                    "&eMail=" + customer.getEmailOtorgado() + "&contraseña=" + customer.getContrasena();
+
+        ResponseObject responseObject = Utilities.putResponse(getApplicationContext(), url, 1000);
+        ResponseObject responseToken;
+
+        int code = responseObject.getResponseCode();
+
+        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+
+        //TODO NO ESTA DEVOLVIENDO TOKEN INVALIDO
+        if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
+            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+            if (responseToken == null) {
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(getString(R.string.msgErrToken));
+
+            } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(responseToken.getResponseData());
+            } else {
+                url = "/putAditionalCustomerData.php?token=" + responseToken.getResponseData() + "&idCustomer=" + customer.getIdCliente() +
+                        "&direccion=" + customer.getDireccionOtorgada() + "&telefono=" + customer.getTelefonoOtorgado() +
+                        "&eMail=" + customer.getEmailOtorgado() + "&contraseña=" + customer.getContrasena();
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+
+                code = responseObject.getResponseCode();
+
+                if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+            }
+        }
+
+        switch (responseObject.getResponseCode()) {
+            case Constants.NO_INTERNET:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrInternet));
+                break;
+
+            case Constants.OK:
+                responseObject.setResponseData(getString(R.string.msgSuccUpdateData));
+                break;
+
+            case Constants.EXCEPTION:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                break;
+
+            case Constants.SERVER_ERROR:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrServer)));
+                break;
+
+            case Constants.NO_DATA:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrorUpdateData));
+                break;
+
+            case Constants.INVALID_TOKEN:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrToken)));
+                break;
+        }
+
+        return responseObject;
     }
 
     private void callActivity() {

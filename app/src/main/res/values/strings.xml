@@ -19,12 +19,17 @@
     <string name="customerAddress">Direccion<font color='red'>*</font></string>
     <string name="customerEmail">Email<font color='red'>*</font></string>
     <string name="customerPhone">Celular con codigo de area (sin 0 y sin 15) <font color='red'>*</font></string>
-    <string name="customerPass">Ingrese Contraseña <font color='red'>*</font></string>
+    <string name="customerPass">Ingrese Contraseña</string>
+    <string name="helpPass"><font size="12">Contraseña (min 6 digitos, 1 mayuscula, 1 minuscula y 1 numero) <font color='red'>*</font></font></string>
     <string name="customerPassRep">Repita Contraseña <font color='red'>*</font></string>
     <string name="distribSelect">Elija el disribuidor con el que desea trabajar</string>
     <string name="distribName">Nombre del distribuidor</string>
 
+    <string name="msgSuccUpdateData">Datos actualizados con exito</string>
+    <string name="msgSuccSaveData">Datos guardados con exito</string>
 
+    <string name="msgErrorUpdateData">No se pudo actualizar los datos, pruebe en unos minutos</string>
+    <string name="msgErrorSaveData">No se pudo guardar los datos, pruebe en unos minutos</string>
 
     <string name="msgErrorEmptyId">Coloque un ID válido para poder ingresar</string>
     <string name="msgErrorEmptyIdPass">Coloque un ID y una contraseña válidos para poder ingresar</string>

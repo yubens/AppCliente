@@ -376,7 +376,6 @@ public class MainActivity extends AppCompatActivity {
             callRegister();
 
 
-
     }
 
     private void showExit(String msg) {
@@ -570,11 +569,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void callRegister() {
         Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-
         intent.putExtra("customer", customer);
-
         startActivity(intent);
-
     }
 
     private void callRegister2() {
@@ -617,10 +613,8 @@ public class MainActivity extends AppCompatActivity {
 
         int code = responseObject.getResponseCode();
 
-
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
             responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
-
 
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);

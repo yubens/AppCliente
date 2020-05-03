@@ -49,6 +49,11 @@ public abstract class Utilities {
         return error;
     }
 
+    public static void showMsg(String msg, Context context) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        System.out.println(msg);
+    }
+
     public static void saveData(SharedPreferences sharedPreferences, String key, String data) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, data);
@@ -185,6 +190,8 @@ public abstract class Utilities {
 
     }
 
+
+
     public static ResponseObject getResponse(Context context, final String url, long waitTime) {
         ResponseObject responseObject = new ResponseObject();
         final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
@@ -264,11 +271,71 @@ public abstract class Utilities {
         } else
             responseObject.setResponseCode(Constants.NO_INTERNET);
 
-
         return responseObject;
-
     }
 
+    public static ResponseObject putResponse(Context context, final String url, long waitTime) {
+        ResponseObject responseObject = new ResponseObject();
+        final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
+        final AtomicReference <String> resultString = new AtomicReference<>();
 
+        if (checkConnection(context)) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    int status;
+                    String line;
+                    URL urlOpen;
+                    StringBuilder result = new StringBuilder();
+                    HttpURLConnection cnx = null;
+                    super.run();
+
+                    try {
+                        urlOpen = new URL(Constants.URL + url);
+                        cnx = (HttpURLConnection) urlOpen.openConnection();
+                        cnx.setRequestMethod("PUT");
+
+                        status = cnx.getResponseCode();
+
+                        resultCode.set(status);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultString.set(e.getMessage());
+                        resultCode.set(Constants.EXCEPTION);
+
+                    } finally {
+                        if (cnx != null) {
+//                            resultString.set(result.toString());
+                            cnx.disconnect();
+                        }
+
+                    }
+                }
+            };
+
+            try {
+                thread.start();
+                thread.join(waitTime);
+                responseObject = new ResponseObject();
+                responseObject.setResponseCode(resultCode.get());
+                responseObject.setResponseData(resultString.get());
+
+//                throw  new InterruptedException("hi");
+
+//                token = resultString.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                responseObject.setResponseCode(Constants.EXCEPTION);
+                responseObject.setResponseData(e.getMessage());
+            }
+
+            return responseObject;
+
+        } else
+            responseObject.setResponseCode(Constants.NO_INTERNET);
+
+        return responseObject;
+    }
 
 }
