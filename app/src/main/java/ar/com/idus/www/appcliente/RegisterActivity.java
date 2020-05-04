@@ -90,9 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ResponseObject responseUpdate;
                 boolean errorEmail, errorPhone, errorPass;
-                String id, name, email, phone, pass, passRep, address;
-                id = editName.getText().toString();
-                name = editName.getText().toString();
+                String email, phone, pass, passRep, address;
                 email = editEmail.getText().toString();
                 phone = editPhone.getText().toString();
                 address = editAddress.getText().toString();

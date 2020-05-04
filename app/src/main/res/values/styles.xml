@@ -15,6 +15,14 @@
         <item name="android:background">
             @drawable/btn_rounded 
         </item>
+        <item name="android:textStyle">
+            bold
+        </item>
+        <item name="android:layout_width">
+            150sp
+        </item>
+
+
     </style>
 
 </resources>

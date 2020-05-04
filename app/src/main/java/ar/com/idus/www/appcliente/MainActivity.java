@@ -223,7 +223,9 @@ public class MainActivity extends AppCompatActivity {
     private void showExit(String msg) {
         editPassCustomer.setVisibility(View.GONE);
         editIdCustomer.setVisibility(View.GONE);
+        txtIdCustomer.setVisibility(View.VISIBLE);
         txtIdCustomer.setText(msg);
+        txtIdCustomer.setTextSize(18);
         btnEnter.setText(R.string.btnExit);
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
