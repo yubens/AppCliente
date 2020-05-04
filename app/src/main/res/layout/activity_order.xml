@@ -99,11 +99,12 @@
 
             <EditText
                 android:id="@+id/editQuantity"
-                android:layout_width="134dp"
+                android:layout_width="120sp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:hint="@string/editQuantity"
+                android:layout_marginEnd="5sp"
                 android:inputType="numberSigned"
                 android:textSize="18sp" />
 
@@ -177,12 +178,29 @@
                 android:id="@+id/btnWatch"
                 style="@style/IdusButton"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:text="@string/btnWatch"
                 android:textSize="14sp" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/btnExit"
+                style="@style/IdusButton"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/btnExit"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
 
 
     </LinearLayout>

@@ -2,9 +2,11 @@ package ar.com.idus.www.appcliente;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,10 +16,12 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
+import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
@@ -29,8 +33,10 @@ public class OrderActivity extends AppCompatActivity {
     TextView txtMultiple, txtSalePrice, txtOfferPrice, txtTotal, txtStock, txtError;
     EditText editQuantity, editDescription, editCode;
     ImageButton imgButFindCode, imgButFindDesc;
-    Button btnAdd, btnWatch;
+    Button btnAdd, btnWatch, btnExit;
     Company company;
+    ArrayList<Product> productList;
+    Product chosenProduct;
 
     SharedPreferences sharedPreferences;
 
@@ -52,18 +58,14 @@ public class OrderActivity extends AppCompatActivity {
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
         btnAdd = findViewById(R.id.btnAdd);
         btnWatch = findViewById(R.id.btnWatch);
+        btnExit = findViewById(R.id.btnExit);
+        btnExit.setVisibility(View.GONE);
+        productList = new ArrayList<>();
 
-        btnAdd.setActivated(false);
-        btnAdd.setBackgroundResource(R.drawable.btn_disabled);
-        btnWatch.setActivated(false);
-        btnWatch.setBackgroundResource(R.drawable.btn_disabled);
-
-        ResponseObject responseToken, responseCompany;
+        ResponseObject responseCompany;
         Bundle bundle;
 
         bundle = getIntent().getExtras();
-
-        bundle = null;
 
         if (bundle == null) {
 //            Toast.makeText(getApplicationContext(), R.string.msgErrCustomerData, Toast.LENGTH_LONG).show();
@@ -124,6 +126,12 @@ public class OrderActivity extends AppCompatActivity {
         btnWatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (productList.isEmpty()) {
+                    Utilities.showMsg(getString(R.string.msgErrEmptyBasket), getApplicationContext());
+                    return;
+                }
+
+                callBasket();
 
             }
         });
@@ -131,6 +139,28 @@ public class OrderActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int multiple, quantity;
+                if (chosenProduct == null) {
+                    Utilities.showMsg(getString(R.string.msgErrChosenProd), getApplicationContext());
+                    return;
+                }
+
+                if (editQuantity.getText().toString().isEmpty()) {
+                    Utilities.showMsg(getString(R.string.msgErrEmptyQuantity), getApplicationContext());
+                    return;
+                }
+
+                multiple = Integer.valueOf(txtMultiple.getText().toString());
+                quantity = Integer.valueOf(editQuantity.getText().toString());
+
+                if ((quantity % multiple) != 0) {
+                    Utilities.showMsg(getString(R.string.msgErrMultiple), getApplicationContext());
+                    return;
+                }
+
+                productList.add(chosenProduct);
+                chosenProduct = null;
+
 
             }
         });
@@ -308,19 +338,26 @@ public class OrderActivity extends AppCompatActivity {
         imgButFindCode.setVisibility(View.GONE);
         imgButFindDesc.setVisibility(View.GONE);
         btnAdd.setVisibility(View.GONE);
+        btnWatch.setVisibility(View.GONE);
 
-        btnWatch.setText(R.string.btnExit);
-        btnWatch.setBackgroundResource(R.drawable.btn_rounded);
-        btnWatch.setActivated(true);
+        btnExit.setVisibility(View.VISIBLE);
+
+        btnExit.setText(R.string.btnExit);
 
         txtError.setText(msg);
 
-        btnWatch.setOnClickListener(new View.OnClickListener() {
+        btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("salio");
                 System.exit(0);
             }
         });
+    }
+
+    private void callBasket() {
+        Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
+        intent.putExtra("productList", productList);
+        startActivity(intent);
     }
 }

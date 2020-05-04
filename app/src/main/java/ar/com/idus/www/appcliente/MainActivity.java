@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     boolean firstEntry = false;
 
 
-    public boolean getFirstEntry() {
+    public boolean isFirstEntry() {
         return this.firstEntry;
     }
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
         editIdCustomer.setText(idCustomer);
 
-        if (!getFirstEntry())
+        if (!isFirstEntry())
             txtIdCustomer.setVisibility(View.GONE);
         else
             editPassCustomer.setVisibility(View.GONE);
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String id;
                 String pass;
-                boolean firstTime =  getFirstEntry();
+                boolean firstTime =  isFirstEntry();
                 ResponseObject responseCustomer;
 
                 id = editIdCustomer.getText().toString();
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (firstTime || customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty())
+        if (isFirstEntry() || customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty())
             callRegister();
         else
             callOrder();

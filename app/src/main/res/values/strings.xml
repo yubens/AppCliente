@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AppCliente</string>
+    <string name="app_name">BuyIDUSApp</string>
     <string name="register_title">Registro</string>
     <string name="order_title">Carga de Pedidos</string>
     <string name="basket_title">Carrito de Compra</string>
@@ -21,13 +21,14 @@
     <string name="editQuantity">Cantidad</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
+    <string name="enterd">Ingrese ID</string>
     <string name="customerId">Id del Cliente</string>
     <string name="customerName">Nombre del Cliente</string>
     <string name="customerGivenAddress">Direccion (Brindada por la distribuidora)</string>
     <string name="customerGivenEmail">Email (Brindado por la distribuidora)</string>
     <string name="customerGivenPhone">Telefono (Brindado por la distribuidora)</string>
-    <string name="customerAddress">Direccion<font color='red'>*</font></string>
-    <string name="customerEmail">Email<font color='red'>*</font></string>
+    <string name="customerAddress">Direccion <font color='red'>*</font></string>
+    <string name="customerEmail">Email <font color='red'>*</font></string>
     <string name="customerPhone">Celular con codigo de area (sin 0 y sin 15) <font color='red'>*</font></string>
     <string name="customerPass">Ingrese Contraseña</string>
     <string name="helpPass"><font size="12">Contraseña (min 6 digitos, 1 mayuscula, 1 minuscula y 1 numero) <font color='red'>*</font></font></string>
@@ -36,13 +37,11 @@
     <string name="distribName">Nombre del distribuidor</string>
     <string name="description">Descripcion</string>
 
-
     <string name="msgSuccUpdateData">Datos actualizados con exito</string>
     <string name="msgSuccSaveData">Datos guardados con exito</string>
 
     <string name="msgErrorUpdateData">No se pudo actualizar los datos, pruebe en unos minutos</string>
     <string name="msgErrorSaveData">No se pudo guardar los datos, pruebe en unos minutos</string>
-
     <string name="msgErrorEmptyId">Coloque un ID válido para poder ingresar</string>
     <string name="msgErrorEmptyIdPass">Coloque un ID y una contraseña válidos para poder ingresar</string>
     <string name="msgMandatoryData">Debe completar los datos obligatorios</string>
@@ -59,8 +58,13 @@
     <string name="msgErrServer">Se produjo un error de servidor, por favor intente abrir la aplicacion nuevamente en unos minutos. </string>
     <string name="msgDisabledPhone">Dispositivo deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
     <string name="msgDisabledCustomer">Cliente deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
-    <string name="msgErrAdd">No puede agregar un articulo hasta completar los campos correspondientes</string>
+    <string name="msgErrAdd">No puede agregar un producto hasta completar los campos correspondientes</string>
     <string name="msgErrMinLength">Ingrese al menos 3 letras</string>
+    <string name="msgErrEmptyBasket">Aun no ha agregado productos al carrito</string>
+    <string name="msgErrChosenProd">Debe buscar un producto para poder agregarlo</string>
+    <string name="msgErrEmptyQuantity">Ingresa la cantidad para poder agregar al carrito</string>
+    <string name="msgErrMultiple">La cantidad que está ingresando no es múltiplo del producto, por favor corrija el dato.</string>
+    <string name="msgErrBasket">No pudieron obtenerse los productos del carrito, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
 
 
     <string name="bntAceptar">Aceptar</string>
@@ -132,7 +136,6 @@
     <string name="confirmar">Confirmar</string>
     <string name="rechazar">Rechazar</string>
     <string name="tituloImportamte">IMPORTANTE</string>
-    <string name="mensajeMutiplo">La cantidad que está ingresando no es múltiplo del artículo. Por favor corrija el dato.</string>
     <string name="mensajeInsercionOK">Se insertó correctamente la devolución.</string>
     <string name="mensajeInsercionError">Se produjo un error al insertar la devolución.</string>
     <string name="mensajeEleccParcial">Tilda los articulos que quieras devolver y modifica su cantidad si lo deseas</string>

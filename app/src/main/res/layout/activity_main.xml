@@ -19,14 +19,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.451">
 
+        <ImageView
+            android:id="@+id/imageIdus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/icono_idus128" />
+
         <EditText
             android:id="@+id/editIdCustomer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="1dp"
+            android:textAlignment="center"
+            android:layout_marginTop="5dp"
             android:backgroundTint="@color/colorPrimaryLight"
-            android:hint="@string/distribId"
+            android:hint="@string/enterd"
             android:ems="10"
             android:importantForAutofill="no"
             android:inputType="textPersonName" />
@@ -44,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textAlignment="center"
             android:backgroundTint="@color/colorPrimaryLight"
             android:ems="10"
             android:hint="@string/customerPass"
