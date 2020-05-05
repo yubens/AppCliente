@@ -13,11 +13,11 @@
     <string name="btnWatch">Ver el carrito</string>
     <string name="editCode">Código</string>
     <string name="txtDetalleArticulo">Detalle del Artículo</string>
-    <string name="txtSalesPrice">Precio de Venta</string>
-    <string name="txtOfferPrice">Precio de Oferta</string>
-    <string name="txtMultiple">Múltiplo de</string>
-    <string name="txtTotal">Total</string>
-    <string name="txtStock">Stock</string>
+    <string name="txtSalePrice">Precio Venta: </string>
+    <string name="txtOfferPrice">Precio Oferta: </string>
+    <string name="txtMultiple">Múltiplo de </string>
+    <string name="txtTotal">Total: </string>
+    <string name="txtStock">Stock: </string>
     <string name="editQuantity">Cantidad</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
@@ -59,11 +59,13 @@
     <string name="msgDisabledPhone">Dispositivo deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
     <string name="msgDisabledCustomer">Cliente deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
     <string name="msgErrAdd">No puede agregar un producto hasta completar los campos correspondientes</string>
-    <string name="msgErrMinLength">Ingrese al menos 3 letras</string>
+    <string name="msgErrMinLength">Ingrese al menos 3 caracteres para poder buscar </string>
     <string name="msgErrEmptyBasket">Aun no ha agregado productos al carrito</string>
     <string name="msgErrChosenProd">Debe buscar un producto para poder agregarlo</string>
     <string name="msgErrEmptyQuantity">Ingresa la cantidad para poder agregar al carrito</string>
     <string name="msgErrMultiple">La cantidad que está ingresando no es múltiplo del producto, por favor corrija el dato.</string>
+    <string name="msgErrFindProd">No se obtuvieron datos para la busqueda del codigo o descripcion</string>
+    <string name="msgErrFindCode">Ingrese un codigo de producto para poder buscar</string>
     <string name="msgErrBasket">No pudieron obtenerse los productos del carrito, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
 
 

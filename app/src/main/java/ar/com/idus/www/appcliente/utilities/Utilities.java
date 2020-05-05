@@ -11,8 +11,11 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,6 +24,15 @@ import ar.com.idus.www.appcliente.R;
 import static ar.com.idus.www.appcliente.R.string.msgErrToken;
 
 public abstract class Utilities {
+
+    public static float roundNumber(String number) {
+        float f = Float.valueOf(number);
+        BigDecimal bd = new BigDecimal(f);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        f = bd.floatValue();
+
+        return f;
+    }
 
     public static boolean checkConnection(Context context) {
         try {
@@ -51,7 +63,6 @@ public abstract class Utilities {
 
     public static void showMsg(String msg, Context context) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-        System.out.println(msg);
     }
 
     public static void saveData(SharedPreferences sharedPreferences, String key, String data) {
@@ -70,6 +81,28 @@ public abstract class Utilities {
         editor.remove(key);
         editor.commit();
     }
+
+//    public void givenUsingJava8_whenGeneratingRandomAlphanumericString_thenCorrect() {
+//        int leftLimit = 48; // numeral '0'
+//        int rightLimit = 122; // letter 'z'
+//        int targetStringLength = 10;
+//        Random random = new Random();
+//
+//        String generatedString = random. ints(leftLimit, rightLimit + 1)
+//                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+//                .limit(targetStringLength)
+//                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+//                .toString();
+//
+//        System.out.println(generatedString);
+//    }
+    public static void test() {
+        String generatedString2 = RandomStringUtils.randomAlphanumeric(256);
+
+        System.out.println(generatedString2);
+    }
+
+
 
     public static ResponseObject getNewToken(Context context, SharedPreferences sharedPreferences) {
         ResponseObject responseObject;

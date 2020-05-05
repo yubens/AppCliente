@@ -247,12 +247,12 @@ public class MainActivity extends AppCompatActivity {
         String url = "/findtelephone.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idTelephone=" + idPhone;
         ResponseObject responseToken;
 
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
         code = responseObject.getResponseCode();
 
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
 
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -266,12 +266,12 @@ public class MainActivity extends AppCompatActivity {
                 responseObject.setResponseData(responseToken.getResponseData());
             } else {
                 url = "/findtelephone.php?token=" + responseToken.getResponseData() + "&idTelephone=" + idPhone;
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
 
                 code = responseObject.getResponseCode();
 
                 if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
             }
         }
 
@@ -449,13 +449,13 @@ public class MainActivity extends AppCompatActivity {
 
     private ResponseObject getCustomer(String id){
         String url = "/getCustomer.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idCustomer=" + id;
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
         ResponseObject responseToken;
 
         int code = responseObject.getResponseCode();
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
 
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -469,12 +469,12 @@ public class MainActivity extends AppCompatActivity {
                 responseObject.setResponseData(responseToken.getResponseData());
             } else {
                 url = "/getCustomer.php?token=" + responseToken.getResponseData() + "&idCustomer=" + id;
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
 
                 code = responseObject.getResponseCode();
 
                 if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
             }
         }
 

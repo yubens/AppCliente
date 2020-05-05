@@ -208,13 +208,13 @@ public class RegisterActivity extends AppCompatActivity {
                     "&direccion=" + customer.getDireccionOtorgada() + "&telefono=" + customer.getTelefonoOtorgado() +
                     "&eMail=" + customer.getEmailOtorgado() + "&contraseña=" + customer.getContrasena();
 
-        ResponseObject responseObject = Utilities.putResponse(getApplicationContext(), url, 1000);
+        ResponseObject responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
         ResponseObject responseToken;
 
         int code = responseObject.getResponseCode();
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+            responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
 
         //TODO NO ESTA DEVOLVIENDO TOKEN INVALIDO
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
@@ -231,12 +231,12 @@ public class RegisterActivity extends AppCompatActivity {
                 url = "/putAditionalCustomerData.php?token=" + responseToken.getResponseData() + "&idCustomer=" + customer.getIdCliente() +
                         "&direccion=" + customer.getDireccionOtorgada() + "&telefono=" + customer.getTelefonoOtorgado() +
                         "&eMail=" + customer.getEmailOtorgado() + "&contraseña=" + customer.getContrasena();
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 1000);
+                responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
 
                 code = responseObject.getResponseCode();
 
                 if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 2000);
+                    responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
             }
         }
 
