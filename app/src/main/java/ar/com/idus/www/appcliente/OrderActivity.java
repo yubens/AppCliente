@@ -253,6 +253,7 @@ public class OrderActivity extends AppCompatActivity {
                 bodyOrder.setPrice(String.valueOf(chosenProduct.getRealPrice()));
                 bodyOrder.setQuantity(String.valueOf(quantity));
                 bodyOrder.setIdItem(String.valueOf(itemOrder++));
+                bodyOrder.setName(chosenProduct.getName());
 
                 listOrder.add(bodyOrder);
 
@@ -490,6 +491,7 @@ public class OrderActivity extends AppCompatActivity {
                 break;
 
             case Constants.NO_DATA:
+                cleanUp();
                 responseObject.setResponseCode(Constants.SHOW_ERROR);
                 responseObject.setResponseData(getString(R.string.msgErrFindProd));
                 break;
@@ -545,6 +547,7 @@ public class OrderActivity extends AppCompatActivity {
     private void cleanUp() {
         chosenProduct = null;
         editQuantity.setText("");
+        editQuantity.setKeyListener(null);
         editDescription.setText("");
         editCode.setText("");
         txtPrice.setText(R.string.txtPrice);

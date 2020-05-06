@@ -4,16 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.models.Product;
+import ar.com.idus.www.appcliente.utilities.BasketAdapter;
 
 public class BasketActivity extends AppCompatActivity {
     ArrayList<Product> productList;
     HeadOrder headOrder;
+    BasketAdapter adapter;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +28,20 @@ public class BasketActivity extends AppCompatActivity {
 
         if (bundle == null) {
             showExit(getString(R.string.msgErrBasket));
+            return;
         }
 
         headOrder = (HeadOrder) bundle.getSerializable("order");
+
+        if (headOrder == null) {
+            showExit(getString(R.string.msgErrBasket));
+            return;
+        }
+
+        listView = findViewById(R.id.listBody);
+        adapter = new BasketAdapter(getApplicationContext(), R.layout.basket_item, headOrder.getBodyOrders());
+        listView.setAdapter(adapter);
+
         System.out.println("llego");
 
         //TODO

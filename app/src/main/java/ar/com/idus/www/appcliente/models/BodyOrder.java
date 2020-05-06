@@ -7,6 +7,7 @@ public class BodyOrder implements Serializable {
     private String idProduct;
     private String quantity;
     private String price;
+    String name;
 
     public String getIdItem() {
         return idItem;
@@ -38,5 +39,13 @@ public class BodyOrder implements Serializable {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -11,6 +11,8 @@
     <string name="btnConfirm">Confirmar Datos</string>
     <string name="btnAdd">Agregar al carrito</string>
     <string name="btnWatch">Ver el carrito</string>
+    <string name="btnCancel">Cancelar</string>
+    <string name="btnSendOrder">Enviar Pedido</string>
     <string name="editCode">Código</string>
     <string name="txtDetalleArticulo">Detalle del Artículo</string>
     <string name="txtSalePrice">Precio Venta: </string>
@@ -19,6 +21,7 @@
     <string name="txtTotal">Total: </string>
     <string name="txtStock">Stock: </string>
     <string name="editQuantity">Cantidad</string>
+    <string name="txtObservations">Observaciones</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
     <string name="enterd">Ingrese ID</string>
@@ -80,7 +83,6 @@
     <string name="strTotal">Total</string>
     <string name="strSaldo">Saldo</string>
     <string name="strPago">Pago</string>
-    <string name="strCancelar">Cancelar</string>
     <string name="strHistoricoPago">Histórico</string>
     <string name="strDetalle">Detalle</string>
     <string name="strCodigo">Código</string>
