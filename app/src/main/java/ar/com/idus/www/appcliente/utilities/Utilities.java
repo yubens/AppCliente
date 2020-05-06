@@ -82,24 +82,24 @@ public abstract class Utilities {
         editor.commit();
     }
 
-//    public void givenUsingJava8_whenGeneratingRandomAlphanumericString_thenCorrect() {
+    public void generateRandom() {
 //        int leftLimit = 48; // numeral '0'
 //        int rightLimit = 122; // letter 'z'
 //        int targetStringLength = 10;
 //        Random random = new Random();
 //
-//        String generatedString = random. ints(leftLimit, rightLimit + 1)
+//        String generatedString;
+//        generatedString = random. ints(leftLimit, rightLimit + 1)
 //                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
 //                .limit(targetStringLength)
 //                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
 //                .toString();
 //
 //        System.out.println(generatedString);
-//    }
-    public static void test() {
-        String generatedString2 = RandomStringUtils.randomAlphanumeric(256);
+    }
 
-        System.out.println(generatedString2);
+    public static void test() {
+
     }
 
 

@@ -8,10 +8,12 @@ import android.view.View;
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.models.Distributor;
+import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.models.Product;
 
 public class BasketActivity extends AppCompatActivity {
     ArrayList<Product> productList;
+    HeadOrder headOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +26,11 @@ public class BasketActivity extends AppCompatActivity {
             showExit(getString(R.string.msgErrBasket));
         }
 
-        productList = (ArrayList<Product>) bundle.getSerializable("productList");
+        headOrder = (HeadOrder) bundle.getSerializable("order");
+        System.out.println("llego");
+
+        //TODO
+        // responden token invalidos los 3 endpoints
     }
 
     private void showExit(String msg) {

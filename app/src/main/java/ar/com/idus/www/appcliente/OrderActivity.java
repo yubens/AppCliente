@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.Button;
@@ -18,12 +20,17 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 
+import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
+import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
@@ -33,9 +40,10 @@ public class OrderActivity extends AppCompatActivity {
     ArrayList<Distributor> distributors;
     Distributor distributor;
     Customer customer;
-    TextView txtMultiple, txtSalePrice, txtOfferPrice, txtTotal, txtStock, txtError;
+    TextView txtMultiple, txtPrice, txtTotal, txtStock, txtError;
     EditText editQuantity, editDescription, editCode;
     ImageButton imgButFindCode, imgButFindDesc;
+
     Button btnAdd, btnWatch, btnExit;
     Company company;
     ArrayList<Product> productList;
@@ -43,7 +51,13 @@ public class OrderActivity extends AppCompatActivity {
     Product chosenProduct;
     ListView listView;
     ImageView imgProduct;
-    DecimalFormat format = new DecimalFormat("#.00");
+    DecimalFormat format;
+    HeadOrder headOrder;
+    BodyOrder bodyOrder;
+    ArrayList<BodyOrder> listOrder;
+    SimpleDateFormat formatter;
+    Date date;
+    int itemOrder;
 
     SharedPreferences sharedPreferences;
 
@@ -52,9 +66,12 @@ public class OrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        ResponseObject responseCompany;
+        final ResponseObject responseProducts;
+        Bundle bundle;
+
         txtMultiple = findViewById(R.id.txtMultiple);
-        txtOfferPrice = findViewById(R.id.txtOfferPrice);
-        txtSalePrice = findViewById(R.id.txtSalePrice);
+        txtPrice = findViewById(R.id.txtPrice);
         txtTotal = findViewById(R.id.txtTotal);
         txtStock = findViewById(R.id.txtStock);
         txtError = findViewById(R.id.txtError);
@@ -69,19 +86,18 @@ public class OrderActivity extends AppCompatActivity {
         btnExit.setVisibility(View.GONE);
         imgProduct = findViewById(R.id.imgProduct);
 
-        listView = new ListView(getApplicationContext());
+
         imgProduct.setVisibility(View.GONE);
         editQuantity.setKeyListener(null);
 
-//        listView.setVisibility(View.GONE);
-
+        listView = new ListView(getApplicationContext());
         productList = new ArrayList<>();
         chosenProductsList = new ArrayList<>();
+        headOrder = new HeadOrder();
+        listOrder = new ArrayList<>();
 
-
-        ResponseObject responseCompany;
-        final ResponseObject responseProducts;
-        Bundle bundle;
+        format = new DecimalFormat("#.00");
+        formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
         bundle = getIntent().getExtras();
 
@@ -90,6 +106,9 @@ public class OrderActivity extends AppCompatActivity {
             showExit(getString(R.string.msgErrClientData));
             return;
         }
+
+        date = new Date();
+        headOrder.setDateStart(formatter.format(date));
 
         customer = (Customer) bundle.getSerializable("customer");
 
@@ -194,6 +213,10 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
+                headOrder.setBodyOrders(listOrder);
+
+//                setHeadOrder();
+
                 callBasket();
 
             }
@@ -213,7 +236,11 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
-                multiple = Integer.valueOf(txtMultiple.getText().toString());
+                multiple = Integer.valueOf(chosenProduct.getMultiple());
+
+                if (multiple == 0)
+                    multiple = 1;
+
                 quantity = Integer.valueOf(editQuantity.getText().toString());
 
                 if ((quantity % multiple) != 0) {
@@ -221,8 +248,17 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
-                productList.add(chosenProduct);
-                chosenProduct = null;
+                bodyOrder = new BodyOrder();
+                bodyOrder.setIdProduct(chosenProduct.getIdProduct());
+                bodyOrder.setPrice(String.valueOf(chosenProduct.getRealPrice()));
+                bodyOrder.setQuantity(String.valueOf(quantity));
+                bodyOrder.setIdItem(String.valueOf(itemOrder++));
+
+                listOrder.add(bodyOrder);
+
+                Utilities.showMsg(getString(R.string.msgSuccAddProd), getApplicationContext());
+
+                cleanUp();
 
 
             }
@@ -239,55 +275,80 @@ public class OrderActivity extends AppCompatActivity {
 
     private void setProduct() {
         //TODO
-        // crear producto con los datos necesarios para enviar al carrito. cantidad, precio total, etc, segun web service
-
-        //TODO
         // preguntar si se muestra precio de venta y de oferta a la vez
         // stock no viene
 
-        float salePrice,offerPrice, total;
-        String salePriceS = "", offerPriceS = "", totalS = "", multiple = "", stock;
+        float price, total;
+        String priceString = "", totalS = "", multiple = "", stock, aux;
 
         loadImage();
-        editCode.setText("");
-        editDescription.setText("");
+        editDescription.setText(chosenProduct.getName());
         editQuantity.setKeyListener(new DigitsKeyListener());
         multiple = getString(R.string.txtMultiple) +  " " + chosenProduct.getMultiple();
         txtMultiple.setText(multiple);
 
         if(chosenProduct.getOfferPrice() != null && !chosenProduct.getOfferPrice().isEmpty() && !chosenProduct.getOfferPrice().equals("0")) {
-            offerPrice = Utilities.roundNumber(chosenProduct.getOfferPrice());
-            offerPriceS = String.format("%.2f", offerPrice);
-            offerPriceS = getString(R.string.txtOfferPrice) + " " + offerPriceS;
-        }
+            aux = chosenProduct.getOfferPrice();
 
-        if (chosenProduct.getListPrice02() != null && !chosenProduct.getListPrice02().isEmpty() && !chosenProduct.getListPrice02().equals("0"))
-            salePriceS = chosenProduct.getListPrice02();
+        } else if (chosenProduct.getListPrice02() != null && !chosenProduct.getListPrice02().isEmpty() && !chosenProduct.getListPrice02().equals("0"))
+            aux = chosenProduct.getListPrice02();
         else if (chosenProduct.getListPrice01() != null && !chosenProduct.getListPrice01().isEmpty() && !chosenProduct.getListPrice01().equals("0"))
-            salePriceS = chosenProduct.getListPrice01();
+            aux = chosenProduct.getListPrice01();
         else if (chosenProduct.getListPrice00() != null && !chosenProduct.getListPrice00().isEmpty() && !chosenProduct.getListPrice00().equals("0"))
-            salePriceS = chosenProduct.getListPrice00();
+            aux = chosenProduct.getListPrice00();
         else
-            salePriceS = chosenProduct.getSalePrice00();
+            aux = chosenProduct.getSalePrice00();
 
-        salePrice = Utilities.roundNumber(salePriceS);
-        salePriceS = String.format("%.2f", salePrice);
+        price = Utilities.roundNumber(aux);
+        priceString = String.format("%.2f", price);
+        priceString = getString(R.string.txtPrice) + " " + priceString;
 
-        salePriceS = getString(R.string.txtSalePrice) + " " + salePriceS;
-
-        txtOfferPrice.setText(salePriceS);
-        txtSalePrice.setText(salePriceS);
-
-        totalS = getString(R.string.txtTotal) + salePriceS;
-
-        txtTotal.setText(salePriceS);
-
-        System.out.println();
+        chosenProduct.setRealPrice(price);
 
         // TODO
         // alinear cantidad, mulitplo y stock
         // mostar un solo precio (venta u oferta) y total
 
+        editQuantity.addTextChangedListener(watcher);
+        txtPrice.setText(priceString);
+
+    }
+
+    private TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            float amount, result;
+            String total = "";
+            if (s.length() > 0) {
+                amount = Float.parseFloat(s.toString());
+                int nro = 5;
+                result = chosenProduct.getRealPrice() * amount;
+                total = getString(R.string.txtTotal ) + " " + String.format("%.2f", result);
+
+                txtTotal.setText(total);
+            }
+
+            if(editQuantity.getText().toString().isEmpty()){
+                txtTotal.setText(R.string.txtTotal);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    private void setHeadOrder() {
+        headOrder.setIdOrder(UUID.randomUUID().toString());
+        date = new Date();
+        headOrder.setDateEnd(formatter.format(date));
+        headOrder.setIdCustomer(customer.getIdCliente());
 
     }
 
@@ -455,13 +516,12 @@ public class OrderActivity extends AppCompatActivity {
 
     private void showExit(String msg) {
         txtMultiple.setVisibility(View.GONE);
-        txtSalePrice.setVisibility(View.GONE);
+        txtPrice.setVisibility(View.GONE);
         txtTotal.setVisibility(View.GONE);
         txtStock.setVisibility(View.GONE);
         editQuantity.setVisibility(View.GONE);
         editDescription.setVisibility(View.GONE);
         editCode.setVisibility(View.GONE);
-        txtOfferPrice.setVisibility(View.GONE);
         imgButFindCode.setVisibility(View.GONE);
         imgButFindDesc.setVisibility(View.GONE);
         btnAdd.setVisibility(View.GONE);
@@ -482,9 +542,19 @@ public class OrderActivity extends AppCompatActivity {
         });
     }
 
+    private void cleanUp() {
+        chosenProduct = null;
+        editQuantity.setText("");
+        editDescription.setText("");
+        editCode.setText("");
+        txtPrice.setText(R.string.txtPrice);
+        txtTotal.setText(R.string.txtTotal);
+        txtMultiple.setText(R.string.txtMultiple);
+    }
+
     private void callBasket() {
         Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
-        intent.putExtra("productList", productList);
+        intent.putExtra("order", headOrder);
         startActivity(intent);
     }
 }

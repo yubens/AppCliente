@@ -14,7 +14,7 @@
     <string name="editCode">Código</string>
     <string name="txtDetalleArticulo">Detalle del Artículo</string>
     <string name="txtSalePrice">Precio Venta: </string>
-    <string name="txtOfferPrice">Precio Oferta: </string>
+    <string name="txtPrice">Precio: </string>
     <string name="txtMultiple">Múltiplo de </string>
     <string name="txtTotal">Total: </string>
     <string name="txtStock">Stock: </string>
@@ -39,6 +39,7 @@
 
     <string name="msgSuccUpdateData">Datos actualizados con exito</string>
     <string name="msgSuccSaveData">Datos guardados con exito</string>
+    <string name="msgSuccAddProd">Producto agreagado al carrito con exito</string>
 
     <string name="msgErrorUpdateData">No se pudo actualizar los datos, pruebe en unos minutos</string>
     <string name="msgErrorSaveData">No se pudo guardar los datos, pruebe en unos minutos</string>

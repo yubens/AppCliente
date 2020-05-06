@@ -54,6 +54,16 @@ public class Product implements Serializable {
     @Expose
     public String listPrice02;
 
+    private float realPrice;
+
+    public float getRealPrice() {
+        return realPrice;
+    }
+
+    public void setRealPrice(float realPrice) {
+        this.realPrice = realPrice;
+    }
+
     public String getIdProduct() {
         return idProduct;
     }
