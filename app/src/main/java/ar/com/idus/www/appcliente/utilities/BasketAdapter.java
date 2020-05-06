@@ -1,6 +1,7 @@
 package ar.com.idus.www.appcliente.utilities;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.R;
 import ar.com.idus.www.appcliente.models.BodyOrder;
-import ar.com.idus.www.appcliente.models.Distributor;
 
 
 public class BasketAdapter extends ArrayAdapter<BodyOrder> {
@@ -25,8 +25,9 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
     static class ViewHolder {
         TextView txtName;
         TextView txtQuantity;
-        TextView txtPrice;
+        TextView txtIdPrice;
         TextView txtTotal;
+        
     }
 
     public BasketAdapter(@NonNull Context context, int resource, ArrayList<BodyOrder> orders) {
@@ -40,13 +41,15 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final BasketAdapter.ViewHolder viewHolder;
+        String total, quantity, price;
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.basket_item, null);
             viewHolder = new BasketAdapter.ViewHolder();
             viewHolder.txtName =  convertView.findViewById(R.id.txtGridName);
+            viewHolder.txtName.setTypeface(null, Typeface.BOLD);
             viewHolder.txtQuantity =  convertView.findViewById(R.id.txtGridQuantity);
-            viewHolder.txtPrice =  convertView.findViewById(R.id.txtGridPrice);
+            viewHolder.txtIdPrice =  convertView.findViewById(R.id.txtGridIdProd);
             viewHolder.txtTotal =  convertView.findViewById(R.id.txtGridTotal);
             convertView.setTag(viewHolder);
 
@@ -55,10 +58,15 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         }
 
         BodyOrder order = orders.get(position);
+
+        total = "Subtotal: " + String.format("%.2f", order.getTotal());
+        quantity = "Cantidad: " + order.getQuantity() ;
+        price =  String.format("%.2f", order.getPrice());
+
         viewHolder.txtName.setText(order.getName());
-        viewHolder.txtPrice.setText(order.getPrice());
-        viewHolder.txtTotal.setText(order.getPrice());
-        viewHolder.txtQuantity.setText(order.getQuantity());
+        viewHolder.txtIdPrice.setText("ID Producto " + order.getIdProduct());
+        viewHolder.txtTotal.setText(total);
+        viewHolder.txtQuantity.setText(quantity + " x " + price);
 
         return convertView;
     }

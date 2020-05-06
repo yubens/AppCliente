@@ -97,7 +97,7 @@ public class OrderActivity extends AppCompatActivity {
         listOrder = new ArrayList<>();
 
         format = new DecimalFormat("#.00");
-        formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         bundle = getIntent().getExtras();
 
@@ -213,9 +213,7 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
-                headOrder.setBodyOrders(listOrder);
-
-//                setHeadOrder();
+                setHeadOrder();
 
                 callBasket();
 
@@ -226,6 +224,7 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int multiple, quantity;
+                float total;
                 if (chosenProduct == null) {
                     Utilities.showMsg(getString(R.string.msgErrChosenProd), getApplicationContext());
                     return;
@@ -250,10 +249,12 @@ public class OrderActivity extends AppCompatActivity {
 
                 bodyOrder = new BodyOrder();
                 bodyOrder.setIdProduct(chosenProduct.getIdProduct());
-                bodyOrder.setPrice(String.valueOf(chosenProduct.getRealPrice()));
+                bodyOrder.setPrice(chosenProduct.getRealPrice());
                 bodyOrder.setQuantity(String.valueOf(quantity));
                 bodyOrder.setIdItem(String.valueOf(itemOrder++));
                 bodyOrder.setName(chosenProduct.getName());
+                total = chosenProduct.getRealPrice() * quantity;
+                bodyOrder.setTotal(total);
 
                 listOrder.add(bodyOrder);
 
@@ -346,9 +347,8 @@ public class OrderActivity extends AppCompatActivity {
     };
 
     private void setHeadOrder() {
+        headOrder.setBodyOrders(listOrder);
         headOrder.setIdOrder(UUID.randomUUID().toString());
-        date = new Date();
-        headOrder.setDateEnd(formatter.format(date));
         headOrder.setIdCustomer(customer.getIdCliente());
 
     }

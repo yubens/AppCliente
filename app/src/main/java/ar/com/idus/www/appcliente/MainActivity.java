@@ -18,13 +18,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
+import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
@@ -50,44 +53,79 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testingAPI() {
-//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-//        LocalDateTime now = LocalDateTime.now();
-//        System.out.println(dtf.format(now));
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
-        System.out.println(formatter.format(date));
 
 
+////        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+////        LocalDateTime now = LocalDateTime.now();
+////        System.out.println(dtf.format(now));
+//
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//        Date date = new Date();
+//        System.out.println(formatter.format(date));
+//
+//
+//
+//
+//        String url, token, id;
+//        ResponseObject response;
+//
+//
+//            url = "http://idus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
+////            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
+////        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
+////        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
+//
+//        token = "1";
+//        id = "1";
+//
+//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//
+//        token = Utilities.getData(sharedPreferences, "token");
+//
+//        Utilities.saveData(sharedPreferences, "token", "12132154");
+//
+//        token = Utilities.getData(sharedPreferences, "token");
+//
+//        Utilities.deleteData(sharedPreferences, "token");
+//
+//        token = Utilities.getData(sharedPreferences, "token");
+//
+//        response = getCustomer(id);
+//
+//        System.out.println("llego");
+    }
 
+    private void testScreen() {
+        HeadOrder headOrder = new HeadOrder();
+        BodyOrder bodyOrder = new BodyOrder();
+        BodyOrder bodyOrder2 = new BodyOrder();
+        ArrayList<BodyOrder> bodyOrders = new ArrayList<>();
 
-        String url, token, id;
-        ResponseObject response;
+        bodyOrder.setName("FLAN CHOCOLATE 6X6X60G");
+        bodyOrder.setIdItem("10");
+        bodyOrder.setQuantity("5");
+        bodyOrder.setPrice(20.50f);
+        bodyOrder.setIdProduct("526ARTICULO550");
+        bodyOrder.setTotal(205040.50f);
+        bodyOrders.add(bodyOrder);
+        bodyOrders.add(bodyOrder);
+        bodyOrders.add(bodyOrder);
+        bodyOrder2.setName("OREO CHOCOLATE 36X117GR");
+        bodyOrder2.setIdItem("10");
+        bodyOrder2.setQuantity("Cantidad: 125");
+        bodyOrder2.setPrice(2330.50f);
+        bodyOrder2.setIdProduct("526ARTICULO332");
+        bodyOrder2.setTotal(11205040.50f);
+        bodyOrders.add(bodyOrder2);
+        bodyOrders.add(bodyOrder);
+        bodyOrders.add(bodyOrder);
+        bodyOrders.add(bodyOrder);
+        bodyOrders.add(bodyOrder);
 
-
-            url = "http://idus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
-//            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
-//        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
-//        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
-
-        token = "1";
-        id = "1";
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        token = Utilities.getData(sharedPreferences, "token");
-
-        Utilities.saveData(sharedPreferences, "token", "12132154");
-
-        token = Utilities.getData(sharedPreferences, "token");
-
-        Utilities.deleteData(sharedPreferences, "token");
-
-        token = Utilities.getData(sharedPreferences, "token");
-
-        response = getCustomer(id);
-
-        System.out.println("llego");
+        headOrder.setBodyOrders(bodyOrders);
+        Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
+        intent.putExtra("order", headOrder);
+        startActivity(intent);
     }
 
     @Override
@@ -99,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         String token = null, idPhone, idCustomer;
         int msg = 0;
 
-//        testingAPI();
+        testScreen();
 
         btnEnter = findViewById(R.id.btnEnter);
         txtIdCustomer = findViewById(R.id.txtIdCustomer);

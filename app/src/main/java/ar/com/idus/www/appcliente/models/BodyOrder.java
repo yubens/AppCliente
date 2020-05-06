@@ -6,8 +6,9 @@ public class BodyOrder implements Serializable {
     private String idItem;
     private String idProduct;
     private String quantity;
-    private String price;
-    String name;
+    private float price;
+    private String name;
+    private float total;
 
     public String getIdItem() {
         return idItem;
@@ -33,11 +34,11 @@ public class BodyOrder implements Serializable {
         this.quantity = quantity;
     }
 
-    public String getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -47,5 +48,13 @@ public class BodyOrder implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public float getTotal() {
+        return total;
+    }
+
+    public void setTotal(float total) {
+        this.total = total;
     }
 }
