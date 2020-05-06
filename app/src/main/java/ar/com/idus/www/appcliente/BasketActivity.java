@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.BasketAdapter;
+import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
@@ -33,6 +35,7 @@ public class BasketActivity extends AppCompatActivity {
     EditText editObs;
     SimpleDateFormat formatter;
     Date date;
+    String idOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,62 @@ public class BasketActivity extends AppCompatActivity {
         btnSendOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ResponseObject responseSend = sendOrder();
+                ResponseObject responseSendOrder = sendOrder();
+
+                if (responseSendOrder != null) {
+                    switch (responseSendOrder.getResponseCode()) {
+                        case Constants.OK:
+                            ResponseObject responseSendBody = sendBody();
+
+                            if (responseSendBody != null) {
+                                switch (responseSendBody.getResponseCode()) {
+                                    case Constants.OK:
+                                        ResponseObject responseConfirm = confirmOrder();
+
+                                        if (responseConfirm != null) {
+                                            switch (responseSendBody.getResponseCode()) {
+                                                case Constants.OK:
+                                                    Utilities.showMsg(getString(R.string.msgSuccSendOrder), getApplicationContext());
+                                                    //TODO
+                                                    // crear pantalla con datos de distribuidor
+                                                    // mandarlo a esa pantalla
+
+                                                    break;
+
+                                                case Constants.SHOW_ERROR:
+                                                    Utilities.showMsg(responseConfirm.getResponseData(), getApplicationContext());
+                                                    break;
+
+                                                case Constants.SHOW_EXIT:
+                                                    showExit(responseConfirm.getResponseData());
+                                                    break;
+                                            }
+                                        }
+
+                                        break;
+
+                                    case Constants.SHOW_ERROR:
+                                        Utilities.showMsg(responseSendBody.getResponseData(), getApplicationContext());
+                                        break;
+
+                                    case Constants.SHOW_EXIT:
+                                        showExit(responseSendBody.getResponseData());
+                                        break;
+                                }
+                            }
+
+
+                            break;
+
+                        case Constants.SHOW_ERROR:
+                            Utilities.showMsg(responseSendOrder.getResponseData(), getApplicationContext());
+                            break;
+
+                        case Constants.SHOW_EXIT:
+                            showExit(responseSendOrder.getResponseData());
+                            break;
+                    }
+                }
             }
         });
 
@@ -75,32 +133,181 @@ public class BasketActivity extends AppCompatActivity {
     }
 
     private ResponseObject sendOrder() {
-        ResponseObject responseObject;
-        String idOrder = UUID.randomUUID().toString();
-        String geo = "";
+        ResponseObject responseObject, responseToken;
+        idOrder = UUID.randomUUID().toString();
+        String geo = "-64.477876;-32.407801";
         String observations = editObs.getText().toString();
 
         date = new Date();
         headOrder.setDateEnd(formatter.format(date));
+        headOrder.setDateOrder(formatter.format(date));
 
-        String url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/putB2BOrderHead.php?token=" + Utilities.getData(sharedPreferences, "token") +
+        // TODO falta
+        // obtener coordenas del dispositivo
+        // sumar 24 horas al date end
+        headOrder.setDateDelivery(formatter.format(date));
+        headOrder.setGeo("-64.477876;-32.407801");
+
+        String url = "/putB2BOrderHead.php?token=" + Utilities.getData(sharedPreferences, "token") +
                         "&idOrder=" + idOrder + "&idCustomer=" + headOrder.getIdCustomer() + "&cantItems=" + headOrder.getBodyOrders().size() +
                         "&dateOrder=" + headOrder.getDateOrder() + "&dateStar=" + headOrder.getDateStart() + "&dateEnd=" + headOrder.getDateEnd() +
                         "&geoPos=" + geo + "&obsOrder=" + observations + "&dateDelivery=" + headOrder.getDateDelivery();
 
         responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
 
+        int code = responseObject.getResponseCode();
+
+        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+
+        if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
+            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+            if (responseToken == null) {
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrToken));
+
+            } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(responseToken.getResponseData());
+            } else {
+                url = "/putB2BOrderHead.php?token=" + responseToken.getResponseData() +
+                        "&idOrder=" + idOrder + "&idCustomer=" + headOrder.getIdCustomer() + "&cantItems=" + headOrder.getBodyOrders().size() +
+                        "&dateOrder=" + headOrder.getDateOrder() + "&dateStar=" + headOrder.getDateStart() + "&dateEnd=" + headOrder.getDateEnd() +
+                        "&geoPos=" + geo + "&obsOrder=" + observations + "&dateDelivery=" + headOrder.getDateDelivery();
+
+
+                responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
+
+                code = responseObject.getResponseCode();
+
+                if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+            }
+        }
+
+        switch (responseObject.getResponseCode()) {
+            case Constants.NO_INTERNET:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrInternet));
+                break;
+
+            case Constants.SHOW_EXIT:
+                break;
+
+            case Constants.NO_DATA:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrOrder));
+                break;
+
+            case Constants.EXCEPTION:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                break;
+
+            case Constants.SERVER_ERROR:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrServer)));
+                break;
+
+            case Constants.INVALID_TOKEN:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrToken)));
+                break;
+        }
+
         return responseObject;
     }
 
     private ResponseObject sendBody() {
         ResponseObject responseObject = null;
+        String url;
+
+        int i = 0;
+
+        for (BodyOrder bodyOrder : headOrder.getBodyOrders()) {
+            url = "/putB2BOrderBody.php?token=" + Utilities.getData(sharedPreferences, "token") +
+                    "&idOrder=" + idOrder + "&idOrderItems=" + i++ + "&idProduct=" + bodyOrder.getIdProduct() + "&cantOrderProduct=" +  bodyOrder.getQuantity() +
+                    "&priceUnitarProductOrder=" + bodyOrder.getPrice();
+
+            responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
+
+            if (responseObject.getResponseCode() != Constants.OK) {
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrOrder));
+                break;
+            }
+
+        }
 
         return responseObject;
     }
 
     private ResponseObject confirmOrder() {
-        ResponseObject responseObject = null;
+        ResponseObject responseObject, responseToken;
+        String url = "/putB2BOrderConfirmed.php?token=" + Utilities.getData(sharedPreferences, "token") +
+                    "&idOrder=" + idOrder;
+
+        responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
+
+        int code = responseObject.getResponseCode();
+
+        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+
+        if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
+            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+            if (responseToken == null) {
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrToken));
+
+            } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(responseToken.getResponseData());
+            } else {
+                url = "/putB2BOrderConfirmed.php?token=" + responseToken.getResponseData() +
+                        "&idOrder=" + idOrder;
+
+                responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
+
+                code = responseObject.getResponseCode();
+
+                if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+            }
+        }
+
+        switch (responseObject.getResponseCode()) {
+            case Constants.NO_INTERNET:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrInternet));
+                break;
+
+            case Constants.SHOW_EXIT:
+                break;
+
+            case Constants.NO_DATA:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrOrder));
+                break;
+
+            case Constants.EXCEPTION:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                break;
+
+            case Constants.SERVER_ERROR:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrServer)));
+                break;
+
+            case Constants.INVALID_TOKEN:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrToken)));
+                break;
+        }
+
 
         return responseObject;
     }

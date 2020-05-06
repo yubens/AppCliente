@@ -216,7 +216,6 @@ public class RegisterActivity extends AppCompatActivity {
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
             responseObject = Utilities.putResponse(getApplicationContext(), url, 5000);
 
-        //TODO NO ESTA DEVOLVIENDO TOKEN INVALIDO
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
 

@@ -190,6 +190,12 @@ public class OrderActivity extends AppCompatActivity {
                         case Constants.OK:
                             checkProducts(auxResponseProducts.getResponseData());
                             chosenProduct = productList.get(0);
+
+                            if (Integer.valueOf(chosenProduct.getStock()) <= 0) {
+                                Utilities.showMsg(getString(R.string.msgErrOutStock), getApplicationContext());
+                                return;
+                            }
+
                             setProduct();
                             break;
 
@@ -223,8 +229,9 @@ public class OrderActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int multiple, quantity;
+                int multiple, quantity, stock;
                 float total;
+
                 if (chosenProduct == null) {
                     Utilities.showMsg(getString(R.string.msgErrChosenProd), getApplicationContext());
                     return;
@@ -241,9 +248,15 @@ public class OrderActivity extends AppCompatActivity {
                     multiple = 1;
 
                 quantity = Integer.valueOf(editQuantity.getText().toString());
+                stock = Integer.valueOf(chosenProduct.getStock());
 
                 if ((quantity % multiple) != 0) {
                     Utilities.showMsg(getString(R.string.msgErrMultiple), getApplicationContext());
+                    return;
+                }
+
+                if (quantity > stock) {
+                    Utilities.showMsg(getString(R.string.msgErrStock), getApplicationContext());
                     return;
                 }
 
@@ -288,6 +301,8 @@ public class OrderActivity extends AppCompatActivity {
         editQuantity.setKeyListener(new DigitsKeyListener());
         multiple = getString(R.string.txtMultiple) +  " " + chosenProduct.getMultiple();
         txtMultiple.setText(multiple);
+        stock = getString(R.string.txtStock) + " " + chosenProduct.getStock();
+        txtStock.setText(stock);
 
         if(chosenProduct.getOfferPrice() != null && !chosenProduct.getOfferPrice().isEmpty() && !chosenProduct.getOfferPrice().equals("0")) {
             aux = chosenProduct.getOfferPrice();
@@ -553,6 +568,7 @@ public class OrderActivity extends AppCompatActivity {
         txtPrice.setText(R.string.txtPrice);
         txtTotal.setText(R.string.txtTotal);
         txtMultiple.setText(R.string.txtMultiple);
+        txtStock.setText(R.string.txtStock);
     }
 
     private void callBasket() {

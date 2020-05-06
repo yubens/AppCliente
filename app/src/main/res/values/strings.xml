@@ -15,9 +15,9 @@
     <string name="btnSendOrder">Enviar Pedido</string>
     <string name="editCode">Código</string>
     <string name="txtDetalleArticulo">Detalle del Artículo</string>
-    <string name="txtSalePrice">Precio Venta: </string>
-    <string name="txtPrice">Precio: </string>
-    <string name="txtMultiple">Múltiplo de </string>
+    <string name="txtSalePrice">Precio Venta:</string>
+    <string name="txtPrice">Precio:</string>
+    <string name="txtMultiple">Unidad Vta:</string>
     <string name="txtTotal">Total: </string>
     <string name="txtStock">Stock: </string>
     <string name="editQuantity">Cantidad</string>
@@ -43,6 +43,7 @@
     <string name="msgSuccUpdateData">Datos actualizados con exito</string>
     <string name="msgSuccSaveData">Datos guardados con exito</string>
     <string name="msgSuccAddProd">Producto agreagado al carrito con exito</string>
+    <string name="msgSuccSendOrder">Pedido finalizado con exito</string>
 
     <string name="msgErrorUpdateData">No se pudo actualizar los datos, pruebe en unos minutos</string>
     <string name="msgErrorSaveData">No se pudo guardar los datos, pruebe en unos minutos</string>
@@ -67,10 +68,13 @@
     <string name="msgErrEmptyBasket">Aun no ha agregado productos al carrito</string>
     <string name="msgErrChosenProd">Debe buscar un producto para poder agregarlo</string>
     <string name="msgErrEmptyQuantity">Ingresa la cantidad para poder agregar al carrito</string>
-    <string name="msgErrMultiple">La cantidad que está ingresando no es múltiplo del producto, por favor corrija el dato.</string>
+    <string name="msgErrMultiple">La cantidad que está ingresando no se corresponde con la unidad de venta del producto, por favor corrija el dato.</string>
+    <string name="msgErrStock">La cantidad elegida es mayor al stock disponible, por favor corrija el dato</string>
+    <string name="msgErrOutStock">Producto sin stock, por favor elija otro</string>
     <string name="msgErrFindProd">No se obtuvieron datos para la busqueda del codigo o descripcion</string>
     <string name="msgErrFindCode">Ingrese un codigo de producto para poder buscar</string>
     <string name="msgErrBasket">No pudieron obtenerse los productos del carrito, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
+    <string name="msgErrOrder">No pudo confirmarse el envio del pedido, por favor intente nuevamente en unos minutos</string>
 
 
     <string name="bntAceptar">Aceptar</string>

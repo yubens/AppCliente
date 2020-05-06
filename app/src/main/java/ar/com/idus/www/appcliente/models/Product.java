@@ -54,6 +54,10 @@ public class Product implements Serializable {
     @Expose
     public String listPrice02;
 
+    @SerializedName("STOCK_VTA")
+    @Expose
+    public String stock;
+
     private float realPrice;
 
     public float getRealPrice() {
@@ -158,5 +162,13 @@ public class Product implements Serializable {
 
     public void setListPrice02(String listPrice02) {
         this.listPrice02 = listPrice02;
+    }
+
+    public String getStock() {
+        return stock;
+    }
+
+    public void setStock(String stock) {
+        this.stock = stock;
     }
 }

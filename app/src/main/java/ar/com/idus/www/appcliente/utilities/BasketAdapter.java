@@ -25,9 +25,9 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
     static class ViewHolder {
         TextView txtName;
         TextView txtQuantity;
-        TextView txtIdPrice;
+        TextView txtIdProd;
         TextView txtTotal;
-        
+
     }
 
     public BasketAdapter(@NonNull Context context, int resource, ArrayList<BodyOrder> orders) {
@@ -41,7 +41,7 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final BasketAdapter.ViewHolder viewHolder;
-        String total, quantity, price;
+        String total, quantity, price, idProd;
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.basket_item, null);
@@ -49,7 +49,7 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
             viewHolder.txtName =  convertView.findViewById(R.id.txtGridName);
             viewHolder.txtName.setTypeface(null, Typeface.BOLD);
             viewHolder.txtQuantity =  convertView.findViewById(R.id.txtGridQuantity);
-            viewHolder.txtIdPrice =  convertView.findViewById(R.id.txtGridIdProd);
+            viewHolder.txtIdProd =  convertView.findViewById(R.id.txtGridIdProd);
             viewHolder.txtTotal =  convertView.findViewById(R.id.txtGridTotal);
             convertView.setTag(viewHolder);
 
@@ -60,11 +60,12 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         BodyOrder order = orders.get(position);
 
         total = "Subtotal: " + String.format("%.2f", order.getTotal());
+        idProd = "Id Producto: " + order.getIdProduct();
         quantity = "Cantidad: " + order.getQuantity() ;
         price =  String.format("%.2f", order.getPrice());
 
         viewHolder.txtName.setText(order.getName());
-        viewHolder.txtIdPrice.setText("ID Producto " + order.getIdProduct());
+        viewHolder.txtIdProd.setText(idProd);
         viewHolder.txtTotal.setText(total);
         viewHolder.txtQuantity.setText(quantity + " x " + price);
 

@@ -62,7 +62,7 @@ public abstract class Utilities {
     }
 
     public static void showMsg(String msg, Context context) {
-//        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     public static void saveData(SharedPreferences sharedPreferences, String key, String data) {
@@ -346,9 +346,6 @@ public abstract class Utilities {
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());
 
-//                throw  new InterruptedException("hi");
-
-//                token = resultString.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 responseObject.setResponseCode(Constants.EXCEPTION);

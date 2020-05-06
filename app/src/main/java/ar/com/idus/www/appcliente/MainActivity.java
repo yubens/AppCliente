@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         BodyOrder bodyOrder2 = new BodyOrder();
         ArrayList<BodyOrder> bodyOrders = new ArrayList<>();
 
-        bodyOrder.setName("FLAN CHOCOLATE 6X6X60G");
+        bodyOrder.setName("Comrpobante 22225F-087156");
         bodyOrder.setIdItem("10");
         bodyOrder.setQuantity("5");
         bodyOrder.setPrice(20.50f);
@@ -137,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
         String token = null, idPhone, idCustomer;
         int msg = 0;
 
-        testScreen();
-
+//        testScreen();
+//
         btnEnter = findViewById(R.id.btnEnter);
         txtIdCustomer = findViewById(R.id.txtIdCustomer);
         editIdCustomer = findViewById(R.id.editIdCustomer);
