@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -288,6 +290,22 @@ public class OrderActivity extends AppCompatActivity {
 //        }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_list_orders, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.optWatchOrders)
+            callOrderInquiry();
+
+        return super.onContextItemSelected(item);
+    }
+
     private void setProduct() {
         //TODO
         // preguntar si se muestra precio de venta y de oferta a la vez
@@ -381,11 +399,8 @@ public class OrderActivity extends AppCompatActivity {
 
     private void checkProducts (String data) {
         Gson gson = new Gson();
-
         Product[] products = gson.fromJson(data, Product[].class);
-
         productList = new ArrayList<>(Arrays.asList(products));
-
     }
 
     private ResponseObject getCompany (String id) {
@@ -574,6 +589,12 @@ public class OrderActivity extends AppCompatActivity {
     private void callBasket() {
         Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
         intent.putExtra("order", headOrder);
+        startActivity(intent);
+    }
+
+    private void callOrderInquiry () {
+        Intent intent = new Intent(getApplicationContext(), OrderInquiryActivity.class);
+        intent.putExtra("customer", customer);
         startActivity(intent);
     }
 }

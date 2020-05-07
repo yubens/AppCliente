@@ -9,6 +9,7 @@
     <string name="btnEnter">Ingresar</string>
     <string name="btnExit">Salir</string>
     <string name="btnConfirm">Confirmar Datos</string>
+    <string name="btnNewOrder">Pedido Nuevo</string>
     <string name="btnAdd">Agregar al carrito</string>
     <string name="btnWatch">Ver el carrito</string>
     <string name="btnCancel">Cancelar</string>
@@ -21,7 +22,10 @@
     <string name="txtTotal">Total: </string>
     <string name="txtStock">Stock: </string>
     <string name="editQuantity">Cantidad</string>
+    <string name="txtVoucher">Comprobante:</string>
+    <string name="txtDate">Fecha: </string>
     <string name="txtObservations">Observaciones</string>
+    <string name="menuWatchOrders">Consulta de Pedidos</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
     <string name="enterd">Ingrese ID</string>
@@ -75,6 +79,7 @@
     <string name="msgErrFindCode">Ingrese un codigo de producto para poder buscar</string>
     <string name="msgErrBasket">No pudieron obtenerse los productos del carrito, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
     <string name="msgErrOrder">No pudo confirmarse el envio del pedido, por favor intente nuevamente en unos minutos</string>
+    <string name="msgErrOrderInquiry">No se pudo acceder al listado de ordenes, por favor intente nuevamente en unos minutos</string>
 
 
     <string name="bntAceptar">Aceptar</string>

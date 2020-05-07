@@ -15,9 +15,10 @@ import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.R;
 import ar.com.idus.www.appcliente.models.BodyOrder;
+import ar.com.idus.www.appcliente.models.OrderState;
 
-public class ListOrderAdapter  extends ArrayAdapter<BodyOrder> {
-    private ArrayList<BodyOrder> orders;
+public class ListOrderAdapter  extends ArrayAdapter<OrderState> {
+    private ArrayList<OrderState> orders;
     private Context context;
     private LayoutInflater inflater;
 
@@ -28,7 +29,7 @@ public class ListOrderAdapter  extends ArrayAdapter<BodyOrder> {
 
     }
 
-    public ListOrderAdapter(@NonNull Context context, int resource, ArrayList<BodyOrder> orders) {
+    public ListOrderAdapter(@NonNull Context context, int resource, ArrayList<OrderState> orders) {
         super(context, resource, orders);
         this.context = context;
         this.orders = orders;
@@ -54,12 +55,16 @@ public class ListOrderAdapter  extends ArrayAdapter<BodyOrder> {
             viewHolder = (ListOrderAdapter.ViewHolder) convertView.getTag();
         }
 
-        BodyOrder order = orders.get(position);
+        OrderState order = orders.get(position);
+        float f = Float.parseFloat(order.getTot_order());
+        total = "Total: " + String.format("%.2f", f);
+        voucher = "Comprobante: " + order.getId_order();
+        dateState = "Fecha: " + order.getDate_order() + "    Estado: " + order.getState();
 
 
-        viewHolder.txtVoucher.setText("Comprobante 888974F-00794");
-        viewHolder.txtDateState.setText("Fecha: 06-05-2020  Estado: Pagado");
-        viewHolder.txtTotal.setText("Total: 500,90");
+        viewHolder.txtVoucher.setText(voucher);
+        viewHolder.txtDateState.setText(dateState);
+        viewHolder.txtTotal.setText(total);
 
         return convertView;
     }

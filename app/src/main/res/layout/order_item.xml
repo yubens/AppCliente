@@ -12,7 +12,7 @@
         android:layout_row="0"
         android:layout_column="0"
         android:layout_columnSpan="6"
-        android:text="@string/description" />
+        android:text="@string/txtVoucher" />
 
     <TextView
         android:id="@+id/txtGridDateState"
@@ -21,7 +21,7 @@
         android:layout_column="0"
         android:layout_columnSpan="2"
         android:layout_columnWeight="0.5"
-        android:text="@string/txtPrice" />
+        android:text="@string/txtDate" />
 
     <TextView
         android:id="@+id/txtGridOrderTotal"
