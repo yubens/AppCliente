@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -29,6 +30,7 @@ public class OrderInquiryActivity extends AppCompatActivity {
     Button btnExit, btnNewOrder;
     ListView listView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +46,11 @@ public class OrderInquiryActivity extends AppCompatActivity {
             return;
         }
 
-        customer = (Customer) bundle.getSerializable("customer");
+        listOrders = (ArrayList<OrderState>) bundle.getSerializable("orders");
 
-        if (customer == null) {
+        if (listOrders == null) {
 //            Toast.makeText(getApplicationContext(), R.string.msgErrCustomerData, Toast.LENGTH_LONG).show();
-            showExit(getString(R.string.msgErrClientData));
+            showExit(getString(R.string.msgErrOrderInquiry));
             return;
         }
 
@@ -57,101 +59,14 @@ public class OrderInquiryActivity extends AppCompatActivity {
         listView = findViewById(R.id.listOrdersInquiry);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        ResponseObject responseListOrders = getListOrders();
-
-        if (responseListOrders != null) {
-            switch (responseListOrders.getResponseCode()) {
-                case Constants.OK:
-                    checkListOrders(responseListOrders.getResponseData());
-                    adapter = new ListOrderAdapter(getApplicationContext(), R.layout.order_item, listOrders);
-                    listView.setAdapter(adapter);
-                    System.out.println();
-                    break;
-
-                case Constants.SHOW_ERROR:
-                    Utilities.showMsg(responseListOrders.getResponseData(), getApplicationContext());
-                    break;
-
-                case Constants.SHOW_EXIT:
-                    showExit(responseListOrders.getResponseData());
-                    break;
-            }
-        }
+        adapter = new ListOrderAdapter(getApplicationContext(), R.layout.order_item, listOrders);
+        listView.setAdapter(adapter);
 
     }
 
-    private void checkListOrders(String data) {
-        Gson gson = new Gson();
-        OrderState[] orders = gson.fromJson(data, OrderState[].class);
-        listOrders = new ArrayList<>(Arrays.asList(orders));
-    }
-
-    private ResponseObject getListOrders() {
-        String url = "/getB2BOrdersState.php?token=" + Utilities.getData(sharedPreferences, "token") +
-                "&idCustomer=" + customer.getIdCliente();
-
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
-        ResponseObject responseToken;
-
-        int code = responseObject.getResponseCode();
-
-        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
-
-        if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
-            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
-
-            if (responseToken == null) {
-                responseObject.setResponseCode(Constants.SHOW_EXIT);
-                responseObject.setResponseData(getString(R.string.msgErrToken));
-
-            } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
-                responseObject.setResponseCode(Constants.SHOW_EXIT);
-                responseObject.setResponseData(responseToken.getResponseData());
-            } else {
-                url = "/getB2BOrdersState.php?token=" + responseToken.getResponseData() +
-                        "&idCustomer=" + customer.getIdCliente();
-
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
-
-                code = responseObject.getResponseCode();
-
-                if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
-            }
-        }
-
-        switch (responseObject.getResponseCode()) {
-            case Constants.NO_INTERNET:
-                responseObject.setResponseCode(Constants.SHOW_ERROR);
-                responseObject.setResponseData(getString(R.string.msgErrInternet));
-                break;
-
-            case Constants.SHOW_EXIT:
-                break;
-
-            case Constants.NO_DATA:
-                responseObject.setResponseCode(Constants.SHOW_ERROR);
-                responseObject.setResponseData(getString(R.string.msgErrOrderInquiry));
-                break;
-
-            case Constants.EXCEPTION:
-                responseObject.setResponseCode(Constants.SHOW_ERROR);
-                responseObject.setResponseData(getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
-                break;
-
-            case Constants.SERVER_ERROR:
-                responseObject.setResponseCode(Constants.SHOW_ERROR);
-                responseObject.setResponseData(getString((R.string.msgErrServer)));
-                break;
-
-            case Constants.INVALID_TOKEN:
-                responseObject.setResponseCode(Constants.SHOW_ERROR);
-                responseObject.setResponseData(getString((R.string.msgErrToken)));
-                break;
-        }
-
-        return responseObject;
+    private void showMsg(String msg) {
+        if (!OrderInquiryActivity.this.isFinishing())
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
     private void showExit(String msg) { }

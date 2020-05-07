@@ -12,12 +12,15 @@ import android.text.method.DigitsKeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -33,6 +36,7 @@ import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
+import ar.com.idus.www.appcliente.models.OrderState;
 import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
@@ -40,16 +44,18 @@ import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class OrderActivity extends AppCompatActivity {
     ArrayList<Distributor> distributors;
+    ArrayList<OrderState> listOrderState;
     Distributor distributor;
     Customer customer;
     TextView txtMultiple, txtPrice, txtTotal, txtStock, txtError;
     EditText editQuantity, editDescription, editCode;
     ImageButton imgButFindCode, imgButFindDesc;
-
+    ArrayAdapter<String> adapter;
     Button btnAdd, btnWatch, btnExit;
     Company company;
     ArrayList<Product> productList;
     ArrayList<Product> chosenProductsList;
+    ArrayList <String> stringProds;
     Product chosenProduct;
     ListView listView;
     ImageView imgProduct;
@@ -86,13 +92,10 @@ public class OrderActivity extends AppCompatActivity {
         btnWatch = findViewById(R.id.btnWatch);
         btnExit = findViewById(R.id.btnExit);
         btnExit.setVisibility(View.GONE);
-        imgProduct = findViewById(R.id.imgProduct);
 
-
-        imgProduct.setVisibility(View.GONE);
         editQuantity.setKeyListener(null);
 
-        listView = new ListView(getApplicationContext());
+        listView = findViewById(R.id.listProd);
         productList = new ArrayList<>();
         chosenProductsList = new ArrayList<>();
         headOrder = new HeadOrder();
@@ -113,6 +116,7 @@ public class OrderActivity extends AppCompatActivity {
         headOrder.setDateStart(formatter.format(date));
 
         customer = (Customer) bundle.getSerializable("customer");
+        company = (Company) bundle.getSerializable("company");
 
         if (customer == null) {
             showExit(getString(R.string.msgErrClientData));
@@ -126,23 +130,23 @@ public class OrderActivity extends AppCompatActivity {
             return;
         }
 
-        responseCompany = getCompany(customer.getEmpresaId());
+//        responseCompany = getCompany(customer.getEmpresaId());
 
-        if (responseCompany != null) {
-            switch (responseCompany.getResponseCode()) {
-                case Constants.OK:
-                    checkCompany(responseCompany.getResponseData());
-                    break;
-
-                case Constants.SHOW_ERROR:
-                    Utilities.showMsg(responseCompany.getResponseData(), getApplicationContext());
-                    break;
-
-                case Constants.SHOW_EXIT:
-                    showExit(responseCompany.getResponseData());
-                    break;
-            }
-        }
+//        if (responseCompany != null) {
+//            switch (responseCompany.getResponseCode()) {
+//                case Constants.OK:
+//                    checkCompany(responseCompany.getResponseData());
+//                    break;
+//
+//                case Constants.SHOW_ERROR:
+//                    Utilities.showMsg(responseCompany.getResponseData(), getApplicationContext());
+//                    break;
+//
+//                case Constants.SHOW_EXIT:
+//                    showExit(responseCompany.getResponseData());
+//                    break;
+//            }
+//        }
 
         imgButFindDesc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,21 +154,29 @@ public class OrderActivity extends AppCompatActivity {
                 String desc = editDescription.getText().toString();
 
                 if (desc.length() < 3) {
-                    Utilities.showMsg(getString(R.string.msgErrMinLength), getApplicationContext());
+                    showMsg(getString(R.string.msgErrMinLength));
+                    return;
                 }
 
-                ResponseObject auxResponseProducts = getProducts(editCode.getText().toString(), false);
+                ResponseObject auxResponseProducts = getProducts(editDescription.getText().toString(), false);
 
                 if (auxResponseProducts != null) {
                     switch (auxResponseProducts.getResponseCode()) {
                         case Constants.OK:
                             //TODO
+                            checkProducts(auxResponseProducts.getResponseData());
                             //mostar productos para que se elija uno
+
+                            fillProducts();
+
+                            adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, android.R.id.text1, stringProds);
+                            listView.setAdapter(adapter);
+                            listView.setVisibility(View.VISIBLE);
 
                             break;
 
                         case Constants.SHOW_ERROR:
-                            Utilities.showMsg(auxResponseProducts.getResponseData(), getApplicationContext());
+                            showMsg(auxResponseProducts.getResponseData());
                             break;
 
                         case Constants.SHOW_EXIT:
@@ -177,13 +189,29 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listView.setVisibility(View.GONE);
+                // ListView Clicked item index
+                // ListView Clicked item value
+                chosenProduct = productList.get(position);
+
+                setProduct();
+
+            }
+        });
+
         imgButFindCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String code = editCode.getText().toString();
 
-                if (code. isEmpty())
-                    Utilities.showMsg(getString(R.string.msgErrFindCode), getApplicationContext());
+                if (code.isEmpty()) {
+                    showMsg(getString(R.string.msgErrFindCode));
+                    return;
+                }
 
                 ResponseObject auxResponseProducts = getProducts(code, true);
 
@@ -194,7 +222,7 @@ public class OrderActivity extends AppCompatActivity {
                             chosenProduct = productList.get(0);
 
                             if (Integer.valueOf(chosenProduct.getStock()) <= 0) {
-                                Utilities.showMsg(getString(R.string.msgErrOutStock), getApplicationContext());
+                                showMsg(getString(R.string.msgErrOutStock));
                                 return;
                             }
 
@@ -202,7 +230,7 @@ public class OrderActivity extends AppCompatActivity {
                             break;
 
                         case Constants.SHOW_ERROR:
-                            Utilities.showMsg(auxResponseProducts.getResponseData(), getApplicationContext());
+                            showMsg(auxResponseProducts.getResponseData());
                             break;
 
                         case Constants.SHOW_EXIT:
@@ -216,8 +244,8 @@ public class OrderActivity extends AppCompatActivity {
         btnWatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (productList.isEmpty()) {
-                    Utilities.showMsg(getString(R.string.msgErrEmptyBasket), getApplicationContext());
+                if (listOrder.isEmpty()) {
+                    showMsg(getString(R.string.msgErrEmptyBasket));
                     return;
                 }
 
@@ -235,12 +263,12 @@ public class OrderActivity extends AppCompatActivity {
                 float total;
 
                 if (chosenProduct == null) {
-                    Utilities.showMsg(getString(R.string.msgErrChosenProd), getApplicationContext());
+                    showMsg(getString(R.string.msgErrChosenProd));
                     return;
                 }
 
                 if (editQuantity.getText().toString().isEmpty()) {
-                    Utilities.showMsg(getString(R.string.msgErrEmptyQuantity), getApplicationContext());
+                    showMsg(getString(R.string.msgErrEmptyQuantity));
                     return;
                 }
 
@@ -253,12 +281,12 @@ public class OrderActivity extends AppCompatActivity {
                 stock = Integer.valueOf(chosenProduct.getStock());
 
                 if ((quantity % multiple) != 0) {
-                    Utilities.showMsg(getString(R.string.msgErrMultiple), getApplicationContext());
+                    showMsg(getString(R.string.msgErrMultiple));
                     return;
                 }
 
                 if (quantity > stock) {
-                    Utilities.showMsg(getString(R.string.msgErrStock), getApplicationContext());
+                    showMsg(getString(R.string.msgErrStock));
                     return;
                 }
 
@@ -273,7 +301,7 @@ public class OrderActivity extends AppCompatActivity {
 
                 listOrder.add(bodyOrder);
 
-                Utilities.showMsg(getString(R.string.msgSuccAddProd), getApplicationContext());
+                showMsg(getString(R.string.msgSuccAddProd));
 
                 cleanUp();
 
@@ -300,22 +328,46 @@ public class OrderActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.optWatchOrders)
-            callOrderInquiry();
+        if (id == R.id.optWatchOrders) {
+            ResponseObject responseListOrders = getListOrders();
+
+            if (responseListOrders != null) {
+                switch (responseListOrders.getResponseCode()) {
+                    case Constants.OK:
+                        checkListOrders(responseListOrders.getResponseData());
+                        callOrderInquiry();
+                        System.out.println();
+                        break;
+
+                    case Constants.SHOW_ERROR:
+                        showMsg(responseListOrders.getResponseData());
+                        break;
+
+                    case Constants.SHOW_EXIT:
+                        showExit(responseListOrders.getResponseData());
+                        break;
+                }
+            }
+        }
+
 
         return super.onContextItemSelected(item);
     }
 
-    private void setProduct() {
-        //TODO
-        // preguntar si se muestra precio de venta y de oferta a la vez
-        // stock no viene
+    private void fillProducts () {
+        stringProds = new ArrayList<>();
+        for (Product product : productList) {
+            stringProds.add(product.getName());
+        }
+    }
 
+    private void setProduct() {
         float price, total;
         String priceString = "", totalS = "", multiple = "", stock, aux;
 
         loadImage();
         editDescription.setText(chosenProduct.getName());
+        editCode.setText(chosenProduct.getCode());
         editQuantity.setKeyListener(new DigitsKeyListener());
         multiple = getString(R.string.txtMultiple) +  " " + chosenProduct.getMultiple();
         txtMultiple.setText(multiple);
@@ -398,9 +450,25 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void checkProducts (String data) {
+        ArrayList<Product> aux = new ArrayList<>();
         Gson gson = new Gson();
         Product[] products = gson.fromJson(data, Product[].class);
-        productList = new ArrayList<>(Arrays.asList(products));
+        aux = new ArrayList<>(Arrays.asList(products));
+
+        if (aux.size() == 1)
+            productList = aux;
+        else {
+            productList = new ArrayList<>();
+            for (Product product : aux) {
+                if (!product.getStock().equals("0"))
+                    productList.add(product);
+            }
+        }
+    }
+
+    private void showMsg(String msg) {
+        if (!OrderActivity.this.isFinishing())
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
     private ResponseObject getCompany (String id) {
@@ -546,6 +614,85 @@ public class OrderActivity extends AppCompatActivity {
         return responseObject;
     }
 
+    private void checkListOrders(String data) {
+        Gson gson = new Gson();
+        OrderState[] orders = gson.fromJson(data, OrderState[].class);
+        listOrderState = new ArrayList<>(Arrays.asList(orders));
+    }
+
+    private ResponseObject getListOrders() {
+        String url = "/getB2BOrdersState.php?token=" + Utilities.getData(sharedPreferences, "token") +
+                "&idCustomer=" +  customer.getIdCliente();
+
+        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+        ResponseObject responseToken;
+
+        int code = responseObject.getResponseCode();
+
+        if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+
+        if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
+            responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
+
+            if (responseToken == null) {
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(getString(R.string.msgErrToken));
+
+            } else if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
+                responseObject.setResponseCode(Constants.SHOW_EXIT);
+                responseObject.setResponseData(responseToken.getResponseData());
+            } else {
+                url = "/getB2BOrdersState.php?token=" + responseToken.getResponseData() +
+                        "&idCustomer=" + customer.getIdCliente();
+
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+
+                code = responseObject.getResponseCode();
+
+                if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+            }
+        }
+
+        switch (responseObject.getResponseCode()) {
+            case Constants.NO_INTERNET:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrInternet));
+                break;
+
+            case Constants.SHOW_EXIT:
+                break;
+
+            case Constants.NO_DATA:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrOrderInquiry));
+                break;
+
+            case Constants.NO_RESULT:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrEmptyInquiry));
+                break;
+
+            case Constants.EXCEPTION:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString(R.string.msgErrException) + " (" + responseObject.getResponseData() + ")");
+                break;
+
+            case Constants.SERVER_ERROR:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrServer)));
+                break;
+
+            case Constants.INVALID_TOKEN:
+                responseObject.setResponseCode(Constants.SHOW_ERROR);
+                responseObject.setResponseData(getString((R.string.msgErrToken)));
+                break;
+        }
+
+        return responseObject;
+    }
+
     private void showExit(String msg) {
         txtMultiple.setVisibility(View.GONE);
         txtPrice.setVisibility(View.GONE);
@@ -594,7 +741,7 @@ public class OrderActivity extends AppCompatActivity {
 
     private void callOrderInquiry () {
         Intent intent = new Intent(getApplicationContext(), OrderInquiryActivity.class);
-        intent.putExtra("customer", customer);
+        intent.putExtra("orders", listOrderState);
         startActivity(intent);
     }
 }

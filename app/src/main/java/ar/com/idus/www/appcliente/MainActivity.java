@@ -1,9 +1,15 @@
 package ar.com.idus.www.appcliente;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -14,19 +20,20 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
+import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
@@ -137,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         String token = null, idPhone, idCustomer;
         int msg = 0;
 
+
 //        testScreen();
 //
         btnEnter = findViewById(R.id.btnEnter);
@@ -156,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("pasando internet off");
 
 
-        if(Utilities.getData(sharedPreferences, "token").equals(Constants.NO_RESULT)) {
+        if(Utilities.getData(sharedPreferences, "token").equals(Constants.NO_RESULT_STR)) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
 
             if (responseToken == null) {
@@ -175,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         idPhone = getIdPhone();
         idCustomer = Utilities.getData(sharedPreferences,"idCustomer");
 
-        if (idCustomer.equals(Constants.NO_RESULT))
+        if (idCustomer.equals(Constants.NO_RESULT_STR))
             idCustomer = "";
 
         final ResponseObject responsePhone = findPhone2(idPhone);
@@ -201,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
             txtIdCustomer.setVisibility(View.GONE);
         else
             editPassCustomer.setVisibility(View.GONE);
+
+
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkCustomer (String data, String id, String pass, boolean firstTime) {
+
         Gson gson = new Gson();
         Customer[] customers;
 
@@ -265,7 +276,13 @@ public class MainActivity extends AppCompatActivity {
         if (isFirstEntry() || customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty())
             callRegister();
         else
-            callOrder();
+            callDistributor();
+    }
+
+    private void callDistributor() {
+        Intent intent = new Intent(getApplicationContext(), DistributorActivity.class);
+        intent.putExtra("customer", customer);
+        startActivity(intent);
     }
 
     private void showExit(String msg) {
@@ -286,8 +303,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMsg(String msg) {
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-        System.out.println(msg);
+        if (!MainActivity.this.isFinishing())
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
     private ResponseObject findPhone2(String idPhone) {
@@ -422,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
     private String getIdPhone() {
         String idPhone = Utilities.getData(sharedPreferences,"idPhone");
 
-        if (idPhone.equals(Constants.NO_RESULT)) {
+        if (idPhone.equals(Constants.NO_RESULT_STR)) {
             idPhone = UUID.randomUUID().toString();
             Utilities.saveData(sharedPreferences, "idPhone", idPhone);
         }
@@ -436,14 +453,14 @@ public class MainActivity extends AppCompatActivity {
 //        String token = Utilities.getData(sharedPreferences, "token");
 //        ResponseObject responseObject;
 //
-//        if (token.equals(Constants.NO_RESULT)) {
+//        if (token.equals(Constants.NO_RESULT_STR)) {
 //            System.out.println("token no encontrado");
 //
 //            token = Utilities.getToken(getApplicationContext()); // primer intento de obtencion
 //
 //            responseObject = Utilities.getResponse(getApplicationContext(), "/getToken.php?idApp=BuyIdus", 1000);
 //
-//            if (token == null || token.equals(Constants.NO_RESULT)) {
+//            if (token == null || token.equals(Constants.NO_RESULT_STR)) {
 //                token = Utilities.getToken(getApplicationContext()); // segundo intento
 //                System.out.println("segundo intento token " + token);
 //            }
@@ -462,11 +479,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void callOrder() {
-        Intent intent = new Intent(getApplicationContext(), OrderActivity.class);
-        intent.putExtra("customer", customer);
-        startActivity(intent);
-    }
+
 
     private Client getClient(String id) {
         Client client = null;

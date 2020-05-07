@@ -1,8 +1,14 @@
 package ar.com.idus.www.appcliente;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -10,9 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -84,7 +92,7 @@ public class BasketActivity extends AppCompatActivity {
                                         if (responseConfirm != null) {
                                             switch (responseSendBody.getResponseCode()) {
                                                 case Constants.OK:
-                                                    Utilities.showMsg(getString(R.string.msgSuccSendOrder), getApplicationContext());
+                                                    showMsg(getString(R.string.msgSuccSendOrder));
                                                     //TODO
                                                     // crear pantalla con datos de distribuidor
                                                     // mandarlo a esa pantalla
@@ -92,7 +100,7 @@ public class BasketActivity extends AppCompatActivity {
                                                     break;
 
                                                 case Constants.SHOW_ERROR:
-                                                    Utilities.showMsg(responseConfirm.getResponseData(), getApplicationContext());
+                                                    showMsg(responseConfirm.getResponseData());
                                                     break;
 
                                                 case Constants.SHOW_EXIT:
@@ -104,7 +112,7 @@ public class BasketActivity extends AppCompatActivity {
                                         break;
 
                                     case Constants.SHOW_ERROR:
-                                        Utilities.showMsg(responseSendBody.getResponseData(), getApplicationContext());
+                                        showMsg(responseSendBody.getResponseData());
                                         break;
 
                                     case Constants.SHOW_EXIT:
@@ -117,7 +125,7 @@ public class BasketActivity extends AppCompatActivity {
                             break;
 
                         case Constants.SHOW_ERROR:
-                            Utilities.showMsg(responseSendOrder.getResponseData(), getApplicationContext());
+                            showMsg(responseSendOrder.getResponseData());
                             break;
 
                         case Constants.SHOW_EXIT:
@@ -132,21 +140,39 @@ public class BasketActivity extends AppCompatActivity {
         // responden token invalidos los 3 endpoints
     }
 
+    private void showMsg(String msg) {
+        if (!BasketActivity.this.isFinishing())
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+    }
+
     private ResponseObject sendOrder() {
         ResponseObject responseObject, responseToken;
         idOrder = UUID.randomUUID().toString();
-        String geo = "-64.477876;-32.407801";
+        String geo = "-1;-1";
         String observations = editObs.getText().toString();
 
+        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location location = null;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            geo = location.getLatitude() + ";" + location.getLongitude();
+        }
+
+
         date = new Date();
+
         headOrder.setDateEnd(formatter.format(date));
         headOrder.setDateOrder(formatter.format(date));
 
-        // TODO falta
-        // obtener coordenas del dispositivo
-        // sumar 24 horas al date end
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, 1);
+        date = c.getTime();
+
         headOrder.setDateDelivery(formatter.format(date));
-        headOrder.setGeo("-64.477876;-32.407801");
+        headOrder.setGeo(geo);
 
         String url = "/putB2BOrderHead.php?token=" + Utilities.getData(sharedPreferences, "token") +
                         "&idOrder=" + idOrder + "&idCustomer=" + headOrder.getIdCustomer() + "&cantItems=" + headOrder.getBodyOrders().size() +

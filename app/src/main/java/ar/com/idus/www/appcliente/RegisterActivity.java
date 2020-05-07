@@ -122,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
                             switch (responseUpdate.getResponseCode()) {
                                 case Constants.OK:
                                     showMsg(responseUpdate.getResponseData());
-
+                                    callDistributor();
                                     System.out.println(responseUpdate.getResponseData());
                                     break;
 
@@ -149,9 +149,15 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void callDistributor() {
+        Intent intent = new Intent(getApplicationContext(), DistributorActivity.class);
+        intent.putExtra("customer", customer);
+        startActivity(intent);
+    }
+
     private void showMsg(String msg) {
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-        System.out.println(msg);
+        if (!RegisterActivity.this.isFinishing())
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
     private void showExit(String msg) {

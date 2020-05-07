@@ -1,5 +1,6 @@
 package ar.com.idus.www.appcliente.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -15,7 +16,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -62,7 +62,7 @@ public abstract class Utilities {
     }
 
     public static void showMsg(String msg, Context context) {
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     public static void saveData(SharedPreferences sharedPreferences, String key, String data) {
@@ -73,7 +73,7 @@ public abstract class Utilities {
     }
 
     public static String getData(SharedPreferences sharedPreferences, String key) {
-        return sharedPreferences.getString(key, Constants.NO_RESULT);
+        return sharedPreferences.getString(key, Constants.NO_RESULT_STR);
     }
 
     public static void deleteData (SharedPreferences sharedPreferences, String key) {
@@ -110,12 +110,12 @@ public abstract class Utilities {
 
         deleteData(sharedPreferences, "token");
 
-        responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 1000);
+        responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 5000);
 
         code = responseObject.getResponseCode();
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 2000);
+            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 5000);
 
         if (responseObject != null) {
             switch (responseObject.getResponseCode()) {
@@ -150,7 +150,7 @@ public abstract class Utilities {
     }
 
     public static String getToken(final Context context) {
-        String token = Constants.NO_RESULT;
+        String token = Constants.NO_RESULT_STR;
         final AtomicReference <String> tokenString = new AtomicReference<>();
 
         if (checkConnection(context)) {
@@ -183,12 +183,12 @@ public abstract class Utilities {
                             tokenString.set(result.toString());
 
                         } else
-                            tokenString.set(Constants.NO_RESULT);
+                            tokenString.set(Constants.NO_RESULT_STR);
 
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        tokenString.set(Constants.NO_RESULT);
+                        tokenString.set(Constants.NO_RESULT_STR);
 
                     } finally {
                         if (cnx != null) {
@@ -277,7 +277,8 @@ public abstract class Utilities {
 
             try {
                 thread.start();
-                thread.join(waitTime);
+//                thread.join(waitTime);
+                thread.join();
                 responseObject = new ResponseObject();
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());
@@ -341,7 +342,8 @@ public abstract class Utilities {
 
             try {
                 thread.start();
-                thread.join(waitTime);
+//                thread.join(waitTime);
+                thread.join();
                 responseObject = new ResponseObject();
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());
