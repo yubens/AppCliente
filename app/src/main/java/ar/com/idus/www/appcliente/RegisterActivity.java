@@ -11,10 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-
 import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
@@ -26,7 +24,6 @@ public class RegisterActivity extends AppCompatActivity {
     Button btnConfirm;
     EditText editName, editAddress, editPhone, editPass, editPassRep, editId, editEmail, editGivenAddress, editGivenEmail, editGivenPhone;
     TextView txtMsg;
-    Client client;
     Customer customer;
     SharedPreferences sharedPreferences;
     ArrayList<Distributor> distributors = new ArrayList<>();
@@ -35,11 +32,8 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        ResponseObject responseToken;
 
-//        final String token;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
         btnConfirm  = findViewById(R.id.btnConfirm);
         editAddress = findViewById(R.id.editAddress);
         editId = findViewById(R.id.editCustomerId);
@@ -54,10 +48,8 @@ public class RegisterActivity extends AppCompatActivity {
         txtMsg = findViewById(R.id.txtMsg);
 
         Bundle bundle = getIntent().getExtras();
-//        bundle = null;
 
         if (bundle == null) {
-//            Toast.makeText(getApplicationContext(), R.string.msgErrCustomerData, Toast.LENGTH_LONG).show();
             showExit(getString(R.string.msgErrClientData));
             return;
         }
@@ -122,7 +114,6 @@ public class RegisterActivity extends AppCompatActivity {
                             switch (responseUpdate.getResponseCode()) {
                                 case Constants.OK:
                                     showMsg(responseUpdate.getResponseData());
-//                                    Utilities.saveData(sharedPreferences, "registered", Constants.ENABLED);
                                     Utilities.saveData(sharedPreferences,"idCustomer", customer.getIdCliente());
                                     callDistributor();
                                     System.out.println(responseUpdate.getResponseData());
@@ -137,16 +128,8 @@ public class RegisterActivity extends AppCompatActivity {
                                     break;
                             }
                         }
-
-//                        distributors = getDistributors(email);
-//
-//                        if (!distributors.isEmpty()) {
-//                            callActivity();
-//                        } else
-//                            Toast.makeText(getApplicationContext(), R.string.msgErrDistribData, Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }
         });
     }
@@ -184,31 +167,6 @@ public class RegisterActivity extends AppCompatActivity {
                 System.exit(0);
             }
         });
-    }
-
-    private ArrayList<Distributor> getDistributors(String email) {
-        // TODO
-        // deberia llamar al web service que obtiene los distribuidores de cada cliente
-
-        ArrayList<Distributor> response = new ArrayList<>();
-        Distributor distributor;
-
-        int count = 1;
-        String name = "100";
-
-        if (!email.equals("pepe@honguito.com")) {
-            count = 30;
-            name = "400";
-        }
-
-        for (int i = 1; i <= count; i++) {
-            distributor = new Distributor();
-            distributor.setId(String.valueOf(i));
-            distributor.setName("Dustrubuidor " + name + i);
-            response.add(distributor);
-        }
-
-        return response;
     }
 
     private ResponseObject updateCustomer() {
@@ -315,6 +273,5 @@ public class RegisterActivity extends AppCompatActivity {
         Pattern pattern = Pattern.compile(regex);
 
         return !pattern.matcher(pass).matches();
-
     }
 }

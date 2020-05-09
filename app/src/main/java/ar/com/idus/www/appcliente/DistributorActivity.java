@@ -1,7 +1,5 @@
 package ar.com.idus.www.appcliente;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,12 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
-
 import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
-import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
@@ -64,14 +60,6 @@ public class DistributorActivity extends AppCompatActivity {
                         checkCompany(responseCompany.getResponseData());
                         txtDistName.setText(company.getNombre());
                         txtDistEmail.setText(company.getCorreo());
-
-//                        btnContinue.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                callOrder();
-//                            }
-//                        });
-
                         break;
 
                     case Constants.SHOW_ERROR:
@@ -95,7 +83,6 @@ public class DistributorActivity extends AppCompatActivity {
                 callOrder();
             }
         });
-
     }
 
     private void showMsg(String msg) {
@@ -114,7 +101,6 @@ public class DistributorActivity extends AppCompatActivity {
 
     private void checkCompany(String data) {
         Gson gson = new Gson();
-
         Company[] companies;
 
         companies = gson.fromJson(data, Company[].class);
@@ -182,8 +168,6 @@ public class DistributorActivity extends AppCompatActivity {
                 break;
         }
 
-
         return responseObject;
     }
-
 }

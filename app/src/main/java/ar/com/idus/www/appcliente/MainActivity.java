@@ -1,15 +1,7 @@
 package ar.com.idus.www.appcliente;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -17,41 +9,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
-
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import ar.com.idus.www.appcliente.models.BodyOrder;
-import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
-import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
-
 public class MainActivity extends AppCompatActivity {
     Button btnEnter;
     TextView txtIdCustomer;
     EditText editIdCustomer, editPassCustomer;
-    Client client;
     Customer customer;
-    String token;
     SharedPreferences sharedPreferences;
     boolean firstEntry = false;
-
 
     public boolean isFirstEntry() {
         return this.firstEntry;
@@ -156,10 +133,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        int result;
         ResponseObject responseToken;
-        String token = null, idPhone, idCustomer;
-        int msg = 0;
+        String idPhone, idCustomer;
 
 //        testingAPI();
 
@@ -169,18 +144,12 @@ public class MainActivity extends AppCompatActivity {
         txtIdCustomer = findViewById(R.id.txtIdCustomer);
         editIdCustomer = findViewById(R.id.editIdCustomer);
         editPassCustomer = findViewById(R.id.editPassCustomer);
-//        sharedPreferences = getPreferences(MODE_PRIVATE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if (!Utilities.checkConnection(getApplicationContext())) {
-//            showMsg((R.string.msgErrInternet));
             showExit(getString(R.string.msgErrInternet));
-
             return;
         }
-
-        System.out.println("pasando internet off");
-
 
         if(Utilities.getData(sharedPreferences, "token").equals(Constants.NO_RESULT_STR)) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -189,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
                 showExit(getString(R.string.msgErrToken));
                 return;
             }
-
-            System.out.println("pasando response token null");
 
             if (responseToken.getResponseCode() == Constants.SHOW_EXIT) {
                 showExit(responseToken.getResponseData());
@@ -204,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         if (idCustomer.equals(Constants.NO_RESULT_STR))
             idCustomer = "";
 
-        final ResponseObject responsePhone = findPhone2(idPhone);
+        final ResponseObject responsePhone = findPhone(idPhone);
 
         if (responsePhone == null) {
             showExit(getString(R.string.msgErrFind));
@@ -220,15 +187,12 @@ public class MainActivity extends AppCompatActivity {
 //        responsePhone.setResponseCode(Constants.CREATED);
 
         setFirstEntry(responsePhone.getResponseCode() == Constants.CREATED  || idCustomer.isEmpty());
-
         editIdCustomer.setText(idCustomer);
 
         if (!isFirstEntry())
             txtIdCustomer.setVisibility(View.GONE);
         else
             editPassCustomer.setVisibility(View.GONE);
-
-
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
                     if (responseCustomer != null) {
                         switch (responseCustomer.getResponseCode()) {
                             case Constants.OK:
-//                                Utilities.saveData(sharedPreferences,"idCustomer", id);
                                 checkCustomer(responseCustomer.getResponseData(), id, pass, firstTime);
                                 System.out.println(responseCustomer.getResponseData());
                                 break;
@@ -272,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkCustomer (String data, String id, String pass, boolean firstTime) {
-
         Gson gson = new Gson();
         Customer[] customers;
 
@@ -329,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
     // no siempre responde 201
     // si la app se cierra, luego pide contraseña pero no deberia
 
-    private ResponseObject findPhone2(String idPhone) {
+    private ResponseObject findPhone(String idPhone) {
         int code;
         String url = "/findtelephone.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idTelephone=" + idPhone;
         ResponseObject responseToken;
@@ -385,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
             case Constants.CREATED: // primer ingreso
                 Utilities.saveData(sharedPreferences, "idPhone", idPhone);
                 System.out.println("primer ingreso");
-//                firstEntry = true;
                 break;
 
             case Constants.NO_DATA:
@@ -412,54 +373,6 @@ public class MainActivity extends AppCompatActivity {
         return responseObject;
     }
 
-    private int findPhone(final String token, final String idPhone) {
-        int result = Constants.NO_DATA;
-        final AtomicInteger response = new AtomicInteger();
-
-        if (Utilities.checkConnection(getApplicationContext())) {
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    URL url;
-                    HttpURLConnection cnx = null;
-                    super.run();
-
-                    try {
-                        url = new URL(Constants.URL + "/findtelephone.php?token=" + token + "&idTelephone=" + idPhone);
-                        cnx = (HttpURLConnection) url.openConnection();
-
-                        System.out.println("response code findphone " + cnx.getResponseCode());
-
-                        response.set(cnx.getResponseCode());
-
-                    } catch (Exception e) {
-                        response.set(Constants.EXCEPTION);
-                        e.printStackTrace();
-
-
-                    } finally {
-                        if (cnx != null) {
-                            cnx.disconnect();
-                        }
-
-                    }
-                }
-            };
-
-            try {
-                thread.start();
-                thread.join(1500);
-                result = response.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return  result;
-
-        } else
-            return result;
-    }
-
     private String getIdPhone() {
         String idPhone = Utilities.getData(sharedPreferences,"idPhone");
 
@@ -472,7 +385,6 @@ public class MainActivity extends AppCompatActivity {
             int random_int = (int)(Math.random() * (max - min + 1) + min);
             idPhone = String.valueOf(random_int);
 
-
             Utilities.saveData(sharedPreferences, "idPhone", idPhone);
         }
 
@@ -481,63 +393,10 @@ public class MainActivity extends AppCompatActivity {
         return idPhone;
     }
 
-//    private String getToken() {
-//        String token = Utilities.getData(sharedPreferences, "token");
-//        ResponseObject responseObject;
-//
-//        if (token.equals(Constants.NO_RESULT_STR)) {
-//            System.out.println("token no encontrado");
-//
-//            token = Utilities.getToken(getApplicationContext()); // primer intento de obtencion
-//
-//            responseObject = Utilities.getResponse(getApplicationContext(), "/getToken.php?idApp=BuyIdus", 1000);
-//
-//            if (token == null || token.equals(Constants.NO_RESULT_STR)) {
-//                token = Utilities.getToken(getApplicationContext()); // segundo intento
-//                System.out.println("segundo intento token " + token);
-//            }
-//
-//            System.out.println("token " + token);
-//
-//        } else //TODO borrar, solo para test
-//            System.out.println("token encontrado " + token);
-//
-//        return token;
-//    }
-
     private void callRegister() {
         Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
         intent.putExtra("customer", customer);
         startActivity(intent);
-    }
-
-
-
-    private Client getClient(String id) {
-        Client client = null;
-        if(Utilities.checkConnection(getApplicationContext())) {
-            // TODO
-            // buscar al cliente por idPhone, recuperar los datos y devolver objeto los datos recibidos
-
-            client = new Client();
-
-            if (id.equals("1")) {
-                client.setId("1111");
-                client.setAddress("Almafuerte 2020, Mendoza");
-                client.setName("Pepe Honguito");
-                client.setPhone("2612223333");
-                client.setEmail("pepe@honguito.com");
-            } else {
-                client.setId("4444");
-                client.setAddress("Adolfo Calle 450, Mendoza");
-                client.setName("Fulanito de TAl");
-                client.setPhone("1155554444");
-                client.setEmail("fulatino@tal.com");
-            }
-
-        }
-
-        return client;
     }
 
     private ResponseObject getCustomer(String id){

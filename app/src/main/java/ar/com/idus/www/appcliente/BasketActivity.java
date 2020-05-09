@@ -1,8 +1,5 @@
 package ar.com.idus.www.appcliente;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -16,28 +13,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
-
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
-import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
-import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.BasketAdapter;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class BasketActivity extends AppCompatActivity {
-    ArrayList<Product> productList;
     HeadOrder headOrder;
     Customer customer;
     Company company;
@@ -128,7 +120,6 @@ public class BasketActivity extends AppCompatActivity {
                                 }
                             }
 
-
                             break;
 
                         case Constants.SHOW_ERROR:
@@ -142,9 +133,6 @@ public class BasketActivity extends AppCompatActivity {
                 }
             }
         });
-
-        //TODO
-        // responden token invalidos los 3 endpoints
     }
 
     private void showMsg(String msg) {
@@ -174,9 +162,7 @@ public class BasketActivity extends AppCompatActivity {
             geo = location.getLatitude() + ";" + location.getLongitude();
         }
 
-
         date = new Date();
-
         headOrder.setDateEnd(formatter.format(date));
         headOrder.setDateOrder(formatter.format(date));
 
@@ -277,7 +263,6 @@ public class BasketActivity extends AppCompatActivity {
                 responseObject.setResponseData(getString(R.string.msgErrOrder));
                 break;
             }
-
         }
 
         return responseObject;
@@ -347,7 +332,6 @@ public class BasketActivity extends AppCompatActivity {
                 responseObject.setResponseData(getString((R.string.msgErrToken)));
                 break;
         }
-
 
         return responseObject;
     }
