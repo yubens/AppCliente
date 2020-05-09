@@ -29,7 +29,9 @@
     <string name="menuWatchOrders">Consulta de Pedidos</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
-    <string name="enterd">Ingrese ID</string>
+    <string name="distribInfo">Usted está trabajando con</string>
+    <string name="distribContact">Email de contacto</string>
+    <string name="enterId">Ingrese ID</string>
     <string name="customerId">Id del Cliente</string>
     <string name="customerName">Nombre del Cliente</string>
     <string name="customerGivenAddress">Direccion (Brindada por la distribuidora)</string>
@@ -58,7 +60,7 @@
     <string name="msgErrInternet">No tiene conexión a internet. Verifique la red WIFI o los datos del equipo</string>
     <string name="msgErrClientData">No pudieron obtenerse los datos del cliente, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
     <string name="msgErrCustomerData">No pudieron obtenerse los datos del cliente. Verifique el ID ingresado</string>
-    <string name="msgErrDistribData">No pudieron obtenerse los datos del distribuidor</string>
+    <string name="msgErrDistribData">No pudieron obtenerse los datos del distribuidor, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
     <string name="msgErrDataIn">Verifique los datos ingresados</string>
     <string name="msgErrPass">Ambas contraseñas deben coincidir</string>
     <string name="msgErrWrongPass">La contraseña ingresada no es la correcta</string>

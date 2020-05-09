@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -25,6 +26,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import ar.com.idus.www.appcliente.models.BodyOrder;
+import ar.com.idus.www.appcliente.models.Company;
+import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.models.Product;
@@ -36,6 +39,8 @@ import ar.com.idus.www.appcliente.utilities.Utilities;
 public class BasketActivity extends AppCompatActivity {
     ArrayList<Product> productList;
     HeadOrder headOrder;
+    Customer customer;
+    Company company;
     BasketAdapter adapter;
     ListView listView;
     Button btnSendOrder, btnCancel;
@@ -49,6 +54,10 @@ public class BasketActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basket);
+
+        btnCancel = findViewById(R.id.btnCancel);
+        btnSendOrder = findViewById(R.id.btnSendOrder);
+        editObs = findViewById(R.id.editObservations);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -64,9 +73,10 @@ public class BasketActivity extends AppCompatActivity {
             return;
         }
 
-        btnCancel = findViewById(R.id.btnCancel);
-        btnSendOrder = findViewById(R.id.btnSendOrder);
-        editObs = findViewById(R.id.editObservations);
+        customer = (Customer) bundle.getSerializable("customer");
+        company = (Company) bundle.getSerializable("company");
+
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         listView = findViewById(R.id.listBody);
         adapter = new BasketAdapter(getApplicationContext(), R.layout.basket_item, headOrder.getBodyOrders());
@@ -93,10 +103,7 @@ public class BasketActivity extends AppCompatActivity {
                                             switch (responseSendBody.getResponseCode()) {
                                                 case Constants.OK:
                                                     showMsg(getString(R.string.msgSuccSendOrder));
-                                                    //TODO
-                                                    // crear pantalla con datos de distribuidor
-                                                    // mandarlo a esa pantalla
-
+                                                    callDistributor();
                                                     break;
 
                                                 case Constants.SHOW_ERROR:
@@ -143,6 +150,13 @@ public class BasketActivity extends AppCompatActivity {
     private void showMsg(String msg) {
         if (!BasketActivity.this.isFinishing())
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void callDistributor() {
+        Intent intent = new Intent(getApplicationContext(), DistributorActivity.class);
+        intent.putExtra("customer", customer);
+        intent.putExtra("company", company);
+        startActivity(intent);
     }
 
     private ResponseObject sendOrder() {

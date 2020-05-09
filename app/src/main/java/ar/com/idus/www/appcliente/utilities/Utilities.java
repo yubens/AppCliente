@@ -277,9 +277,7 @@ public abstract class Utilities {
 
             try {
                 thread.start();
-//                thread.join(waitTime);
-                thread.join();
-                responseObject = new ResponseObject();
+                thread.join(waitTime);
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());
 
@@ -342,8 +340,8 @@ public abstract class Utilities {
 
             try {
                 thread.start();
-//                thread.join(waitTime);
-                thread.join();
+//                thread.wait(1000);
+                thread.join(waitTime);
                 responseObject = new ResponseObject();
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());

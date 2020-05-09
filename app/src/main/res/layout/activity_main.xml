@@ -33,7 +33,7 @@
             android:textAlignment="center"
             android:layout_marginTop="5dp"
             android:backgroundTint="@color/colorPrimaryLight"
-            android:hint="@string/enterd"
+            android:hint="@string/enterId"
             android:ems="10"
             android:importantForAutofill="no"
             android:inputType="textPersonName" />

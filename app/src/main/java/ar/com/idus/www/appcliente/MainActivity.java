@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -62,44 +64,59 @@ public class MainActivity extends AppCompatActivity {
     private void testingAPI() {
 
 
-////        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-////        LocalDateTime now = LocalDateTime.now();
-////        System.out.println(dtf.format(now));
-//
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-//        Date date = new Date();
-//        System.out.println(formatter.format(date));
-//
-//
-//
-//
-//        String url, token, id;
-//        ResponseObject response;
-//
-//
-//            url = "http://idus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
-////            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
-////        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
-////        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
-//
-//        token = "1";
-//        id = "1";
-//
-//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//
-//        token = Utilities.getData(sharedPreferences, "token");
-//
-//        Utilities.saveData(sharedPreferences, "token", "12132154");
-//
-//        token = Utilities.getData(sharedPreferences, "token");
-//
-//        Utilities.deleteData(sharedPreferences, "token");
-//
-//        token = Utilities.getData(sharedPreferences, "token");
-//
-//        response = getCustomer(id);
-//
-//        System.out.println("llego");
+//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//        LocalDateTime now = LocalDateTime.now();
+//        System.out.println(dtf.format(now));
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+        System.out.println(formatter.format(date));
+
+        List<ResponseObject> lista = new ArrayList<>();
+
+
+        String url, token, id;
+        ResponseObject response;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=c89cabc3a17a0132e9c22878c402da6f&idTelephone=11110000";
+
+
+        for (int j = 1; j < 100; j++) {
+            response = new ResponseObject();
+            url = url + j;
+
+            response = Utilities.getResponse(MainActivity.this, url, 10000);
+            System.out.println(j + " " + response.getResponseCode());
+            lista.add(response);
+        }
+
+
+        System.out.println();
+
+            url = "http://idus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
+//            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
+//        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
+//        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
+
+        token = "1";
+        id = "1";
+
+
+
+        token = Utilities.getData(sharedPreferences, "token");
+
+        Utilities.saveData(sharedPreferences, "token", "12132154");
+
+        token = Utilities.getData(sharedPreferences, "token");
+
+        Utilities.deleteData(sharedPreferences, "token");
+
+        token = Utilities.getData(sharedPreferences, "token");
+
+        response = getCustomer(id);
+
+        System.out.println("llego");
     }
 
     private void testScreen() {
@@ -144,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         String token = null, idPhone, idCustomer;
         int msg = 0;
 
+//        testingAPI();
 
 //        testScreen();
 //
@@ -201,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO testing....
 //        responsePhone.setResponseCode(Constants.CREATED);
 
-        setFirstEntry(responsePhone.getResponseCode() == Constants.CREATED );
+        setFirstEntry(responsePhone.getResponseCode() == Constants.CREATED  || idCustomer.isEmpty());
 
         editIdCustomer.setText(idCustomer);
 
@@ -234,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                     if (responseCustomer != null) {
                         switch (responseCustomer.getResponseCode()) {
                             case Constants.OK:
-                                Utilities.saveData(sharedPreferences,"idCustomer", id);
+//                                Utilities.saveData(sharedPreferences,"idCustomer", id);
                                 checkCustomer(responseCustomer.getResponseData(), id, pass, firstTime);
                                 System.out.println(responseCustomer.getResponseData());
                                 break;
@@ -307,17 +325,23 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
+    // TODO
+    // no siempre responde 201
+    // si la app se cierra, luego pide contraseña pero no deberia
+
     private ResponseObject findPhone2(String idPhone) {
         int code;
         String url = "/findtelephone.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idTelephone=" + idPhone;
         ResponseObject responseToken;
 
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
         code = responseObject.getResponseCode();
+
+        System.out.println("primer response code findphone " + code);
 
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
 
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -331,12 +355,12 @@ public class MainActivity extends AppCompatActivity {
                 responseObject.setResponseData(responseToken.getResponseData());
             } else {
                 url = "/findtelephone.php?token=" + responseToken.getResponseData() + "&idTelephone=" + idPhone;
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
 
                 code = responseObject.getResponseCode();
 
                 if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
             }
         }
 
@@ -440,7 +464,15 @@ public class MainActivity extends AppCompatActivity {
         String idPhone = Utilities.getData(sharedPreferences,"idPhone");
 
         if (idPhone.equals(Constants.NO_RESULT_STR)) {
-            idPhone = UUID.randomUUID().toString();
+//            idPhone = UUID.randomUUID().toString();
+
+            int min = 10000;
+            int max = 10100;
+
+            int random_int = (int)(Math.random() * (max - min + 1) + min);
+            idPhone = String.valueOf(random_int);
+
+
             Utilities.saveData(sharedPreferences, "idPhone", idPhone);
         }
 

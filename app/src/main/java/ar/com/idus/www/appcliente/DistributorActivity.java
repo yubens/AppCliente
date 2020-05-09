@@ -24,7 +24,7 @@ public class DistributorActivity extends AppCompatActivity {
     Customer customer;
     SharedPreferences sharedPreferences;
     Company company;
-    TextView txtDistName, txtDistEmail;
+    TextView txtDistName, txtDistEmail, txtDistTitle, txtEmailTitle;
     Button btnContinue;
 
     @Override
@@ -34,14 +34,28 @@ public class DistributorActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         ResponseObject responseCompany;
 
+        btnContinue = findViewById(R.id.btnContinue);
+        txtDistEmail = findViewById(R.id.txtDistEmail);
+        txtDistName = findViewById(R.id.txtDistName);
+        txtDistTitle = findViewById(R.id.txtDistTitle);
+        txtEmailTitle = findViewById(R.id.txtEmailTitle);
+
+        if (bundle == null) {
+            showExit(getString(R.string.msgErrDistribData));
+            return;
+        }
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         customer = (Customer) bundle.getSerializable("customer");
 
-        if (customer != null) {
-            btnContinue = findViewById(R.id.btnContinue);
-            txtDistEmail = findViewById(R.id.txtDistEmail);
-            txtDistName = findViewById(R.id.txtDistName);
+        if (customer == null) {
+            showExit(getString(R.string.msgErrCustomerData));
+            return;
+        }
 
+        company = (Company) bundle.getSerializable("company");
+
+        if (company == null) {
             responseCompany = getCompany(customer.getEmpresaId());
 
             if (responseCompany != null) {
@@ -51,12 +65,12 @@ public class DistributorActivity extends AppCompatActivity {
                         txtDistName.setText(company.getNombre());
                         txtDistEmail.setText(company.getCorreo());
 
-                        btnContinue.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                callOrder();
-                            }
-                        });
+//                        btnContinue.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                callOrder();
+//                            }
+//                        });
 
                         break;
 
@@ -71,6 +85,17 @@ public class DistributorActivity extends AppCompatActivity {
                 }
             }
         }
+
+        txtDistName.setText(company.getNombre());
+        txtDistEmail.setText(company.getCorreo());
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callOrder();
+            }
+        });
+
     }
 
     private void showMsg(String msg) {
@@ -160,4 +185,5 @@ public class DistributorActivity extends AppCompatActivity {
 
         return responseObject;
     }
+
 }

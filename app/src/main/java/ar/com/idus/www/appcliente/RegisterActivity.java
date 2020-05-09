@@ -122,6 +122,8 @@ public class RegisterActivity extends AppCompatActivity {
                             switch (responseUpdate.getResponseCode()) {
                                 case Constants.OK:
                                     showMsg(responseUpdate.getResponseData());
+//                                    Utilities.saveData(sharedPreferences, "registered", Constants.ENABLED);
+                                    Utilities.saveData(sharedPreferences,"idCustomer", customer.getIdCliente());
                                     callDistributor();
                                     System.out.println(responseUpdate.getResponseData());
                                     break;
