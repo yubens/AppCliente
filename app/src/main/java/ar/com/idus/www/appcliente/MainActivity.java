@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     Customer customer;
     SharedPreferences sharedPreferences;
     boolean firstEntry = false;
+    ProgressBar progressBar;
 
     public boolean isFirstEntry() {
         return this.firstEntry;
@@ -97,36 +99,73 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testScreen() {
-        HeadOrder headOrder = new HeadOrder();
-        BodyOrder bodyOrder = new BodyOrder();
-        BodyOrder bodyOrder2 = new BodyOrder();
-        ArrayList<BodyOrder> bodyOrders = new ArrayList<>();
+//        try
+//        {
+//            progressBar.setVisibility(View.VISIBLE);
+//            Thread.sleep(5000);
+//        }
+//        catch(InterruptedException ex)
+//        {
+//            Thread.currentThread().interrupt();
+//        }
+//
+//        progressBar.setVisibility(View.GONE);
 
-        bodyOrder.setName("Comrpobante 22225F-087156");
-        bodyOrder.setIdItem("10");
-        bodyOrder.setQuantity("5");
-        bodyOrder.setPrice(20.50f);
-        bodyOrder.setIdProduct("526ARTICULO550");
-        bodyOrder.setTotal(205040.50f);
-        bodyOrders.add(bodyOrder);
-        bodyOrders.add(bodyOrder);
-        bodyOrders.add(bodyOrder);
-        bodyOrder2.setName("OREO CHOCOLATE 36X117GR");
-        bodyOrder2.setIdItem("10");
-        bodyOrder2.setQuantity("Cantidad: 125");
-        bodyOrder2.setPrice(2330.50f);
-        bodyOrder2.setIdProduct("526ARTICULO332");
-        bodyOrder2.setTotal(11205040.50f);
-        bodyOrders.add(bodyOrder2);
-        bodyOrders.add(bodyOrder);
-        bodyOrders.add(bodyOrder);
-        bodyOrders.add(bodyOrder);
-        bodyOrders.add(bodyOrder);
+        progressBar.setVisibility(View.VISIBLE);
 
-        headOrder.setBodyOrders(bodyOrders);
-        Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
-        intent.putExtra("order", headOrder);
-        startActivity(intent);
+        Thread thread2 = new Thread() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+//                            sleep(10000);
+                            progressBar.setVisibility(View.GONE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                    }
+                });
+            }
+        };
+
+        thread2.start();
+
+
+//        HeadOrder headOrder = new HeadOrder();
+//        BodyOrder bodyOrder = new BodyOrder();
+//        BodyOrder bodyOrder2 = new BodyOrder();
+//        ArrayList<BodyOrder> bodyOrders = new ArrayList<>();
+//
+//        bodyOrder.setName("Comrpobante 22225F-087156");
+//        bodyOrder.setIdItem("10");
+//        bodyOrder.setQuantity("5");
+//        bodyOrder.setPrice(20.50f);
+//        bodyOrder.setIdProduct("526ARTICULO550");
+//        bodyOrder.setTotal(205040.50f);
+//        bodyOrders.add(bodyOrder);
+//        bodyOrders.add(bodyOrder);
+//        bodyOrders.add(bodyOrder);
+//        bodyOrder2.setName("OREO CHOCOLATE 36X117GR");
+//        bodyOrder2.setIdItem("10");
+//        bodyOrder2.setQuantity("Cantidad: 125");
+//        bodyOrder2.setPrice(2330.50f);
+//        bodyOrder2.setIdProduct("526ARTICULO332");
+//        bodyOrder2.setTotal(11205040.50f);
+//        bodyOrders.add(bodyOrder2);
+//        bodyOrders.add(bodyOrder);
+//        bodyOrders.add(bodyOrder);
+//        bodyOrders.add(bodyOrder);
+//        bodyOrders.add(bodyOrder);
+//
+//        headOrder.setBodyOrders(bodyOrders);
+//        Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
+//        intent.putExtra("order", headOrder);
+//        startActivity(intent);
     }
 
     @Override
@@ -138,12 +177,13 @@ public class MainActivity extends AppCompatActivity {
 
 //        testingAPI();
 
-//        testScreen();
+
 //
         btnEnter = findViewById(R.id.btnEnter);
         txtIdCustomer = findViewById(R.id.txtIdCustomer);
         editIdCustomer = findViewById(R.id.editIdCustomer);
         editPassCustomer = findViewById(R.id.editPassCustomer);
+        progressBar = findViewById(R.id.progressBar);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if (!Utilities.checkConnection(getApplicationContext())) {
@@ -194,6 +234,23 @@ public class MainActivity extends AppCompatActivity {
         else
             editPassCustomer.setVisibility(View.GONE);
 
+        progressBar.setVisibility(View.GONE);
+
+
+//        try
+//        {
+//            progressBar.setVisibility(View.GONE);
+//            Thread.sleep(5000);
+//        }
+//        catch(InterruptedException ex)
+//        {
+//            Thread.currentThread().interrupt();
+//        }
+
+
+//        testScreen();
+
+
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (!firstTime && (id.isEmpty() || pass.isEmpty())){
                     showMsg(getString(R.string.msgErrorEmptyIdPass));
                 } else {
-//                    client = getClient(id);
+
                     responseCustomer = getCustomer(id);
 
                     if (responseCustomer != null) {
@@ -269,22 +326,23 @@ public class MainActivity extends AppCompatActivity {
         editPassCustomer.setVisibility(View.GONE);
         editIdCustomer.setVisibility(View.GONE);
         txtIdCustomer.setVisibility(View.VISIBLE);
+        btnEnter.setVisibility(View.GONE);
         txtIdCustomer.setText(msg);
         txtIdCustomer.setTextSize(18);
-        btnEnter.setText(R.string.btnExit);
+//        btnEnter.setText(R.string.btnExit);
 
-        btnEnter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("salio");
-                System.exit(0);
-            }
-        });
+//        btnEnter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!MainActivity.this.isFinishing())
+//                    System.exit(0);
+//            }
+//        });
     }
 
     private void showMsg(String msg) {
         if (!MainActivity.this.isFinishing())
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
     // TODO
@@ -387,8 +445,6 @@ public class MainActivity extends AppCompatActivity {
 
             Utilities.saveData(sharedPreferences, "idPhone", idPhone);
         }
-
-        System.out.println("id phone " + idPhone);
 
         return idPhone;
     }

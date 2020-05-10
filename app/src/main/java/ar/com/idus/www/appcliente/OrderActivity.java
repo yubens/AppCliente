@@ -478,11 +478,6 @@ public class OrderActivity extends AppCompatActivity {
         }
     }
 
-    private void showMsg(String msg) {
-        if (!OrderActivity.this.isFinishing())
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-    }
-
     private ResponseObject getCompany (String id) {
         String url = "/getCompany.php?token=" + Utilities.getData(sharedPreferences, "token") + "&idCompany=" + id;
         ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
@@ -715,17 +710,24 @@ public class OrderActivity extends AppCompatActivity {
         imgButFindDesc.setVisibility(View.GONE);
         btnAdd.setVisibility(View.GONE);
         btnWatch.setVisibility(View.GONE);
-        btnExit.setVisibility(View.VISIBLE);
+//        btnExit.setVisibility(View.VISIBLE);
         btnExit.setText(R.string.btnExit);
+
+        txtError.setTextSize(18);
         txtError.setText(msg);
 
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("salio");
-                System.exit(0);
-            }
-        });
+//        btnExit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!OrderActivity.this.isFinishing())
+//                    System.exit(0);
+//            }
+//        });
+    }
+
+    private void showMsg(String msg) {
+        if (!OrderActivity.this.isFinishing())
+            Toast.makeText(OrderActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
     private void cleanUp() {
@@ -752,6 +754,8 @@ public class OrderActivity extends AppCompatActivity {
     private void callOrderInquiry () {
         Intent intent = new Intent(getApplicationContext(), OrderInquiryActivity.class);
         intent.putExtra("orders", listOrderState);
+        intent.putExtra("customer", customer);
+        intent.putExtra("company", company);
         startActivity(intent);
     }
 }

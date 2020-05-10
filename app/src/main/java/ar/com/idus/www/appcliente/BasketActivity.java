@@ -133,11 +133,18 @@ public class BasketActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callDistributor();
+            }
+        });
     }
 
     private void showMsg(String msg) {
         if (!BasketActivity.this.isFinishing())
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(BasketActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
     private void callDistributor() {
@@ -337,31 +344,8 @@ public class BasketActivity extends AppCompatActivity {
     }
 
     private void showExit(String msg) {
-//        txtMultiple.setVisibility(View.GONE);
-//        txtSalePrice.setVisibility(View.GONE);
-//        txtTotal.setVisibility(View.GONE);
-//        txtStock.setVisibility(View.GONE);
-//        editQuantity.setVisibility(View.GONE);
-//        editDescription.setVisibility(View.GONE);
-//        editCode.setVisibility(View.GONE);
-//        txtOfferPrice.setVisibility(View.GONE);
-//        imgButFindCode.setVisibility(View.GONE);
-//        imgButFindDesc.setVisibility(View.GONE);
-//        btnAdd.setVisibility(View.GONE);
-//        btnWatch.setVisibility(View.GONE);
-//
-//        btnExit.setVisibility(View.VISIBLE);
-//
-//        btnExit.setText(R.string.btnExit);
-//
-//        txtError.setText(msg);
-//
-//        btnExit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                System.out.println("salio");
-//                System.exit(0);
-//            }
-//        });
+        btnSendOrder.setVisibility(View.GONE);
+        btnCancel.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
     }
 }

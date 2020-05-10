@@ -87,7 +87,7 @@ public class DistributorActivity extends AppCompatActivity {
 
     private void showMsg(String msg) {
         if (!DistributorActivity.this.isFinishing())
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(DistributorActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
     private void callOrder() {
@@ -97,7 +97,13 @@ public class DistributorActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void showExit(String data) {}
+    private void showExit(String data) {
+        btnContinue.setVisibility(View.GONE);
+        txtEmailTitle.setVisibility(View.GONE);
+        txtDistTitle.setVisibility(View.GONE);
+        txtDistEmail.setVisibility(View.GONE);
+        txtDistName.setText(data);
+    }
 
     private void checkCompany(String data) {
         Gson gson = new Gson();

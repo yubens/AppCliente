@@ -142,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void showMsg(String msg) {
         if (!RegisterActivity.this.isFinishing())
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
     private void showExit(String msg) {
@@ -157,16 +157,20 @@ public class RegisterActivity extends AppCompatActivity {
         editGivenPhone.setVisibility(View.GONE);
         editGivenAddress.setVisibility(View.GONE);
         editGivenEmail.setVisibility(View.GONE);
-        txtMsg.setText(msg);
-        btnConfirm.setText(R.string.btnExit);
+        btnConfirm.setVisibility(View.GONE);
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("salio");
-                System.exit(0);
-            }
-        });
+        txtMsg.setTextSize(18);
+        txtMsg.setText(msg);
+
+//        btnConfirm.setText(R.string.btnExit);
+//
+//        btnConfirm.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                System.out.println("salio");
+//                System.exit(0);
+//            }
+//        });
     }
 
     private ResponseObject updateCustomer() {
@@ -213,7 +217,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             case Constants.OK:
                 responseObject.setResponseData(getString(R.string.msgSuccUpdateData));
-                callOrder();
                 break;
 
             case Constants.EXCEPTION:

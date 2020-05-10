@@ -234,7 +234,6 @@ public abstract class Utilities {
                     super.run();
 
                     try {
-
                         urlOpen = new URL(Constants.URL + url);
                         cnx = (HttpURLConnection) urlOpen.openConnection();
                         status = cnx.getResponseCode();
