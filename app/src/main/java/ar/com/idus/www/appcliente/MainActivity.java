@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -232,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         idPhone = getIdPhone();
+
         idCustomer = Utilities.getData(sharedPreferences,"idCustomer");
 
         if (idCustomer.equals(Constants.NO_RESULT_STR))
@@ -448,11 +450,14 @@ public class MainActivity extends AppCompatActivity {
             // Permission is not granted
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_PHONE_STATE},
-                    1);
+                    100);
         }
 
         if (idPhone.equals(Constants.NO_RESULT_STR)) {
             idPhone = UUID.randomUUID().toString();
+
+//            TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+//            idPhone = telephonyManager.getDeviceId();
 
 //            int min = 10000;
 //            int max = 10100;

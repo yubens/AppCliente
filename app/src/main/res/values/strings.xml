@@ -19,7 +19,7 @@
     <string name="txtDetalleArticulo">Detalle del Artículo</string>
     <string name="txtSalePrice">Precio Venta:</string>
     <string name="txtPrice">Precio:</string>
-    <string name="txtMultiple">Unidad Vta:</string>
+    <string name="txtMultiple">Minimo de Vta:</string>
     <string name="txtTotal">Total: </string>
     <string name="txtStock">Stock: </string>
     <string name="editQuantity">Cantidad</string>
@@ -77,7 +77,7 @@
     <string name="msgDisabledPhone">Dispositivo deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
     <string name="msgDisabledCustomer">Cliente deshabilitado para ingresar, por favor comuniquese con su distribuidora</string>
     <string name="msgErrAdd">No puede agregar un producto hasta completar los campos correspondientes</string>
-    <string name="msgErrMinLength">Ingrese al menos 3 caracteres para poder buscar </string>
+    <string name="msgErrMinLength">Ingrese mas de 3 caracteres para poder buscar </string>
     <string name="msgErrEmptyBasket">Aun no ha agregado productos al carrito</string>
     <string name="msgErrChosenProd">Debe buscar un producto para poder agregarlo</string>
     <string name="msgErrEmptyQuantity">Ingresa la cantidad para poder agregar al carrito</string>

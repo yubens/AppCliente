@@ -78,11 +78,13 @@ public class OrderActivity extends AppCompatActivity {
         editDescription = findViewById(R.id.editDescription);
         editQuantity = findViewById(R.id.editQuantity);
         imgButFindCode = findViewById(R.id.imgButFindCode);
+        imgButFindCode.setVisibility(View.GONE);
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
         btnAdd = findViewById(R.id.btnAdd);
         btnWatch = findViewById(R.id.btnWatch);
         editQuantity.setKeyListener(null);
-        editCode.addTextChangedListener(watcherTxt);
+//        editCode.addTextChangedListener(watcherTxt);
+        editCode.setKeyListener(null);
         editDescription.addTextChangedListener(watcherTxt);
         listView = findViewById(R.id.listProd);
         imgProduct = findViewById(R.id.imgError);
@@ -119,33 +121,12 @@ public class OrderActivity extends AppCompatActivity {
             return;
         }
 
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-
-
-        // consultar por los productos sin cargo ya que tiene multiplo 1
-
-
-
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-        // ********************* TODO ******************************
-
-
         imgButFindDesc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String desc = editDescription.getText().toString().trim();
 
-                if (desc.length() < 3) {
+                if (desc.length() < 4) {
                     showMsg(getString(R.string.msgErrMinLength));
                     return;
                 }
@@ -192,44 +173,44 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
-        imgButFindCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String code = editCode.getText().toString().trim();
-
-                if (code.isEmpty()) {
-                    showMsg(getString(R.string.msgErrFindCode));
-                    return;
-                }
-
-                ResponseObject auxResponseProducts = getProducts(code, true);
-
-                if (auxResponseProducts != null) {
-                    switch (auxResponseProducts.getResponseCode()) {
-                        case Constants.OK:
-                            checkProducts(auxResponseProducts.getResponseData());
-                            chosenProduct = productList.get(0);
-                            listView.setVisibility(View.GONE);
-
-                            if (Integer.valueOf(chosenProduct.getStock()) <= 0) {
-                                showMsg(getString(R.string.msgErrOutStock));
-                                return;
-                            }
-
-                            setProduct();
-                            break;
-
-                        case Constants.SHOW_ERROR:
-                            showMsg(auxResponseProducts.getResponseData());
-                            break;
-
-                        case Constants.SHOW_EXIT:
-                            showExit(auxResponseProducts.getResponseData());
-                            break;
-                    }
-                }
-            }
-        });
+//        imgButFindCode.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String code = editCode.getText().toString().trim();
+//
+//                if (code.isEmpty()) {
+//                    showMsg(getString(R.string.msgErrFindCode));
+//                    return;
+//                }
+//
+//                ResponseObject auxResponseProducts = getProducts(code, true);
+//
+//                if (auxResponseProducts != null) {
+//                    switch (auxResponseProducts.getResponseCode()) {
+//                        case Constants.OK:
+//                            checkProducts(auxResponseProducts.getResponseData());
+//                            chosenProduct = productList.get(0);
+//                            listView.setVisibility(View.GONE);
+//
+//                            if (Integer.valueOf(chosenProduct.getStock()) <= 0) {
+//                                showMsg(getString(R.string.msgErrOutStock));
+//                                return;
+//                            }
+//
+//                            setProduct();
+//                            break;
+//
+//                        case Constants.SHOW_ERROR:
+//                            showMsg(auxResponseProducts.getResponseData());
+//                            break;
+//
+//                        case Constants.SHOW_EXIT:
+//                            showExit(auxResponseProducts.getResponseData());
+//                            break;
+//                    }
+//                }
+//            }
+//        });
 
         btnWatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,10 +326,10 @@ public class OrderActivity extends AppCompatActivity {
 
         loadImage();
         editDescription.setText(chosenProduct.getName());
-        editCode.setText(chosenProduct.getCode());
+        editCode.setText(getString(R.string.editCode) + " " + chosenProduct.getCode());
         editQuantity.setKeyListener(new DigitsKeyListener());
         editQuantity.setText("");
-        multiple = getString(R.string.txtMultiple) +  " " + chosenProduct.getMultiple();
+        multiple = getString(R.string.txtMultiple) +  " " + (chosenProduct.getMultiple().equals("0") ?  "1" : chosenProduct.getMultiple());
         txtMultiple.setText(multiple);
         stock = Integer.valueOf(chosenProduct.getStock()) > 0 ? getString(R.string.avilableProd) : getString(R.string.notAvailableProd) ;
         txtStock.setText(stock);
@@ -418,8 +399,7 @@ public class OrderActivity extends AppCompatActivity {
             if (charSequence.toString().isEmpty())
                 listView.setVisibility(View.GONE);
 
-            if (charSequence.toString().isEmpty() && editCode.getText().toString().isEmpty()
-                && editDescription.getText().toString().isEmpty() && !previous.isEmpty())
+            if (charSequence.toString().isEmpty() && editDescription.getText().toString().isEmpty() && !previous.isEmpty())
                 cleanUp();
         }
 
@@ -573,13 +553,13 @@ public class OrderActivity extends AppCompatActivity {
                         "&idCompany=" + customer.getEmpresaId() + "&codePriceList=" + customer.getCodigoLista() +
                         "&findDesc=" + prodDesc + "&findCode=" + prodCode;
 
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
         ResponseObject responseToken;
 
         int code = responseObject.getResponseCode();
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+            responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
 
         if (responseObject.getResponseCode() == Constants.INVALID_TOKEN) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -595,12 +575,12 @@ public class OrderActivity extends AppCompatActivity {
                 url = "/getProduct.php?token=" +  responseToken.getResponseData() +
                         "&idCompany=" + customer.getEmpresaId() + "&codePriceList=" + customer.getCodigoLista() +
                         "&findDesc=" + prodDesc + "&findCode=" + prodCode;
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+                responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
 
                 code = responseObject.getResponseCode();
 
                 if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+                    responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
             }
         }
 

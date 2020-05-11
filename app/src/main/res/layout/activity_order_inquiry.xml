@@ -10,9 +10,9 @@
         android:id="@+id/btnNewOrder"
         style="@style/IdusButton"
         android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
         android:layout_marginTop="44dp"
         android:text="@string/btnNewOrder"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/listOrdersInquiry" />
 
