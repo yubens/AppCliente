@@ -9,17 +9,18 @@
 
     <EditText
         android:id="@+id/editObservations"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="@string/txtObservations"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.703"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listBody" />
+        app:layout_constraintTop_toBottomOf="@+id/txtTotalOrder" />
 
     <Button
         android:id="@+id/btnSendOrder"
@@ -35,10 +36,12 @@
         android:id="@+id/btnCancel"
         style="@style/IdusButton"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:text="@string/btnCancel"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnSendOrder"
         app:layout_constraintTop_toBottomOf="@+id/editObservations" />
 
     <ListView
@@ -52,6 +55,17 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtTotalOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/txtTotal"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listBody" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

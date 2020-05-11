@@ -27,6 +27,8 @@
     <string name="txtDate">Fecha: </string>
     <string name="txtObservations">Observaciones</string>
     <string name="menuWatchOrders">Consulta de Pedidos</string>
+    <string name="alertWarning">Advertencia</string>
+    <string name="btnAccept">Aceptar</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
     <string name="distribInfo">Usted está trabajando con</string>
@@ -53,6 +55,8 @@
     <string name="msgSuccSaveData">Datos guardados con exito</string>
     <string name="msgSuccAddProd">Producto agreagado al carrito con exito</string>
     <string name="msgSuccSendOrder">Pedido finalizado con exito</string>
+    <string name="msgConfirmOrder">¿Está seguro que desea confirmar el pedido?</string>
+    <string name="msgCancelOrder">¿Está seguro que desea cancelar el pedido?</string>
 
     <string name="msgErrorUpdateData">No se pudo actualizar los datos, pruebe en unos minutos</string>
     <string name="msgErrorSaveData">No se pudo guardar los datos, pruebe en unos minutos</string>

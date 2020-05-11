@@ -117,7 +117,7 @@
 
             <TextView
                 android:id="@+id/txtMultiple"
-                android:layout_width="140sp"
+                android:layout_width="130sp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="@string/txtMultiple"
@@ -126,9 +126,10 @@
 
             <TextView
                 android:id="@+id/txtStock"
-                android:layout_width="140sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
                 android:hint="@string/txtStock"
                 android:textSize="18sp" />
 
@@ -143,18 +144,17 @@
 
             <TextView
                 android:id="@+id/txtPrice"
-                android:layout_width="130sp"
+                android:layout_width="150sp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="@string/txtPrice"
                 android:textAlignment="textStart"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/txtTotal"
-                android:layout_width="150sp"
+                android:layout_marginStart="15dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="@string/txtTotal"
                 android:textSize="18sp" />
 
@@ -178,29 +178,11 @@
                 android:id="@+id/btnWatch"
                 style="@style/IdusButton"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="15dp"
                 android:layout_weight="1"
                 android:text="@string/btnWatch"
                 android:textSize="14sp" />
-
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center">
-            <Button
-                android:id="@+id/btnExit"
-                style="@style/IdusButton"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/btnExit"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

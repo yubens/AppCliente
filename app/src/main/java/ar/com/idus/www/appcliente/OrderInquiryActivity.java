@@ -44,8 +44,6 @@ public class OrderInquiryActivity extends AppCompatActivity {
         listView = findViewById(R.id.listOrdersInquiry);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        bundle = null;
-
         if (bundle == null) {
             showExit(getString(R.string.msgErrClientData));
             return;

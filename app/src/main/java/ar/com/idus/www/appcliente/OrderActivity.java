@@ -44,7 +44,7 @@ public class OrderActivity extends AppCompatActivity {
     EditText editQuantity, editDescription, editCode;
     ImageButton imgButFindCode, imgButFindDesc;
     ArrayAdapter<String> adapter;
-    Button btnAdd, btnWatch, btnExit;
+    Button btnAdd, btnWatch;
     Company company;
     ArrayList<Product> productList;
     ArrayList<Product> chosenProductsList;
@@ -81,8 +81,6 @@ public class OrderActivity extends AppCompatActivity {
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
         btnAdd = findViewById(R.id.btnAdd);
         btnWatch = findViewById(R.id.btnWatch);
-        btnExit = findViewById(R.id.btnExit);
-        btnExit.setVisibility(View.GONE);
         editQuantity.setKeyListener(null);
         editCode.addTextChangedListener(watcherTxt);
         editDescription.addTextChangedListener(watcherTxt);
@@ -120,6 +118,27 @@ public class OrderActivity extends AppCompatActivity {
             showExit(getString(R.string.msgErrDistribData));
             return;
         }
+
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+
+
+        // consultar por los productos sin cargo ya que tiene multiplo 1
+
+
+
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+        // ********************* TODO ******************************
+
 
         imgButFindDesc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,6 +328,9 @@ public class OrderActivity extends AppCompatActivity {
 
         return super.onContextItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {}
 
     private void fillProducts () {
         stringProds = new ArrayList<>();

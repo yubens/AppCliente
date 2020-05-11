@@ -2,6 +2,7 @@ package ar.com.idus.www.appcliente;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,7 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,6 +44,7 @@ public class BasketActivity extends AppCompatActivity {
     Button btnSendOrder, btnCancel;
     SharedPreferences sharedPreferences;
     EditText editObs;
+    TextView txtTotal;
     SimpleDateFormat formatter;
     Date date;
     String idOrder;
@@ -52,6 +57,7 @@ public class BasketActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btnCancel);
         btnSendOrder = findViewById(R.id.btnSendOrder);
         editObs = findViewById(R.id.editObservations);
+        txtTotal = findViewById(R.id.txtTotalOrder);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -85,68 +91,106 @@ public class BasketActivity extends AppCompatActivity {
 
         formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        calculateTotal();
+
         btnSendOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ResponseObject responseSendOrder = sendOrder();
+                AlertDialog.Builder alertBuilder;
+                alertBuilder = new AlertDialog.Builder(getSupportActionBar().getThemedContext(), android.R.style.Theme_Material_Dialog_Alert);
+                alertBuilder.setMessage(R.string.msgConfirmOrder)
+                        .setTitle(R.string.alertWarning)
+                        .setCancelable(false)
+                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ResponseObject responseSendOrder = sendOrder();
 
-                if (responseSendOrder != null) {
-                    switch (responseSendOrder.getResponseCode()) {
-                        case Constants.OK:
-                            ResponseObject responseSendBody = sendBody();
+                                if (responseSendOrder != null) {
+                                    switch (responseSendOrder.getResponseCode()) {
+                                        case Constants.OK:
+                                            ResponseObject responseSendBody = sendBody();
 
-                            if (responseSendBody != null) {
-                                switch (responseSendBody.getResponseCode()) {
-                                    case Constants.OK:
-                                        ResponseObject responseConfirm = confirmOrder();
+                                            if (responseSendBody != null) {
+                                                switch (responseSendBody.getResponseCode()) {
+                                                    case Constants.OK:
+                                                        ResponseObject responseConfirm = confirmOrder();
 
-                                        if (responseConfirm != null) {
-                                            switch (responseSendBody.getResponseCode()) {
-                                                case Constants.OK:
-                                                    showMsg(getString(R.string.msgSuccSendOrder));
-                                                    callDistributor();
-                                                    break;
+                                                        if (responseConfirm != null) {
+                                                            switch (responseSendBody.getResponseCode()) {
+                                                                case Constants.OK:
+                                                                    showMsg(getString(R.string.msgSuccSendOrder));
+                                                                    callDistributor();
+                                                                    break;
 
-                                                case Constants.SHOW_ERROR:
-                                                    showMsg(responseConfirm.getResponseData());
-                                                    break;
+                                                                case Constants.SHOW_ERROR:
+                                                                    showMsg(responseConfirm.getResponseData());
+                                                                    break;
 
-                                                case Constants.SHOW_EXIT:
-                                                    showExit(responseConfirm.getResponseData());
-                                                    break;
+                                                                case Constants.SHOW_EXIT:
+                                                                    showExit(responseConfirm.getResponseData());
+                                                                    break;
+                                                            }
+                                                        }
+
+                                                        break;
+
+                                                    case Constants.SHOW_ERROR:
+                                                        showMsg(responseSendBody.getResponseData());
+                                                        break;
+
+                                                    case Constants.SHOW_EXIT:
+                                                        showExit(responseSendBody.getResponseData());
+                                                        break;
+                                                }
                                             }
-                                        }
 
-                                        break;
+                                            break;
 
-                                    case Constants.SHOW_ERROR:
-                                        showMsg(responseSendBody.getResponseData());
-                                        break;
+                                        case Constants.SHOW_ERROR:
+                                            showMsg(responseSendOrder.getResponseData());
+                                            break;
 
-                                    case Constants.SHOW_EXIT:
-                                        showExit(responseSendBody.getResponseData());
-                                        break;
+                                        case Constants.SHOW_EXIT:
+                                            showExit(responseSendOrder.getResponseData());
+                                            break;
+                                    }
                                 }
                             }
-
-                            break;
-
-                        case Constants.SHOW_ERROR:
-                            showMsg(responseSendOrder.getResponseData());
-                            break;
-
-                        case Constants.SHOW_EXIT:
-                            showExit(responseSendOrder.getResponseData());
-                            break;
-                    }
-                }
+                        });
+                AlertDialog alert = alertBuilder.create();
+                alert.show();
             }
         });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callDistributor();
+                AlertDialog.Builder alertBuilder;
+                alertBuilder = new AlertDialog.Builder(getSupportActionBar().getThemedContext(), android.R.style.Theme_Material_Dialog_Alert);
+                alertBuilder.setMessage(R.string.msgCancelOrder)
+                        .setTitle(R.string.alertWarning)
+                        .setCancelable(false)
+                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callDistributor();
+                            }
+                        });
+                AlertDialog alert = alertBuilder.create();
+                alert.show();
             }
         });
     }
@@ -154,6 +198,19 @@ public class BasketActivity extends AppCompatActivity {
     private void showMsg(String msg) {
         if (!BasketActivity.this.isFinishing())
             Toast.makeText(BasketActivity.this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void calculateTotal() {
+        float aux = 0.0f;
+        String totalS;
+
+        for (BodyOrder body: headOrder.getBodyOrders()) {
+            aux = aux + body.getTotal();
+        }
+
+        totalS = getString(R.string.txtTotal) + " " + String.format("%.2f", aux);
+
+        txtTotal.setText(totalS);
     }
 
     private void callDistributor() {

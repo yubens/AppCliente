@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.HeadOrder;
@@ -255,11 +257,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (!isFirstEntry())
             txtIdCustomer.setVisibility(View.GONE);
-        else
+        else {
             editPassCustomer.setVisibility(View.GONE);
+            System.out.println("primer response code findphone " + responsePhone.getResponseCode());
+        }
 
         progressBar.setVisibility(View.GONE);
-
 
 //        try
 //        {
@@ -365,8 +368,6 @@ public class MainActivity extends AppCompatActivity {
         ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
         code = responseObject.getResponseCode();
 
-        System.out.println("primer response code findphone " + code);
-
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
             responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
@@ -451,13 +452,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (idPhone.equals(Constants.NO_RESULT_STR)) {
-//            idPhone = UUID.randomUUID().toString();
+            idPhone = UUID.randomUUID().toString();
 
-            int min = 10000;
-            int max = 10100;
-
-            int random_int = (int)(Math.random() * (max - min + 1) + min);
-            idPhone = String.valueOf(random_int);
+//            int min = 10000;
+//            int max = 10100;
+//
+//            int random_int = (int)(Math.random() * (max - min + 1) + min);
+//            idPhone = String.valueOf(random_int);
 
             Utilities.saveData(sharedPreferences, "idPhone", idPhone);
         }
