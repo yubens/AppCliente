@@ -1,7 +1,10 @@
 package ar.com.idus.www.appcliente;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -11,6 +14,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -186,10 +192,28 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        if (!Utilities.checkConnection(getApplicationContext())) {
-            showExit(getString(R.string.msgErrInternet));
-            return;
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+                   1);
         }
+      //
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Permission is not granted
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.INTERNET},
+//                    1);
+//        }
+
+
+//        if (!Utilities.checkConnection(getApplicationContext())) {
+//            showExit(getString(R.string.msgErrInternet));
+//            return;
+//        }
 
         if(Utilities.getData(sharedPreferences, "token").equals(Constants.NO_RESULT_STR)) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -211,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         if (idCustomer.equals(Constants.NO_RESULT_STR))
             idCustomer = "";
 
-        final ResponseObject responsePhone = findPhone(idPhone);
+        ResponseObject responsePhone = findPhone(idPhone);
 
         if (responsePhone == null) {
             showExit(getString(R.string.msgErrFind));
@@ -323,31 +347,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showExit(String msg) {
-        editPassCustomer.setVisibility(View.GONE);
-        editIdCustomer.setVisibility(View.GONE);
-        txtIdCustomer.setVisibility(View.VISIBLE);
-        btnEnter.setVisibility(View.GONE);
-        txtIdCustomer.setText(msg);
-        txtIdCustomer.setTextSize(18);
-//        btnEnter.setText(R.string.btnExit);
-
-//        btnEnter.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!MainActivity.this.isFinishing())
-//                    System.exit(0);
-//            }
-//        });
+        Intent intent = new Intent(this, ErrorActivity.class);
+        intent.putExtra("error", msg);
+        startActivity(intent);
     }
 
     private void showMsg(String msg) {
         if (!MainActivity.this.isFinishing())
             Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
     }
-
-    // TODO
-    // no siempre responde 201
-    // si la app se cierra, luego pide contraseña pero no deberia
 
     private ResponseObject findPhone(String idPhone) {
         int code;
@@ -433,6 +441,14 @@ public class MainActivity extends AppCompatActivity {
 
     private String getIdPhone() {
         String idPhone = Utilities.getData(sharedPreferences,"idPhone");
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    1);
+        }
 
         if (idPhone.equals(Constants.NO_RESULT_STR)) {
 //            idPhone = UUID.randomUUID().toString();

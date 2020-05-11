@@ -46,6 +46,8 @@
     <string name="distribSelect">Elija el disribuidor con el que desea trabajar</string>
     <string name="distribName">Nombre del distribuidor</string>
     <string name="description">Descripcion</string>
+    <string name="avilableProd">Disponible</string>
+    <string name="notAvailableProd">No disponible</string>
 
     <string name="msgSuccUpdateData">Datos actualizados con exito</string>
     <string name="msgSuccSaveData">Datos guardados con exito</string>
@@ -84,6 +86,7 @@
     <string name="msgErrOrder">No pudo confirmarse el envio del pedido, por favor intente nuevamente en unos minutos</string>
     <string name="msgErrOrderInquiry">No se pudo acceder al listado de ordenes, por favor intente nuevamente en unos minutos</string>
     <string name="msgErrEmptyInquiry">Aun no se ha realizado ningun pedido</string>
+    <string name="msgError">Se produjo un error</string>
 
 
     <string name="bntAceptar">Aceptar</string>

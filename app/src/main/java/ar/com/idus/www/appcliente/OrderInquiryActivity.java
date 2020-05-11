@@ -44,6 +44,8 @@ public class OrderInquiryActivity extends AppCompatActivity {
         listView = findViewById(R.id.listOrdersInquiry);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
+        bundle = null;
+
         if (bundle == null) {
             showExit(getString(R.string.msgErrClientData));
             return;
@@ -78,8 +80,8 @@ public class OrderInquiryActivity extends AppCompatActivity {
     }
 
     private void showExit(String msg) {
-        listView.setVisibility(View.GONE);
-        btnNewOrder.setVisibility(View.GONE);
-        txtError.setText(msg);
+        Intent intent = new Intent(this, ErrorActivity.class);
+        intent.putExtra("error", msg);
+        startActivity(intent);
     }
 }

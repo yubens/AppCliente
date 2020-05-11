@@ -146,31 +146,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void showExit(String msg) {
-        editName.setVisibility(View.GONE);
-        editAddress.setVisibility(View.GONE);
-        editPhone.setVisibility(View.GONE);
-        editPass.setVisibility(View.GONE);
-        editPassRep.setVisibility(View.GONE);
-        editPassRep.setVisibility(View.GONE);
-        editId.setVisibility(View.GONE);
-        editEmail.setVisibility(View.GONE);
-        editGivenPhone.setVisibility(View.GONE);
-        editGivenAddress.setVisibility(View.GONE);
-        editGivenEmail.setVisibility(View.GONE);
-        btnConfirm.setVisibility(View.GONE);
-
-        txtMsg.setTextSize(18);
-        txtMsg.setText(msg);
-
-//        btnConfirm.setText(R.string.btnExit);
-//
-//        btnConfirm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                System.out.println("salio");
-//                System.exit(0);
-//            }
-//        });
+        Intent intent = new Intent(this, ErrorActivity.class);
+        intent.putExtra("error", msg);
+        startActivity(intent);
     }
 
     private ResponseObject updateCustomer() {

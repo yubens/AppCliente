@@ -98,11 +98,9 @@ public class DistributorActivity extends AppCompatActivity {
     }
 
     private void showExit(String data) {
-        btnContinue.setVisibility(View.GONE);
-        txtEmailTitle.setVisibility(View.GONE);
-        txtDistTitle.setVisibility(View.GONE);
-        txtDistEmail.setVisibility(View.GONE);
-        txtDistName.setText(data);
+        Intent intent = new Intent(this, ErrorActivity.class);
+        intent.putExtra("error", data);
+        startActivity(intent);
     }
 
     private void checkCompany(String data) {

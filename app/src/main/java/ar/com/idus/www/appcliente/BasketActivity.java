@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,9 +67,16 @@ public class BasketActivity extends AppCompatActivity {
             return;
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    2);
+        }
+
         customer = (Customer) bundle.getSerializable("customer");
         company = (Company) bundle.getSerializable("company");
-
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         listView = findViewById(R.id.listBody);
@@ -344,8 +353,8 @@ public class BasketActivity extends AppCompatActivity {
     }
 
     private void showExit(String msg) {
-        btnSendOrder.setVisibility(View.GONE);
-        btnCancel.setVisibility(View.GONE);
-        listView.setVisibility(View.GONE);
+        Intent intent = new Intent(this, ErrorActivity.class);
+        intent.putExtra("error", msg);
+        startActivity(intent);
     }
 }

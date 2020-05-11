@@ -72,6 +72,7 @@ public class OrderActivity extends AppCompatActivity {
         txtPrice = findViewById(R.id.txtPrice);
         txtTotal = findViewById(R.id.txtTotal);
         txtStock = findViewById(R.id.txtStock);
+        txtStock.setVisibility(View.GONE);
         txtError = findViewById(R.id.txtError);
         editCode = findViewById(R.id.editCode);
         editDescription = findViewById(R.id.editDescription);
@@ -86,6 +87,7 @@ public class OrderActivity extends AppCompatActivity {
         editCode.addTextChangedListener(watcherTxt);
         editDescription.addTextChangedListener(watcherTxt);
         listView = findViewById(R.id.listProd);
+        imgProduct = findViewById(R.id.imgError);
         productList = new ArrayList<>();
         chosenProductsList = new ArrayList<>();
         headOrder = new HeadOrder();
@@ -114,8 +116,8 @@ public class OrderActivity extends AppCompatActivity {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        if (customer == null) {
-            showExit(getString(R.string.msgErrClientData));
+        if (company == null) {
+            showExit(getString(R.string.msgErrDistribData));
             return;
         }
 
@@ -134,6 +136,7 @@ public class OrderActivity extends AppCompatActivity {
                 if (auxResponseProducts != null) {
                     switch (auxResponseProducts.getResponseCode()) {
                         case Constants.OK:
+                            imgProduct.setVisibility(View.GONE);
                             checkProducts(auxResponseProducts.getResponseData());
 
                             if (productList.size() == 1) {
@@ -141,7 +144,6 @@ public class OrderActivity extends AppCompatActivity {
                                 setProduct();
                             } else {
                                 fillProducts();
-
                                 adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, android.R.id.text1, stringProds);
                                 listView.setAdapter(adapter);
                                 listView.setVisibility(View.VISIBLE);
@@ -326,8 +328,9 @@ public class OrderActivity extends AppCompatActivity {
         editQuantity.setText("");
         multiple = getString(R.string.txtMultiple) +  " " + chosenProduct.getMultiple();
         txtMultiple.setText(multiple);
-        stock = getString(R.string.txtStock) + " " + chosenProduct.getStock();
+        stock = Integer.valueOf(chosenProduct.getStock()) > 0 ? getString(R.string.avilableProd) : getString(R.string.notAvailableProd) ;
         txtStock.setText(stock);
+        txtStock.setVisibility(View.VISIBLE);
         txtTotal.setText(getString(R.string.txtTotal));
 
         if(chosenProduct.getOfferPrice() != null && !chosenProduct.getOfferPrice().isEmpty() && !chosenProduct.getOfferPrice().equals("0")) {
@@ -459,7 +462,9 @@ public class OrderActivity extends AppCompatActivity {
         headOrder.setIdCustomer(customer.getIdCliente());
     }
 
-    private void loadImage() {}
+    private void loadImage() {
+        imgProduct.setVisibility(View.VISIBLE);
+    }
 
     private void checkProducts (String data) {
         ArrayList<Product> aux;
@@ -467,15 +472,7 @@ public class OrderActivity extends AppCompatActivity {
         Product[] products = gson.fromJson(data, Product[].class);
         aux = new ArrayList<>(Arrays.asList(products));
 
-        if (aux.size() == 1)
-            productList = aux;
-        else {
-            productList = new ArrayList<>();
-            for (Product product : aux) {
-                if (!product.getStock().equals("0"))
-                    productList.add(product);
-            }
-        }
+        productList = aux;
     }
 
     private ResponseObject getCompany (String id) {
@@ -699,30 +696,9 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void showExit(String msg) {
-        txtMultiple.setVisibility(View.GONE);
-        txtPrice.setVisibility(View.GONE);
-        txtTotal.setVisibility(View.GONE);
-        txtStock.setVisibility(View.GONE);
-        editQuantity.setVisibility(View.GONE);
-        editDescription.setVisibility(View.GONE);
-        editCode.setVisibility(View.GONE);
-        imgButFindCode.setVisibility(View.GONE);
-        imgButFindDesc.setVisibility(View.GONE);
-        btnAdd.setVisibility(View.GONE);
-        btnWatch.setVisibility(View.GONE);
-//        btnExit.setVisibility(View.VISIBLE);
-        btnExit.setText(R.string.btnExit);
-
-        txtError.setTextSize(18);
-        txtError.setText(msg);
-
-//        btnExit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!OrderActivity.this.isFinishing())
-//                    System.exit(0);
-//            }
-//        });
+        Intent intent = new Intent(this, ErrorActivity.class);
+        intent.putExtra("error", msg);
+        startActivity(intent);
     }
 
     private void showMsg(String msg) {
@@ -731,6 +707,8 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void cleanUp() {
+        imgProduct.setVisibility(View.GONE);
+        txtStock.setVisibility(View.GONE);
         chosenProduct = null;
         editQuantity.setText("");
         editQuantity.setKeyListener(null);
