@@ -14,10 +14,9 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.R;
-import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.OrderState;
 
-public class ListOrderAdapter  extends ArrayAdapter<OrderState> {
+public class OrderInquiryAdapter extends ArrayAdapter<OrderState> {
     private ArrayList<OrderState> orders;
     private Context context;
     private LayoutInflater inflater;
@@ -29,7 +28,7 @@ public class ListOrderAdapter  extends ArrayAdapter<OrderState> {
 
     }
 
-    public ListOrderAdapter(@NonNull Context context, int resource, ArrayList<OrderState> orders) {
+    public OrderInquiryAdapter(@NonNull Context context, int resource, ArrayList<OrderState> orders) {
         super(context, resource, orders);
         this.context = context;
         this.orders = orders;
@@ -39,12 +38,12 @@ public class ListOrderAdapter  extends ArrayAdapter<OrderState> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final ListOrderAdapter.ViewHolder viewHolder;
+        final OrderInquiryAdapter.ViewHolder viewHolder;
         String total, voucher, dateState;
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.order_item, null);
-            viewHolder = new ListOrderAdapter.ViewHolder();
+            convertView = inflater.inflate(R.layout.order_inquiry_item, null);
+            viewHolder = new OrderInquiryAdapter.ViewHolder();
             viewHolder.txtVoucher =  convertView.findViewById(R.id.txtGridVoucher);
             viewHolder.txtVoucher.setTypeface(null, Typeface.BOLD);
             viewHolder.txtDateState =  convertView.findViewById(R.id.txtGridDateState);
@@ -52,7 +51,7 @@ public class ListOrderAdapter  extends ArrayAdapter<OrderState> {
             convertView.setTag(viewHolder);
 
         } else {
-            viewHolder = (ListOrderAdapter.ViewHolder) convertView.getTag();
+            viewHolder = (OrderInquiryAdapter.ViewHolder) convertView.getTag();
         }
 
         OrderState order = orders.get(position);

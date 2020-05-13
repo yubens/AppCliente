@@ -321,6 +321,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkCustomer (String data, String id, String pass, boolean firstTime) {
+
+        // *******************TODO ****************************
+        // ***************************************
+        // TODO REVISAR BIEN LOGICA PARA EVITAR NULL EXCEPTION
+
+        // TODO EVITAR CAPURA BOTON ATRAS
+
+        // TODO SCROLL EN VISTAS
+        //***************************
+        //***************************
+
         Gson gson = new Gson();
         Customer[] customers;
 
@@ -334,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
 
         customer.setIdCliente(id);
 
-        if (!firstTime && !customer.getContrasena().equals(pass)) {
+        if (!isFirstEntry() && !customer.getContrasena().equals(pass)) {
             showMsg(getString(R.string.msgErrWrongPass));
             return;
         }

@@ -11,21 +11,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.OrderState;
-import ar.com.idus.www.appcliente.utilities.ListOrderAdapter;
+import ar.com.idus.www.appcliente.utilities.OrderInquiryAdapter;
 
 public class OrderInquiryActivity extends AppCompatActivity {
     Customer customer;
     Company company;
     SharedPreferences sharedPreferences;
     ArrayList<OrderState> listOrders;
-    ListOrderAdapter adapter;
+    OrderInquiryAdapter adapter;
     Button btnExit, btnNewOrder;
     ListView listView;
     TextView txtError;
@@ -50,7 +48,7 @@ public class OrderInquiryActivity extends AppCompatActivity {
         }
 
         listOrders = (ArrayList<OrderState>) bundle.getSerializable("orders");
-        adapter = new ListOrderAdapter(getApplicationContext(), R.layout.order_item, listOrders);
+        adapter = new OrderInquiryAdapter(getApplicationContext(), R.layout.order_inquiry_item, listOrders);
         listView.setAdapter(adapter);
 
         if (listOrders == null) {

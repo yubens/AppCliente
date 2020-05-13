@@ -87,7 +87,7 @@ public class OrderActivity extends AppCompatActivity {
         editCode.setKeyListener(null);
         editDescription.addTextChangedListener(watcherTxt);
         listView = findViewById(R.id.listProd);
-        imgProduct = findViewById(R.id.imgError);
+        imgProduct = findViewById(R.id.imgTruck);
         productList = new ArrayList<>();
         chosenProductsList = new ArrayList<>();
         headOrder = new HeadOrder();
