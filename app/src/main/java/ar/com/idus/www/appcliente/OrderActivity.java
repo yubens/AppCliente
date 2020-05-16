@@ -1,5 +1,6 @@
 package ar.com.idus.www.appcliente;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,24 +35,24 @@ import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.models.OrderState;
 import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.Constants;
+import ar.com.idus.www.appcliente.utilities.OrderAdapter;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class OrderActivity extends AppCompatActivity {
     ArrayList<OrderState> listOrderState;
     Customer customer;
-    TextView txtMultiple, txtPrice, txtTotal, txtStock, txtError;
-    EditText editQuantity, editDescription, editCode;
-    ImageButton imgButFindCode, imgButFindDesc;
+    EditText editDescription;
+    ImageButton imgButFindDesc;
     ArrayAdapter<String> adapter;
-    Button btnAdd, btnWatch;
+    OrderAdapter orderAdapter;
+    Button btnWatch;
     Company company;
     ArrayList<Product> productList;
     ArrayList<Product> chosenProductsList;
     ArrayList <String> stringProds;
     Product chosenProduct;
     ListView listView;
-    ImageView imgProduct;
     DecimalFormat format;
     HeadOrder headOrder;
     BodyOrder bodyOrder;
@@ -68,26 +69,11 @@ public class OrderActivity extends AppCompatActivity {
 
         Bundle bundle;
 
-        txtMultiple = findViewById(R.id.txtMultiple);
-        txtPrice = findViewById(R.id.txtPrice);
-        txtTotal = findViewById(R.id.txtTotal);
-        txtStock = findViewById(R.id.txtStock);
-        txtStock.setVisibility(View.GONE);
-        txtError = findViewById(R.id.txtError);
-        editCode = findViewById(R.id.editCode);
         editDescription = findViewById(R.id.editDescription);
-        editQuantity = findViewById(R.id.editQuantity);
-        imgButFindCode = findViewById(R.id.imgButFindCode);
-        imgButFindCode.setVisibility(View.GONE);
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
-        btnAdd = findViewById(R.id.btnAdd);
         btnWatch = findViewById(R.id.btnWatch);
-        editQuantity.setKeyListener(null);
-//        editCode.addTextChangedListener(watcherTxt);
-        editCode.setKeyListener(null);
-        editDescription.addTextChangedListener(watcherTxt);
+//        editDescription.addTextChangedListener(watcherTxt);
         listView = findViewById(R.id.listProd);
-        imgProduct = findViewById(R.id.imgProduct);
         productList = new ArrayList<>();
         chosenProductsList = new ArrayList<>();
         headOrder = new HeadOrder();
@@ -121,6 +107,26 @@ public class OrderActivity extends AppCompatActivity {
             return;
         }
 
+        ResponseObject auxResponseProducts = getProducts(getString(R.string.defaultProduct), false);
+
+        if (auxResponseProducts != null) {
+            switch (auxResponseProducts.getResponseCode()) {
+                case Constants.OK:
+                    checkProducts(auxResponseProducts.getResponseData());
+                    orderAdapter = new OrderAdapter(OrderActivity.this, R.layout.order_item, productList, listOrder);
+                    listView.setAdapter(orderAdapter);
+                    break;
+
+                case Constants.SHOW_ERROR:
+                    showMsg(auxResponseProducts.getResponseData());
+                    break;
+
+                case Constants.SHOW_EXIT:
+                    showExit(auxResponseProducts.getResponseData());
+                    break;
+            }
+        }
+
         imgButFindDesc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,19 +142,10 @@ public class OrderActivity extends AppCompatActivity {
                 if (auxResponseProducts != null) {
                     switch (auxResponseProducts.getResponseCode()) {
                         case Constants.OK:
-                            imgProduct.setVisibility(View.GONE);
                             checkProducts(auxResponseProducts.getResponseData());
 
-                            if (productList.size() == 1) {
-                                chosenProduct = productList.get(0);
-                                setProduct();
-                            } else {
-                                fillProducts();
-                                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, android.R.id.text1, stringProds);
-                                listView.setAdapter(adapter);
-                                listView.setVisibility(View.VISIBLE);
-                            }
-
+                            orderAdapter = new OrderAdapter(OrderActivity.this, R.layout.order_item, productList, listOrder);
+                            listView.setAdapter(orderAdapter);
                             break;
 
                         case Constants.SHOW_ERROR:
@@ -163,54 +160,16 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listView.setVisibility(View.GONE);
-                chosenProduct = productList.get(position);
-                setProduct();
-            }
-        });
-
-//        imgButFindCode.setOnClickListener(new View.OnClickListener() {
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
 //            @Override
-//            public void onClick(View view) {
-//                String code = editCode.getText().toString().trim();
-//
-//                if (code.isEmpty()) {
-//                    showMsg(getString(R.string.msgErrFindCode));
-//                    return;
-//                }
-//
-//                ResponseObject auxResponseProducts = getProducts(code, true);
-//
-//                if (auxResponseProducts != null) {
-//                    switch (auxResponseProducts.getResponseCode()) {
-//                        case Constants.OK:
-//                            checkProducts(auxResponseProducts.getResponseData());
-//                            chosenProduct = productList.get(0);
-//                            listView.setVisibility(View.GONE);
-//
-//                            if (Integer.valueOf(chosenProduct.getStock()) <= 0) {
-//                                showMsg(getString(R.string.msgErrOutStock));
-//                                return;
-//                            }
-//
-//                            setProduct();
-//                            break;
-//
-//                        case Constants.SHOW_ERROR:
-//                            showMsg(auxResponseProducts.getResponseData());
-//                            break;
-//
-//                        case Constants.SHOW_EXIT:
-//                            showExit(auxResponseProducts.getResponseData());
-//                            break;
-//                    }
-//                }
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                listView.setVisibility(View.GONE);
+//                chosenProduct = productList.get(position);
+//                setProduct();
 //            }
 //        });
+
 
         btnWatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,54 +184,54 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int multiple, quantity, stock;
-                float total;
-
-                if (chosenProduct == null) {
-                    showMsg(getString(R.string.msgErrChosenProd));
-                    return;
-                }
-
-                if (editQuantity.getText().toString().isEmpty()) {
-                    showMsg(getString(R.string.msgErrEmptyQuantity));
-                    return;
-                }
-
-                multiple = Integer.valueOf(chosenProduct.getMultiple());
-
-                if (multiple == 0)
-                    multiple = 1;
-
-                quantity = Integer.valueOf(editQuantity.getText().toString());
-                stock = Integer.valueOf(chosenProduct.getStock());
-
-                if ((quantity % multiple) != 0) {
-                    showMsg(getString(R.string.msgErrMultiple));
-                    return;
-                }
-
-                if (quantity > stock) {
-                    showMsg(getString(R.string.msgErrStock));
-                    return;
-                }
-
-                bodyOrder = new BodyOrder();
-                bodyOrder.setIdProduct(chosenProduct.getIdProduct());
-                bodyOrder.setPrice(chosenProduct.getRealPrice());
-                bodyOrder.setQuantity(String.valueOf(quantity));
-                bodyOrder.setIdItem(String.valueOf(itemOrder++));
-                bodyOrder.setName(chosenProduct.getName());
-                total = chosenProduct.getRealPrice() * quantity;
-                bodyOrder.setTotal(total);
-                listOrder.add(bodyOrder);
-                showMsg(getString(R.string.msgSuccAddProd));
-                cleanUp();
-
-            }
-        });
+//        btnAdd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                int multiple, quantity, stock;
+//                float total;
+//
+//                if (chosenProduct == null) {
+//                    showMsg(getString(R.string.msgErrChosenProd));
+//                    return;
+//                }
+//
+//                if (editQuantity.getText().toString().isEmpty()) {
+//                    showMsg(getString(R.string.msgErrEmptyQuantity));
+//                    return;
+//                }
+//
+//                multiple = Integer.valueOf(chosenProduct.getMultiple());
+//
+//                if (multiple == 0)
+//                    multiple = 1;
+//
+//                quantity = Integer.valueOf(editQuantity.getText().toString());
+//                stock = Integer.valueOf(chosenProduct.getStock());
+//
+//                if ((quantity % multiple) != 0) {
+//                    showMsg(getString(R.string.msgErrMultiple));
+//                    return;
+//                }
+//
+//                if (quantity > stock) {
+//                    showMsg(getString(R.string.msgErrStock));
+//                    return;
+//                }
+//
+//                bodyOrder = new BodyOrder();
+//                bodyOrder.setIdProduct(chosenProduct.getIdProduct());
+//                bodyOrder.setPrice(chosenProduct.getRealPrice());
+//                bodyOrder.setQuantityString(String.valueOf(quantity));
+//                bodyOrder.setIdItem(String.valueOf(itemOrder++));
+//                bodyOrder.setName(chosenProduct.getName());
+//                total = chosenProduct.getRealPrice() * quantity;
+//                bodyOrder.setTotal(total);
+//                listOrder.add(bodyOrder);
+//                showMsg(getString(R.string.msgSuccAddProd));
+//                cleanUp();
+//
+//            }
+//        });
     }
 
     @Override
@@ -321,41 +280,41 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void setProduct() {
-        float price;
-        String priceString = "", multiple = "", stock, aux;
-
-        loadImage();
-        editDescription.setText(chosenProduct.getName());
-        editCode.setText(getString(R.string.editCode) + " " + chosenProduct.getCode());
-        editQuantity.setKeyListener(new DigitsKeyListener());
-        editQuantity.setText("");
-        multiple = getString(R.string.txtMultiple) +  " " + (chosenProduct.getMultiple().equals("0") ?  "1" : chosenProduct.getMultiple());
-        txtMultiple.setText(multiple);
-        stock = Integer.valueOf(chosenProduct.getStock()) > 0 ? getString(R.string.avilableProd) : getString(R.string.notAvailableProd) ;
-        txtStock.setText(stock);
-        txtStock.setVisibility(View.VISIBLE);
-        txtTotal.setText(getString(R.string.txtTotal));
-
-        if(chosenProduct.getOfferPrice() != null && !chosenProduct.getOfferPrice().isEmpty() && !chosenProduct.getOfferPrice().equals("0")) {
-            aux = chosenProduct.getOfferPrice();
-
-        } else if (chosenProduct.getListPrice02() != null && !chosenProduct.getListPrice02().isEmpty() && !chosenProduct.getListPrice02().equals("0"))
-            aux = chosenProduct.getListPrice02();
-        else if (chosenProduct.getListPrice01() != null && !chosenProduct.getListPrice01().isEmpty() && !chosenProduct.getListPrice01().equals("0"))
-            aux = chosenProduct.getListPrice01();
-        else if (chosenProduct.getListPrice00() != null && !chosenProduct.getListPrice00().isEmpty() && !chosenProduct.getListPrice00().equals("0"))
-            aux = chosenProduct.getListPrice00();
-        else
-            aux = chosenProduct.getSalePrice00();
-
-        price = Utilities.roundNumber(aux);
-        priceString = String.format("%.2f", price);
-        priceString = getString(R.string.txtPrice) + " " + priceString;
-
-        chosenProduct.setRealPrice(price);
-
-        editQuantity.addTextChangedListener(watcher);
-        txtPrice.setText(priceString);
+//        float price;
+//        String priceString = "", multiple = "", stock, aux;
+//
+//        loadImage();
+//        editDescription.setText(chosenProduct.getName());
+//        editCode.setText(getString(R.string.editCode) + " " + chosenProduct.getCode());
+//        editQuantity.setKeyListener(new DigitsKeyListener());
+//        editQuantity.setText("");
+//        multiple = getString(R.string.txtMultiple) +  " " + (chosenProduct.getMultiple().equals("0") ?  "1" : chosenProduct.getMultiple());
+//        txtMultiple.setText(multiple);
+//        stock = Integer.valueOf(chosenProduct.getStock()) > 0 ? getString(R.string.avilableProd) : getString(R.string.notAvailableProd) ;
+//        txtStock.setText(stock);
+//        txtStock.setVisibility(View.VISIBLE);
+//        txtTotal.setText(getString(R.string.txtTotal));
+//
+//        if(chosenProduct.getOfferPrice() != null && !chosenProduct.getOfferPrice().isEmpty() && !chosenProduct.getOfferPrice().equals("0")) {
+//            aux = chosenProduct.getOfferPrice();
+//
+//        } else if (chosenProduct.getListPrice02() != null && !chosenProduct.getListPrice02().isEmpty() && !chosenProduct.getListPrice02().equals("0"))
+//            aux = chosenProduct.getListPrice02();
+//        else if (chosenProduct.getListPrice01() != null && !chosenProduct.getListPrice01().isEmpty() && !chosenProduct.getListPrice01().equals("0"))
+//            aux = chosenProduct.getListPrice01();
+//        else if (chosenProduct.getListPrice00() != null && !chosenProduct.getListPrice00().isEmpty() && !chosenProduct.getListPrice00().equals("0"))
+//            aux = chosenProduct.getListPrice00();
+//        else
+//            aux = chosenProduct.getSalePrice00();
+//
+//        price = Utilities.roundNumber(aux);
+//        priceString = String.format("%.2f", price);
+//        priceString = getString(R.string.txtPrice) + " " + priceString;
+//
+//        chosenProduct.setRealPrice(price);
+//
+//        editQuantity.addTextChangedListener(watcher);
+//        txtPrice.setText(priceString);
     }
 
     private TextWatcher watcher = new TextWatcher() {
@@ -368,16 +327,16 @@ public class OrderActivity extends AppCompatActivity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             float amount, result;
             String total = "";
-            if (s.length() > 0) {
-                amount = Float.parseFloat(s.toString());
-                result = chosenProduct.getRealPrice() * amount;
-                total = getString(R.string.txtTotal ) + " " + String.format("%.2f", result);
-                txtTotal.setText(total);
-            }
-
-            if(editQuantity.getText().toString().isEmpty()){
-                txtTotal.setText(R.string.txtTotal);
-            }
+//            if (s.length() > 0) {
+//                amount = Float.parseFloat(s.toString());
+//                result = chosenProduct.getRealPrice() * amount;
+//                total = getString(R.string.txtTotal ) + " " + String.format("%.2f", result);
+//                txtTotal.setText(total);
+//            }
+//
+//            if(editQuantity.getText().toString().isEmpty()){
+//                txtTotal.setText(R.string.txtTotal);
+//            }
         }
 
         @Override
@@ -462,10 +421,6 @@ public class OrderActivity extends AppCompatActivity {
         headOrder.setBodyOrders(listOrder);
         headOrder.setIdOrder(UUID.randomUUID().toString());
         headOrder.setIdCustomer(customer.getIdCliente());
-    }
-
-    private void loadImage() {
-        imgProduct.setVisibility(View.VISIBLE);
     }
 
     private void checkProducts (String data) {
@@ -709,18 +664,18 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void cleanUp() {
-        imgProduct.setVisibility(View.GONE);
-        txtStock.setVisibility(View.GONE);
-        chosenProduct = null;
-        editQuantity.setText("");
-        editQuantity.setKeyListener(null);
-        editDescription.setText("");
-        editCode.setText("");
-        txtPrice.setText(R.string.txtPrice);
-        txtTotal.setText(R.string.txtTotal);
-        txtMultiple.setText(R.string.txtMultiple);
-        txtStock.setText(R.string.txtStock);
-        listView.setVisibility(View.GONE);
+//        imgProduct.setVisibility(View.GONE);
+//        txtStock.setVisibility(View.GONE);
+//        chosenProduct = null;
+//        editQuantity.setText("");
+//        editQuantity.setKeyListener(null);
+//        editDescription.setText("");
+//        editCode.setText("");
+//        txtPrice.setText(R.string.txtPrice);
+//        txtTotal.setText(R.string.txtTotal);
+//        txtMultiple.setText(R.string.txtMultiple);
+//        txtStock.setText(R.string.txtStock);
+//        listView.setVisibility(View.GONE);
     }
 
     private void callBasket() {

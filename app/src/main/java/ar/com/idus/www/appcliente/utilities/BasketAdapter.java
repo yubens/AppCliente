@@ -59,9 +59,9 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
 
         BodyOrder order = orders.get(position);
 
-        total = "Subtotal: " + String.format("%.2f", order.getTotal());
+        total = "Subtotal $ " + String.format("%.2f", order.getTotal());
         idProd = "Id Producto: " + order.getIdProduct();
-        quantity = "Cantidad: " + order.getQuantity() ;
+        quantity = "Cantidad: " + order.getQuantity();
         price =  String.format("%.2f", order.getPrice());
 
         viewHolder.txtName.setText(order.getName());

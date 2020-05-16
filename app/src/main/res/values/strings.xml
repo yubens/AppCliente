@@ -19,8 +19,10 @@
     <string name="txtDetalleArticulo">Detalle del Artículo</string>
     <string name="txtSalePrice">Precio Venta:</string>
     <string name="txtPrice">Precio:</string>
-    <string name="txtMultiple">Minimo de Vta:</string>
-    <string name="txtTotal">Total: </string>
+    <string name="txtMultiple">u min de vta</string>
+    <string name="txtTotal">Total $ </string>
+    <string name="txtSign">$</string>
+    <string name="txtUnits">unidad(es) agregada(s)</string>
     <string name="txtStock">Stock: </string>
     <string name="editQuantity">Cantidad</string>
     <string name="txtVoucher">Comprobante:</string>
@@ -47,9 +49,10 @@
     <string name="customerPassRep">Repita Contraseña <font color='red'>*</font></string>
     <string name="distribSelect">Elija el disribuidor con el que desea trabajar</string>
     <string name="distribName">Nombre del distribuidor</string>
-    <string name="description">Descripcion</string>
-    <string name="avilableProd">Disponible</string>
-    <string name="notAvailableProd">No disponible</string>
+    <string name="description">Busca productos por descripcion</string>
+    <string name="avilableProd">Stock disponible</string>
+    <string name="notAvailableProd">Stock no disponible</string>
+    <string name="defaultProduct">menta</string>
 
     <string name="msgSuccUpdateData">Datos actualizados con exito</string>
     <string name="msgSuccSaveData">Datos guardados con exito</string>
@@ -82,7 +85,7 @@
     <string name="msgErrChosenProd">Debe buscar un producto para poder agregarlo</string>
     <string name="msgErrEmptyQuantity">Ingresa la cantidad para poder agregar al carrito</string>
     <string name="msgErrMultiple">La cantidad que está ingresando no se corresponde con la unidad de venta del producto, por favor corrija el dato.</string>
-    <string name="msgErrStock">La cantidad elegida es mayor al stock disponible, por favor corrija el dato</string>
+    <string name="msgErrStock">Se alcanzó el stock disponible, no pueden agregarse mas unidades de este producto</string>
     <string name="msgErrOutStock">Producto sin stock, por favor elija otro</string>
     <string name="msgErrFindProd">No se obtuvieron datos para la busqueda del codigo o descripcion</string>
     <string name="msgErrFindCode">Ingrese un codigo de producto para poder buscar</string>

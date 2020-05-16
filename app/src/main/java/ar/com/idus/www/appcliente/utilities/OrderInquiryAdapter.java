@@ -55,8 +55,14 @@ public class OrderInquiryAdapter extends ArrayAdapter<OrderState> {
         }
 
         OrderState order = orders.get(position);
-        float f = Float.parseFloat(order.getTot_order());
-        total = "Total: " + String.format("%.2f", f);
+        float f;
+
+        if (order.getTot_order() != null)
+            f = Float.parseFloat(order.getTot_order());
+        else
+            f = 0f;
+
+        total = "Total $ " + String.format("%.2f", f);
         voucher = "Comprobante: " + order.getId_order();
         dateState = "Fecha: " + order.getDate_order() + "    Estado: " + order.getState();
 

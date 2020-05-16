@@ -5,7 +5,8 @@ import java.io.Serializable;
 public class BodyOrder implements Serializable {
     private String idItem;
     private String idProduct;
-    private String quantity;
+    private String quantityString;
+    private int quantity;
     private float price;
     private String name;
     private float total;
@@ -26,12 +27,12 @@ public class BodyOrder implements Serializable {
         this.idProduct = idProduct;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public String getQuantityString() {
+        return quantityString;
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
+    public void setQuantityString(String quantityString) {
+        this.quantityString = quantityString;
     }
 
     public float getPrice() {
@@ -56,5 +57,13 @@ public class BodyOrder implements Serializable {
 
     public void setTotal(float total) {
         this.total = total;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

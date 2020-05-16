@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //        bodyOrder.setName("Comrpobante 22225F-087156");
 //        bodyOrder.setIdItem("10");
-//        bodyOrder.setQuantity("5");
+//        bodyOrder.setQuantityString("5");
 //        bodyOrder.setPrice(20.50f);
 //        bodyOrder.setIdProduct("526ARTICULO550");
 //        bodyOrder.setTotal(205040.50f);
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 //        bodyOrders.add(bodyOrder);
 //        bodyOrder2.setName("OREO CHOCOLATE 36X117GR");
 //        bodyOrder2.setIdItem("10");
-//        bodyOrder2.setQuantity("Cantidad: 125");
+//        bodyOrder2.setQuantityString("Cantidad: 125");
 //        bodyOrder2.setPrice(2330.50f);
 //        bodyOrder2.setIdProduct("526ARTICULO332");
 //        bodyOrder2.setTotal(11205040.50f);
