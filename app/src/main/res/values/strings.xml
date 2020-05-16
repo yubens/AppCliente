@@ -60,6 +60,7 @@
     <string name="msgSuccSendOrder">Pedido finalizado con exito</string>
     <string name="msgConfirmOrder">¿Está seguro que desea confirmar el pedido?</string>
     <string name="msgCancelOrder">¿Está seguro que desea cancelar el pedido?</string>
+    <string name="msgDeleteItem">¿Está seguro que desea eliminar el producto del carrito?</string>
 
     <string name="msgErrorUpdateData">No se pudo actualizar los datos, pruebe en unos minutos</string>
     <string name="msgErrorSaveData">No se pudo guardar los datos, pruebe en unos minutos</string>

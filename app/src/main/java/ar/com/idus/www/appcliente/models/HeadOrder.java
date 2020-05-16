@@ -12,6 +12,7 @@ public class HeadOrder implements Serializable {
     private String dateDelivery;
     private String geo;
     private String observations;
+    private float total = 0.0f;
     private ArrayList<BodyOrder> bodyOrders;
 
     public String getIdOrder() {
@@ -84,5 +85,13 @@ public class HeadOrder implements Serializable {
 
     public void setBodyOrders(ArrayList<BodyOrder> bodyOrders) {
         this.bodyOrders = bodyOrders;
+    }
+
+    public float getTotal() {
+        return total;
+    }
+
+    public void setTotal(float total) {
+        this.total = total;
     }
 }

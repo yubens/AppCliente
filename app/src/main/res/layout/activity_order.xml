@@ -55,7 +55,7 @@
             <ListView
                 android:id="@+id/listProd"
                 android:layout_width="match_parent"
-                android:layout_height="575dp"
+                android:layout_height="500dp"
                 android:divider="@null" />
         </LinearLayout>
 

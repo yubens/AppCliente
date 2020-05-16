@@ -7,6 +7,7 @@ public class BodyOrder implements Serializable {
     private String idProduct;
     private String quantityString;
     private int quantity;
+    private int updatedStock;
     private float price;
     private String name;
     private float total;
@@ -65,5 +66,13 @@ public class BodyOrder implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getUpdatedStock() {
+        return updatedStock;
+    }
+
+    public void setUpdatedStock(int updatedStock) {
+        this.updatedStock = updatedStock;
     }
 }

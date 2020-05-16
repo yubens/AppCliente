@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -57,7 +58,9 @@ public class BasketActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btnCancel);
         btnSendOrder = findViewById(R.id.btnSendOrder);
         editObs = findViewById(R.id.editObservations);
-        txtTotal = findViewById(R.id.txtTotalOrder);
+        txtTotal = findViewById(R.id.txtTotal);
+
+
 
         Bundle bundle = getIntent().getExtras();
 
@@ -81,12 +84,14 @@ public class BasketActivity extends AppCompatActivity {
                     2);
         }
 
+        txtTotal.setTypeface(null, Typeface.BOLD);
+
         customer = (Customer) bundle.getSerializable("customer");
         company = (Company) bundle.getSerializable("company");
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         listView = findViewById(R.id.listBody);
-        adapter = new BasketAdapter(getApplicationContext(), R.layout.basket_item, headOrder.getBodyOrders());
+        adapter = new BasketAdapter(BasketActivity.this, R.layout.basket_item, headOrder.getBodyOrders(), txtTotal);
         listView.setAdapter(adapter);
 
         formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -208,7 +213,7 @@ public class BasketActivity extends AppCompatActivity {
             aux = aux + body.getTotal();
         }
 
-        totalS = getString(R.string.txtTotal) + " " + String.format("%.2f", aux);
+        totalS = String.format("%.2f", aux);
 
         txtTotal.setText(totalS);
     }
@@ -230,6 +235,10 @@ public class BasketActivity extends AppCompatActivity {
         Location location = null;
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            // TODO
+            // revisar si gps esta activado
+            //* *************
             location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
             geo = location.getLatitude() + ";" + location.getLongitude();

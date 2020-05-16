@@ -143,7 +143,6 @@ public class OrderActivity extends AppCompatActivity {
                     switch (auxResponseProducts.getResponseCode()) {
                         case Constants.OK:
                             checkProducts(auxResponseProducts.getResponseData());
-
                             orderAdapter = new OrderAdapter(OrderActivity.this, R.layout.order_item, productList, listOrder);
                             listView.setAdapter(orderAdapter);
                             break;
@@ -682,8 +681,34 @@ public class OrderActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), BasketActivity.class);
         intent.putExtra("customer", customer);
         intent.putExtra("order", headOrder);
+//        intent.putExtra("order", testing(headOrder));
         intent.putExtra("company", company);
         startActivity(intent);
+    }
+
+    private HeadOrder testing (HeadOrder headOrder) {
+        BodyOrder order;
+        ArrayList<BodyOrder> list = new ArrayList<>();
+
+        for (int i = 1 ; i < 31; i++) {
+            order = new BodyOrder();
+            order.setUpdatedStock(i);
+            order.setName("Producto " + i);
+
+            if (i%2 == 0)
+                order.setPrice(10);
+            else
+                order.setPrice(20);
+
+            order.setQuantity(i);
+            order.setTotal(i * order.getPrice());
+            order.setIdProduct("ID " + i);
+            list.add(order);
+        }
+
+        headOrder.setBodyOrders(list);
+        return  headOrder;
+
     }
 
     private void callOrderInquiry () {

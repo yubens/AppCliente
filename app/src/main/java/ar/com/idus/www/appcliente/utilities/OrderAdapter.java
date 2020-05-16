@@ -48,6 +48,7 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         this.context = (Activity) context;
         this.productList = productList;
         this.listOrder = listOrder;
+
 //        this.inflater = (LayoutInflater) context.getin;
     }
 
@@ -180,7 +181,9 @@ public class OrderAdapter extends ArrayAdapter<Product> {
 
                 if (Integer.valueOf(productChosen.getStock()) == 0) {
 //                    Utilities.showMsg(context.getString(R.string.msgErrOutStock), context);
-                    Toast.makeText(context, R.string.msgErrOutStock, Toast.LENGTH_LONG).show();
+                    if(!context.isFinishing())
+                        Toast.makeText(context, R.string.msgErrOutStock, Toast.LENGTH_LONG).show();
+
                     return;
                 }
 
@@ -254,7 +257,7 @@ public class OrderAdapter extends ArrayAdapter<Product> {
 //        if (!listOrder.isEmpty()) {
 //            for (BodyOrder order : listOrder) {
 //                if (order.getIdProduct().equals(product.getIdProduct())) {
-//                    holder.txtTotalString.setText(R.string.txtTotal);
+//                    holder.txtTotalString.setText(R.string.txtSubtotal);
 //                    holder.txtQuantityString.setText(R.string.txtUnits);
 //                    holder.txtItemTotal.setText(String.format("%.2f", order.getTotal()));
 //                    holder.txtItemQuantity.setText(String.valueOf(order.getQuantity()));
@@ -274,13 +277,22 @@ public class OrderAdapter extends ArrayAdapter<Product> {
     private void loadImage() {}
 
     private boolean updateBody(Product productChosen) {
+        int stock = Integer.valueOf(productChosen.getStock());
+
+        if (listOrder.isEmpty()) {
+            body.setUpdatedStock(stock - 1);
+            return false;
+        }
+
         for (BodyOrder item: listOrder) {
             if (item.getIdProduct().equals(body.getIdProduct())) {
-                int stock = Integer.valueOf(productChosen.getStock());
+
                 int quantity = body.getQuantity() + item.getQuantity();
 
                 if (quantity > stock) {
-                    Toast.makeText(context, R.string.msgErrStock, Toast.LENGTH_LONG).show();
+                    if(!context.isFinishing())
+                        Toast.makeText(context, R.string.msgErrStock, Toast.LENGTH_LONG).show();
+
                     body.setQuantity(item.getQuantity());
                     body.setTotal(item.getTotal());
                     return true;
@@ -288,8 +300,10 @@ public class OrderAdapter extends ArrayAdapter<Product> {
 
                 item.setTotal(body.getTotal() + item.getTotal());
                 item.setQuantity(body.getQuantity() + item.getQuantity());
+                item.setUpdatedStock(stock - quantity);
                 body.setQuantity(item.getQuantity());
                 body.setTotal(item.getTotal());
+                body.setUpdatedStock(stock - quantity);
                 return true;
             }
         }
