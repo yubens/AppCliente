@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".RegisterActivity"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -146,16 +145,20 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/btnConfirm"
+                android:id="@+id/btnWatch"
                 style="@style/IdusButton"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="0dp"
-                android:text="@string/btnConfirm"
+                android:text="@string/btnWatch"
                 android:textSize="14sp"/>
 
         </RelativeLayout>
 
     </RelativeLayout>
+
+
+
+
 
 </ScrollView>

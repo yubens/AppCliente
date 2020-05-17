@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -108,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testScreen() {
+
+        Intent intent = new Intent(getApplicationContext(), TestScreenActivity.class);
+        startActivity(intent);
+
 //        try
 //        {
 //            progressBar.setVisibility(View.VISIBLE);
@@ -120,29 +125,29 @@ public class MainActivity extends AppCompatActivity {
 //
 //        progressBar.setVisibility(View.GONE);
 
-        progressBar.setVisibility(View.VISIBLE);
-
-        Thread thread2 = new Thread() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-//                            sleep(10000);
-                            progressBar.setVisibility(View.GONE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            progressBar.setVisibility(View.GONE);
-                        }
-
-                    }
-                });
-            }
-        };
-
-        thread2.start();
+//        progressBar.setVisibility(View.VISIBLE);
+//
+//        Thread thread2 = new Thread() {
+//            @Override
+//            public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        try {
+////                            sleep(10000);
+//                            progressBar.setVisibility(View.GONE);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            progressBar.setVisibility(View.GONE);
+//                        }
+//
+//                    }
+//                });
+//            }
+//        };
+//
+//        thread2.start();
 
 
 //        HeadOrder headOrder = new HeadOrder();
@@ -181,10 +186,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         ResponseObject responseToken;
         String idPhone, idCustomer;
 
 //        testingAPI();
+//        testScreen();
 
 
 //
@@ -345,15 +353,19 @@ public class MainActivity extends AppCompatActivity {
 
         customer.setIdCliente(id);
 
+        if (customer.getEmailOtorgado() == null || customer.getContrasena() == null || customer.getDireccionOtorgada() == null || customer.getTelefonoOtorgado() == null ||
+                customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty() ||
+                isFirstEntry()) {
+            callRegister();
+            return;
+        }
+
         if (!isFirstEntry() && !customer.getContrasena().equals(pass)) {
             showMsg(getString(R.string.msgErrWrongPass));
             return;
         }
 
-        if (isFirstEntry() || customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty())
-            callRegister();
-        else
-            callDistributor();
+        callDistributor();
     }
 
     private void callDistributor() {

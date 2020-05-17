@@ -97,6 +97,7 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         total = String.format("%.2f", order.getTotal());
         quantity = String.valueOf(order.getQuantity());
         price =  String.format("%.2f", order.getPrice());
+        price =  String.valueOf(order.getUpdatedStock());
 
         holder.txtName.setText(order.getName());
         holder.txtSubtotal.setText(total);
@@ -151,6 +152,7 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     orders.remove(pos);
+                                    calculateTotal();
                                     notifyDataSetChanged();
                                 }
                             });

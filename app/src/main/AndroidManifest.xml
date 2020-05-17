@@ -15,24 +15,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ErrorActivity"></activity>
+        <activity android:name=".TestScreenActivity"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity android:name=".ErrorActivity" />
         <activity android:name=".DistributorActivity" />
         <activity
             android:name=".OrderInquiryActivity"
             android:label="@string/order_inquiry_title" />
         <activity
             android:name=".BasketActivity"
-            android:label="@string/basket_title" />
+            android:label="@string/basket_title"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".OrderActivity"
-            android:label="@string/order_title" />
+            android:label="@string/order_title"
+            android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
             android:name=".DistributorSelectionActivity"
             android:label="@string/dist_select_title" />
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/register_title" />
-        <activity android:name=".MainActivity">
+            android:label="@string/register_title"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

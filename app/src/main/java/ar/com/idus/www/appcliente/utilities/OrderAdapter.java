@@ -284,6 +284,8 @@ public class OrderAdapter extends ArrayAdapter<Product> {
             return false;
         }
 
+        body.setUpdatedStock(stock - 1);
+
         for (BodyOrder item: listOrder) {
             if (item.getIdProduct().equals(body.getIdProduct())) {
 
