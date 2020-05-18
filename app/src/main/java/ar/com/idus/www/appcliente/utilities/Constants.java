@@ -5,6 +5,9 @@ public  abstract class  Constants {
     public static final String ENABLED = "1";
     public static final String NO_RESULT_STR = "400";
 
+    public static final int REQUEST_CODE_STATE = 100;
+    public static final int REQUEST_CODE_LOCATION = 101;
+
     public static final int OK = 200;
     public static final int CREATED = 201;
     public static final int SERVER_ERROR = 500;

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -19,14 +20,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Company;
@@ -83,7 +87,7 @@ public class BasketActivity extends AppCompatActivity {
             // Permission is not granted
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    2);
+                    Constants.REQUEST_CODE_LOCATION);
         }
 
         txtTotal.setTypeface(null, Typeface.BOLD);
@@ -200,6 +204,71 @@ public class BasketActivity extends AppCompatActivity {
                 alert.show();
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        final List<String> permsDenied = new ArrayList<>();
+
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_LOCATION:
+                if (grantResults.length == 0)
+                    return;
+
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                            showMessageOKCancel(getString(R.string.msgErrorManualConfig),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //TODO >>>>>> LLEVARLO A LA PANTALLA DE PERMISOS
+                                            finishAndRemoveTask();
+                                            moveTaskToBack(true);
+                                            android.os.Process.killProcess(android.os.Process.myPid());
+                                            System.exit(0);
+                                        }
+                                    });
+
+                            return;
+
+                        }
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            // Permission is not granted
+
+                            showMessageOKCancel(getString(R.string.msgErrorLocation),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                ActivityCompat.requestPermissions(BasketActivity.this,
+                                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                                        Constants.REQUEST_CODE_LOCATION);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                }
+
+                break;
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(BasketActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setCancelable(false)
+                .create()
+                .show();
     }
 
     private void showMsg(String msg) {

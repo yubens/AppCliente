@@ -271,9 +271,6 @@ public class OrderActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {}
-
     private void fillProducts () {
         stringProds = new ArrayList<>();
         for (Product product : productList) {

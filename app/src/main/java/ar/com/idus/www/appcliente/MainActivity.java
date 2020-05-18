@@ -2,9 +2,11 @@ package ar.com.idus.www.appcliente;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
@@ -15,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -190,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
         ResponseObject responseToken;
         String idPhone, idCustomer;
+        List<String> permissions = new ArrayList<>();
 
 //        testingAPI();
 //        testScreen();
@@ -204,21 +210,32 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
-                   1);
-        }
-      //
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+//        if (!checkPermission(Manifest.permission.READ_PHONE_STATE))
+//            permissions.add(Manifest.permission.READ_PHONE_STATE);
+//            requestPermission(Manifest.permission.READ_PHONE_STATE, Constants.REQUEST_CODE_STATE);
+
+//        if (!checkPermission(Manifest.permission.ACCESS_FINE_LOCATION))
+//            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+////            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.REQUEST_CODE_STATE);
+
+//        if (!permissions.isEmpty())
+//            requestPermission(permissions);
+
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
 //                != PackageManager.PERMISSION_GRANTED) {
 //            // Permission is not granted
 //            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.INTERNET},
-//                    1);
+//                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+//                   1);
 //        }
+      //
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    Constants.REQUEST_CODE_STATE);
+        }
 
 
 //        if (!Utilities.checkConnection(getApplicationContext())) {
@@ -328,18 +345,87 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private boolean checkPermission(String permission) {
+        if (ContextCompat.checkSelfPermission(this, permission)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            return false;
+        }
+        return true;
+
+//        return (ContextCompat.checkSelfPermission(this, permission)
+//                != PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void requestPermission(List<String> permissions) {
+        ActivityCompat.requestPermissions(this,
+                permissions.toArray(new String[permissions.size()]),
+                Constants.REQUEST_CODE_STATE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        final List<String> permsDenied = new ArrayList<>();
+
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_STATE:
+                if (grantResults.length == 0)
+                    return;
+
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                Manifest.permission.READ_PHONE_STATE)) {
+
+                            showMessageOKCancel(getString(R.string.msgErrorManualConfig),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //TODO >>>>>> LLEVARLO A LA PANTALLA DE PERMISOS
+                                        onBackPressed();
+                                    }
+                                });
+
+                            return;
+
+                        }
+                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                // Permission is not granted
+
+                                showMessageOKCancel(getString(R.string.msgErrorState),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                ActivityCompat.requestPermissions(MainActivity.this,
+                                                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                                                        Constants.REQUEST_CODE_STATE);
+                                            }
+                                        }
+                                    });
+                            }
+                    }
+                }
+
+                break;
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setCancelable(false)
+                .create()
+                .show();
+    }
+
     private void checkCustomer (String data, String id, String pass, boolean firstTime) {
-
-        // *******************TODO ****************************
-        // ***************************************
-        // TODO REVISAR BIEN LOGICA PARA EVITAR NULL EXCEPTION
-
-        // TODO EVITAR CAPURA BOTON ATRAS
-
-        // TODO SCROLL EN VISTAS
-        //***************************
-        //***************************
-
         Gson gson = new Gson();
         Customer[] customers;
 
@@ -383,6 +469,14 @@ public class MainActivity extends AppCompatActivity {
     private void showMsg(String msg) {
         if (!MainActivity.this.isFinishing())
             Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAndRemoveTask();
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 
     private ResponseObject findPhone(String idPhone) {

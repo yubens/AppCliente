@@ -95,6 +95,10 @@
     <string name="msgErrOrderInquiry">No se pudo acceder al listado de ordenes, por favor intente nuevamente en unos minutos</string>
     <string name="msgErrEmptyInquiry">Aun no se ha realizado ningun pedido</string>
     <string name="msgError">Se produjo un error</string>
+    <string name="msgErrorState">Para poder usar la aplicacion debe proporcionar el permiso para acceder al estado del telefono</string>
+    <string name="msgErrorLocation">Para poder usar la aplicacion debe proporcionar el permiso para acceder a la ubicacion del telefono</string>
+    <string name="msgErrorManualConfig">Deberá conceder manualmente los permisos de la aplicacion</string>
+
 
 
     <string name="bntAceptar">Aceptar</string>
