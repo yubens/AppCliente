@@ -279,19 +279,6 @@ public class OrderAdapter extends ArrayAdapter<Product> {
     }
 
     private void loadImage(ImageView imageView) {
-        String aux = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Atl%C3%A9tico_Boca_Juniors_2012.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_Boca_Juniors_2012.svg.png";
-
-
-        Bitmap bmp = null;
-        try {
-            URL url = new URL(aux);
-            bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            imageView.setImageBitmap(bmp);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
     }
 
     private boolean updateBody(Product productChosen) {

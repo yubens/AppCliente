@@ -428,6 +428,14 @@ public class OrderActivity extends AppCompatActivity {
         Product[] products = gson.fromJson(data, Product[].class);
         aux = new ArrayList<>(Arrays.asList(products));
 
+        for (Product product: aux) {
+            if (product.getStock() == null)
+                product.setStock("0");
+
+            if (product.getMultiple() == null)
+                product.setMultiple("1");
+        }
+
         productList = aux;
     }
 
