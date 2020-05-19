@@ -2,6 +2,8 @@ package ar.com.idus.www.appcliente.utilities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.R;
@@ -117,7 +121,7 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         holder.txtItemQuantity.setId(position);
         holder.txtItemTotal.setId(position);
 
-        loadImage();
+        loadImage(holder.imgItem);
 
         holder.txtItemName.setText(product.getName());
         multiple = (product.getMultiple().equals("0") ?  "1" : product.getMultiple()) + context.getString(R.string.txtMultiple);
@@ -274,7 +278,21 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         return view;
     }
 
-    private void loadImage() {}
+    private void loadImage(ImageView imageView) {
+        String aux = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Atl%C3%A9tico_Boca_Juniors_2012.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_Boca_Juniors_2012.svg.png";
+
+
+        Bitmap bmp = null;
+        try {
+            URL url = new URL(aux);
+            bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            imageView.setImageBitmap(bmp);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
 
     private boolean updateBody(Product productChosen) {
         int stock = Integer.valueOf(productChosen.getStock());

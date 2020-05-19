@@ -54,6 +54,8 @@ public class BasketActivity extends AppCompatActivity {
     SimpleDateFormat formatter;
     Date date;
     String idOrder;
+    String geo;
+    LocationManager locManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +67,6 @@ public class BasketActivity extends AppCompatActivity {
         btnSendOrder = findViewById(R.id.btnSendOrder);
         editObs = findViewById(R.id.editObservations);
         txtTotal = findViewById(R.id.txtTotal);
-
-
 
         Bundle bundle = getIntent().getExtras();
 
@@ -82,13 +82,7 @@ public class BasketActivity extends AppCompatActivity {
             return;
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    Constants.REQUEST_CODE_LOCATION);
-        }
+        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         txtTotal.setTypeface(null, Typeface.BOLD);
 
@@ -108,17 +102,16 @@ public class BasketActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder alertBuilder;
-                alertBuilder = new AlertDialog.Builder(getSupportActionBar().getThemedContext(), android.R.style.Theme_Material_Dialog_Alert);
+                alertBuilder = new AlertDialog.Builder(BasketActivity.this);
                 alertBuilder.setMessage(R.string.msgConfirmOrder)
-                        .setTitle(R.string.alertWarning)
                         .setCancelable(false)
-                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.btnNo, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         })
-                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.btnYes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ResponseObject responseSendOrder = sendOrder();
@@ -184,9 +177,8 @@ public class BasketActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder alertBuilder;
-                alertBuilder = new AlertDialog.Builder(getSupportActionBar().getThemedContext(), android.R.style.Theme_Material_Dialog_Alert);
+                alertBuilder = new AlertDialog.Builder(BasketActivity.this);
                 alertBuilder.setMessage(R.string.msgCancelOrder)
-                        .setTitle(R.string.alertWarning)
                         .setCancelable(false)
                         .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
                             @Override
@@ -202,8 +194,73 @@ public class BasketActivity extends AppCompatActivity {
                         });
                 AlertDialog alert = alertBuilder.create();
                 alert.show();
+
+
             }
         });
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    Constants.REQUEST_CODE_LOCATION);
+        } else {
+            getCoordinates();
+        }
+    }
+
+    private void getCoordinates() {
+        Location locationGPS = null, locationNet;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                showMessageOK(getString(R.string.msgErrorGPS),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO --> ABRIR PARA QUE ENCIENDA GPS
+                                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+//                                showExit(getString(R.string.msgErrorGPS));
+                            }
+                        });
+            } else {
+                locationGPS = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if (locationGPS != null) {
+                    geo = locationGPS.getLatitude() + ";" + locationGPS.getLongitude();
+                    return;
+                }
+
+                locationNet = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                if (locationNet != null)
+                    geo = locationNet.getLatitude() + ";" + locationNet.getLongitude();
+            }
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showMessageOK(getString(R.string.msgErrorGPS),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO --> ABRIR PARA QUE ENCIENDA GPS
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+//                                showExit(getString(R.string.msgErrorGPS));
+                        }
+                    });
+            return;
+        }
+
+        if (geo == null)
+            getCoordinates();
     }
 
     @Override
@@ -224,7 +281,7 @@ public class BasketActivity extends AppCompatActivity {
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                                 Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                            showMessageOKCancel(getString(R.string.msgErrorManualConfig),
+                            showMessageOK(getString(R.string.msgErrorManualConfig),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -243,7 +300,7 @@ public class BasketActivity extends AppCompatActivity {
                                 != PackageManager.PERMISSION_GRANTED) {
                             // Permission is not granted
 
-                            showMessageOKCancel(getString(R.string.msgErrorLocation),
+                            showMessageOK(getString(R.string.msgErrorLocation),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -262,10 +319,10 @@ public class BasketActivity extends AppCompatActivity {
         }
     }
 
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+    private void showMessageOK(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(BasketActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
+                .setPositiveButton(getString(R.string.btnAccept), okListener)
                 .setCancelable(false)
                 .create()
                 .show();
@@ -299,21 +356,12 @@ public class BasketActivity extends AppCompatActivity {
     private ResponseObject sendOrder() {
         ResponseObject responseObject, responseToken;
         idOrder = UUID.randomUUID().toString();
-        String geo = "-1;-1";
+
+//         geo = "-1;-1";
         String observations = editObs.getText().toString();
 
-        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location location = null;
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            // TODO
-            // revisar si gps esta activado
-            //* *************
-            location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            geo = location.getLatitude() + ";" + location.getLongitude();
-        }
+        if (geo == null)
+            geo = "0.0;0.0";
 
         date = new Date();
         headOrder.setDateEnd(formatter.format(date));

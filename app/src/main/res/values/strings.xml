@@ -31,6 +31,8 @@
     <string name="menuWatchOrders">Consulta de Pedidos</string>
     <string name="alertWarning">Advertencia</string>
     <string name="btnAccept">Aceptar</string>
+    <string name="btnYes">Si</string>
+    <string name="btnNo">No</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
     <string name="distribInfo">Usted está trabajando con</string>
@@ -98,6 +100,7 @@
     <string name="msgErrorState">Para poder usar la aplicacion debe proporcionar el permiso para acceder al estado del telefono</string>
     <string name="msgErrorLocation">Para poder usar la aplicacion debe proporcionar el permiso para acceder a la ubicacion del telefono</string>
     <string name="msgErrorManualConfig">Deberá conceder manualmente los permisos de la aplicacion</string>
+    <string name="msgErrorGPS">Para poder usar la aplicacion debe encender el GPS</string>
 
 
 

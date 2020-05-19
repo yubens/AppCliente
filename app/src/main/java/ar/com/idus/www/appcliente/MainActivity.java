@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.WindowManager;
@@ -290,7 +292,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         progressBar.setVisibility(View.GONE);
-
 //        try
 //        {
 //            progressBar.setVisibility(View.GONE);
@@ -374,9 +375,12 @@ public class MainActivity extends AppCompatActivity {
                     return;
 
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                    if (!MainActivity.this.isFinishing())
+                        Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if (!MainActivity.this.isFinishing())
+                        Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                                 Manifest.permission.READ_PHONE_STATE)) {
@@ -386,6 +390,11 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //TODO >>>>>> LLEVARLO A LA PANTALLA DE PERMISOS
+//                                        Intent intent = new Intent();
+//                                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                                        Uri uri = Uri.fromParts("package", MainActivity.this.getPackageName(), null);
+//                                        intent.setData(uri);
+//                                        startActivity(intent);
                                         onBackPressed();
                                     }
                                 });
@@ -419,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
+                .setPositiveButton(getString(R.string.btnAccept), okListener)
                 .setCancelable(false)
                 .create()
                 .show();
