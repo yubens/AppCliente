@@ -33,6 +33,7 @@
         android:layout_marginTop="16dp"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:text="martingasparotti@yahoo.com.ar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmailTitle" />
 
@@ -43,9 +44,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
         android:text="@string/btnContinue"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDistEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/txtDistEmail"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtDistTitle"

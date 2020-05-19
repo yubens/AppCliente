@@ -38,6 +38,7 @@ import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
+import ar.com.idus.www.appcliente.utilities.SoftInputAssist;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     boolean firstEntry = false;
     ProgressBar progressBar;
+    SoftInputAssist softInputAssist;
 
     public boolean isFirstEntry() {
         return this.firstEntry;
@@ -193,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        softInputAssist = new SoftInputAssist(this);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         ResponseObject responseToken;
         String idPhone, idCustomer;
@@ -346,6 +349,24 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        softInputAssist.onResume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        softInputAssist.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        softInputAssist.onPause();
+        super.onPause();
+    }
+
     private boolean checkPermission(String permission) {
         if (ContextCompat.checkSelfPermission(this, permission)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -460,7 +481,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        callDistributor();
+        callRegister();
+//        callDistributor();
     }
 
     private void callDistributor() {

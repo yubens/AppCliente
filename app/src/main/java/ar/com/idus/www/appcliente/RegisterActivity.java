@@ -19,21 +19,24 @@ import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
+import ar.com.idus.www.appcliente.utilities.SoftInputAssist;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class RegisterActivity extends AppCompatActivity {
     Button btnConfirm;
     EditText editName, editAddress, editPhone, editPass, editPassRep, editId, editEmail, editGivenAddress, editGivenEmail, editGivenPhone;
-    TextView txtMsg;
     Customer customer;
     SharedPreferences sharedPreferences;
     ArrayList<Distributor> distributors = new ArrayList<>();
+    SoftInputAssist softInputAssist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        softInputAssist = new SoftInputAssist(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         btnConfirm  = findViewById(R.id.btnConfirm);
@@ -47,7 +50,6 @@ public class RegisterActivity extends AppCompatActivity {
         editGivenAddress = findViewById(R.id.editGivenAddress);
         editGivenEmail = findViewById(R.id.editGivenEmail);
         editGivenPhone = findViewById(R.id.editGivenPhone);
-        txtMsg = findViewById(R.id.txtMsg);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -134,6 +136,24 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        softInputAssist.onResume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        softInputAssist.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        softInputAssist.onDestroy();
+        super.onDestroy();
     }
 
     private void callDistributor() {

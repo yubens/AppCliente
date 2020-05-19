@@ -85,6 +85,12 @@ public class DistributorActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+    }
+
     private void showMsg(String msg) {
         if (!DistributorActivity.this.isFinishing())
             Toast.makeText(DistributorActivity.this, msg, Toast.LENGTH_LONG).show();
