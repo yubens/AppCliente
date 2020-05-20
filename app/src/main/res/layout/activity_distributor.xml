@@ -20,10 +20,11 @@
         android:id="@+id/txtDistName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textSize="18sp"
+        android:layout_marginTop="18dp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:text="Distribuidora Costa Atlantica SRL (MDQ)"
         app:layout_constraintTop_toBottomOf="@+id/txtDistTitle" />
 
     <TextView
@@ -32,17 +33,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
         android:text="martingasparotti@yahoo.com.ar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmailTitle" />
 
     <Button
         android:id="@+id/btnContinue"
         style="@style/IdusButton"
-        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="70dp"
         android:text="@string/btnContinue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +55,7 @@
         android:id="@+id/txtDistTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="40dp"
         android:text="@string/distribInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

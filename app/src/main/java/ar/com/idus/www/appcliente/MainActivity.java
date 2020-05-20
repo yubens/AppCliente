@@ -211,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
         txtIdCustomer = findViewById(R.id.txtIdCustomer);
         editIdCustomer = findViewById(R.id.editIdCustomer);
         editPassCustomer = findViewById(R.id.editPassCustomer);
-        progressBar = findViewById(R.id.progressBar);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 
@@ -294,7 +293,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("primer response code findphone " + responsePhone.getResponseCode());
         }
 
-        progressBar.setVisibility(View.GONE);
 //        try
 //        {
 //            progressBar.setVisibility(View.GONE);

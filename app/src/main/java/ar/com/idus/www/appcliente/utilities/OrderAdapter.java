@@ -129,17 +129,18 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         stock = Integer.valueOf(product.getStock()) > 0 ? context.getString(R.string.avilableProd) : context.getString(R.string.notAvailableProd) ;
         holder.txtItemStock.setText(stock);
 
-        if(product.getOfferPrice() != null && !product.getOfferPrice().isEmpty() && !product.getOfferPrice().equals("0")) {
+        if(product.getOfferPrice() != null && !product.getOfferPrice().isEmpty() && !product.getOfferPrice().equals("0"))
             aux = product.getOfferPrice();
-
-        } else if (product.getListPrice02() != null && !product.getListPrice02().isEmpty() && !product.getListPrice02().equals("0"))
+        else if (product.getListPrice02() != null && !product.getListPrice02().isEmpty() && !product.getListPrice02().equals("0"))
             aux = product.getListPrice02();
         else if (product.getListPrice01() != null && !product.getListPrice01().isEmpty() && !product.getListPrice01().equals("0"))
             aux = product.getListPrice01();
         else if (product.getListPrice00() != null && !product.getListPrice00().isEmpty() && !product.getListPrice00().equals("0"))
             aux = product.getListPrice00();
-        else
+        else if ((product.getSalePrice00() != null && !product.getSalePrice00().isEmpty() && !product.getSalePrice00().equals("0")))
             aux = product.getSalePrice00();
+        else
+            aux = "0";
 
         price = Utilities.roundNumber(aux);
         priceString = String.format("%.2f", price);

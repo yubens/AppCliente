@@ -54,6 +54,7 @@
     <string name="description">Busca productos por descripcion</string>
     <string name="avilableProd">Stock disponible</string>
     <string name="notAvailableProd">Stock no disponible</string>
+    <string name="notAvailableData">Dato no disponible</string>
     <string name="defaultProduct">menta</string>
 
     <string name="msgSuccUpdateData">Datos actualizados con exito</string>

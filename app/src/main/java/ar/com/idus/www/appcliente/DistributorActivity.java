@@ -58,8 +58,6 @@ public class DistributorActivity extends AppCompatActivity {
                 switch (responseCompany.getResponseCode()) {
                     case Constants.OK:
                         checkCompany(responseCompany.getResponseData());
-                        txtDistName.setText(company.getNombre());
-                        txtDistEmail.setText(company.getCorreo());
                         break;
 
                     case Constants.SHOW_ERROR:
@@ -74,8 +72,8 @@ public class DistributorActivity extends AppCompatActivity {
             }
         }
 
-        txtDistName.setText(company.getNombre());
-        txtDistEmail.setText(company.getCorreo());
+        txtDistName.setText(company.getNombre() != null ? company.getNombre() : getString(R.string.notAvailableData));
+        txtDistEmail.setText(company.getCorreo() != null ? company.getCorreo() : getString(R.string.notAvailableData));
 
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -118,9 +118,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
-            android:layout_marginBottom="70dp"
+            android:layout_marginBottom="50dp"
             android:gravity="center"
-            android:text="@string/btnConfirm" />
+            android:text="600" />
 
 
     </LinearLayout>
