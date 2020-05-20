@@ -97,8 +97,6 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         total = String.format("%.2f", order.getTotal());
         quantity = String.valueOf(order.getQuantity());
         price =  String.format("%.2f", order.getPrice());
-        price =  String.valueOf(order.getUpdatedStock());
-
         holder.txtName.setText(order.getName());
         holder.txtSubtotal.setText(total);
         holder.txtQuantity.setText(quantity);

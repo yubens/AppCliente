@@ -4,21 +4,21 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BasketActivity"
     android:fillViewport="true">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-
         <ListView
             android:id="@+id/listBody"
             android:layout_width="350dp"
-            android:layout_height="350dp"
+            android:layout_height="300dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="24dp" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="35dp"
             android:layout_below="@+id/listBody"
             android:text="@string/txtTotal"
             android:textSize="20sp"/>
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/listBody"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="35dp"
             android:layout_toEndOf="@+id/txtStringTotal"
             android:textSize="20sp" />
 
@@ -48,9 +48,9 @@
             android:layout_below="@+id/txtStringTotal"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="24dp"
             android:ems="10"
             android:hint="@string/txtObservations"
             android:inputType="textPersonName" />
@@ -62,8 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/editObservations"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
             android:text="@string/btnSendOrder"
             app:layout_constraintTop_toBottomOf="@+id/editObservations" />
 
@@ -73,9 +73,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/editObservations"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="23dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
             android:text="@string/btnCancel"
             app:layout_constraintStart_toEndOf="@+id/btnSendOrder"
             app:layout_constraintTop_toBottomOf="@+id/editObservations" />
