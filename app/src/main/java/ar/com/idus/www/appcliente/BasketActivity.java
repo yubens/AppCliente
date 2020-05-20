@@ -105,13 +105,13 @@ public class BasketActivity extends AppCompatActivity {
                 alertBuilder = new AlertDialog.Builder(BasketActivity.this);
                 alertBuilder.setMessage(R.string.msgConfirmOrder)
                         .setCancelable(false)
-                        .setNegativeButton(R.string.btnNo, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         })
-                        .setPositiveButton(R.string.btnYes, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ResponseObject responseSendOrder = sendOrder();
@@ -180,13 +180,13 @@ public class BasketActivity extends AppCompatActivity {
                 alertBuilder = new AlertDialog.Builder(BasketActivity.this);
                 alertBuilder.setMessage(R.string.msgCancelOrder)
                         .setCancelable(false)
-                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.btnNo, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         })
-                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.btnYes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 callDistributor();
@@ -274,9 +274,9 @@ public class BasketActivity extends AppCompatActivity {
                     return;
 
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Permiso Concedido", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Permiso Denegado", Toast.LENGTH_SHORT).show();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                                 Manifest.permission.ACCESS_FINE_LOCATION)) {

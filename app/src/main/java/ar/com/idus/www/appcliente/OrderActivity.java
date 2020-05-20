@@ -1,10 +1,12 @@
 package ar.com.idus.www.appcliente;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -76,8 +78,6 @@ public class OrderActivity extends AppCompatActivity {
 
         Bundle bundle;
 
-
-
         editDescription = findViewById(R.id.editDescription);
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
         btnWatch = findViewById(R.id.btnWatch);
@@ -118,6 +118,7 @@ public class OrderActivity extends AppCompatActivity {
 
         softInputAssist = new SoftInputAssist(this);
 
+        showWaiting();
         ResponseObject auxResponseProducts = getProducts(getString(R.string.defaultProduct), false);
 
         if (auxResponseProducts != null) {
@@ -147,10 +148,10 @@ public class OrderActivity extends AppCompatActivity {
                     showMsg(getString(R.string.msgErrMinLength));
                     return;
                 }
-
                 closeKeyboard();
 
                 ResponseObject auxResponseProducts = getProducts(editDescription.getText().toString(), false);
+
 
                 if (auxResponseProducts != null) {
                     switch (auxResponseProducts.getResponseCode()) {
@@ -540,7 +541,28 @@ public class OrderActivity extends AppCompatActivity {
         return responseObject;
     }
 
+    private void showWaiting() {
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Buscando...");
+        progress.setMessage("Por favor espere...");
+        progress.show();
+
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                progress.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 1000);
+    }
+
     private ResponseObject getProducts(String data, boolean isCode) {
+
+        showWaiting();
+
         String prodDesc = "", prodCode = "";
 
         if (isCode)

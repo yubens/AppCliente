@@ -1,6 +1,7 @@
 package ar.com.idus.www.appcliente.utilities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -19,7 +20,9 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import ar.com.idus.www.appcliente.OrderActivity;
 import ar.com.idus.www.appcliente.R;
+import ar.com.idus.www.appcliente.models.Product;
 
 import static ar.com.idus.www.appcliente.R.string.msgErrToken;
 
@@ -287,7 +290,91 @@ public abstract class Utilities {
                 e.printStackTrace();
                 responseObject.setResponseCode(Constants.EXCEPTION);
                 responseObject.setResponseData(e.getMessage());
+
             }
+
+            return responseObject;
+
+        } else
+            responseObject.setResponseCode(Constants.NO_INTERNET);
+
+        return responseObject;
+    }
+
+    public static ResponseObject getResponse2(Context context, final String url, long waitTime) {
+        ResponseObject responseObject = new ResponseObject();
+        final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
+        final AtomicReference <String> resultString = new AtomicReference<>();
+//        ProgressDialog progressDialog = new ProgressDialog(context);
+
+
+        if (checkConnection(context)) {
+
+                    int status;
+                    String line;
+                    URL urlOpen;
+                    StringBuilder result = new StringBuilder();
+                    HttpURLConnection cnx = null;
+
+
+                    try {
+                        urlOpen = new URL(Constants.URL + url);
+                        cnx = (HttpURLConnection) urlOpen.openConnection();
+                        status = cnx.getResponseCode();
+
+
+
+                        resultCode.set(status);
+
+                        if (status == Constants.OK) {
+                            InputStream in = new BufferedInputStream(cnx.getInputStream());
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                            while ((line = reader.readLine()) != null) {
+                                result.append(line);
+                            }
+
+                            if (result.toString().equals("[]"))
+                                resultCode.set(Constants.NO_DATA);
+
+                            resultString.set(result.toString());
+
+
+//                            throw new Exception("hola");
+
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultString.set(e.getMessage());
+                        resultCode.set(Constants.EXCEPTION);
+
+                    } finally {
+                        if (cnx != null) {
+//                            resultString.set(result.toString());
+                            cnx.disconnect();
+                            responseObject.setResponseCode(resultCode.get());
+                            responseObject.setResponseData(resultString.get());
+                        }
+
+                    }
+
+
+
+
+                responseObject.setResponseCode(resultCode.get());
+                responseObject.setResponseData(resultString.get());
+
+//                throw  new InterruptedException("hi");
+
+//                token = resultString.get();
+
+
+//            } finally {
+//                if (progressDialog.isShowing())
+//                    progressDialog.dismiss();
+//            }
 
             return responseObject;
 

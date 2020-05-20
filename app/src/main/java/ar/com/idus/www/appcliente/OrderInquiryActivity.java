@@ -34,11 +34,8 @@ public class OrderInquiryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_order_inquiry);
 
         Bundle bundle = getIntent().getExtras();
-
-        btnExit = findViewById(R.id.btnExitApp);
-        btnExit.setVisibility(View.GONE);
+;
         btnNewOrder = findViewById(R.id.btnNewOrder);
-        txtError = findViewById(R.id.txtErrorInq);
         listView = findViewById(R.id.listOrdersInquiry);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 

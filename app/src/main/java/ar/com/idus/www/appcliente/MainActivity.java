@@ -1,14 +1,18 @@
 package ar.com.idus.www.appcliente;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -51,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     SoftInputAssist softInputAssist;
 
+     ProgressDialog progressDialog2;
+
+
+
     public boolean isFirstEntry() {
         return this.firstEntry;
     }
@@ -59,62 +67,155 @@ public class MainActivity extends AppCompatActivity {
         this.firstEntry = firstEntry;
     }
 
-    private void testingAPI() {
+    private class GetProducts extends AsyncTask<Void, Void, ResponseObject> {
+
+        private ProgressDialog dialog;
+
+        protected void onPostExecute(ResponseObject responseObject) {
+            if (dialog.isShowing())
+                dialog.cancel();
+
+        }
+
+        protected void onPreExecute() {
+
+
+            dialog = new ProgressDialog(MainActivity.this);
+            dialog.setCancelable(true);
+            dialog.setMessage("uploading...");
+            dialog.show();
+
+        }
+
+        protected ResponseObject doInBackground(Void... params) {
+            // call upload photo here.
+            String url = "/getProduct.php?token=cb70172573a55f95c288b327e6559cf7 &idCompany=7f9a1a82-3715-4a15-bba5-39074617e5db&codePriceList=50&findDesc=beld&findCode=";
+
+            ResponseObject responseObject = Utilities.getResponse2(MainActivity.this, url, 0);
+
+            return responseObject;
+        }
+
+    }
+
+
+    public void testingAPI() {
+
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Connecting");
+        progress.setMessage("Please wait while we connect to devices...");
+        progress.show();
+
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                progress.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 3000);
+
+//        ResponseObject object = new GetProducts().execute();
+
+//        final ProgressDialog progressDialog2 = new ProgressDialog(MainActivity.this);
+//
+//        progressDialog2.setCancelable(false);
+//        progressDialog2.setTitle("Buscando...");
+//        progressDialog2.setMessage("Por favor espere...");
+
+//        progressDialog2.show();
+
+//        Thread tr = new Thread() {
+//            @Override
+//            public void run() {
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            sleep(5000);
+////                            progressDialog2.dismiss();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                });
+//            }
+//        };
+//        tr.start();
+
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                progressDialog2.show();
+//            }
+//        });
+
+
+
+
+
+
+
+//        ResponseObject responseObject = Utilities.getResponse2(MainActivity.this, url, 0, progressDialog);
 
 
 //        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 //        LocalDateTime now = LocalDateTime.now();
 //        System.out.println(dtf.format(now));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
-        System.out.println(formatter.format(date));
-
-        List<ResponseObject> lista = new ArrayList<>();
-
-
-        String url, token, id;
-        ResponseObject response;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=c89cabc3a17a0132e9c22878c402da6f&idTelephone=11110000";
-
-
-        for (int j = 1; j < 100; j++) {
-            response = new ResponseObject();
-            url = url + j;
-
-            response = Utilities.getResponse(MainActivity.this, url, 10000);
-            System.out.println(j + " " + response.getResponseCode());
-            lista.add(response);
-        }
-
-
-        System.out.println();
-
-            url = "http://idus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
-//            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
-//        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
-//        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
-
-        token = "1";
-        id = "1";
-
-
-
-        token = Utilities.getData(sharedPreferences, "token");
-
-        Utilities.saveData(sharedPreferences, "token", "12132154");
-
-        token = Utilities.getData(sharedPreferences, "token");
-
-        Utilities.deleteData(sharedPreferences, "token");
-
-        token = Utilities.getData(sharedPreferences, "token");
-
-        response = getCustomer(id);
-
-        System.out.println("llego");
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//        Date date = new Date();
+//        System.out.println(formatter.format(date));
+//
+//        List<ResponseObject> lista = new ArrayList<>();
+//
+//
+//        String url, token, id;
+//        ResponseObject response;
+//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//
+//        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=c89cabc3a17a0132e9c22878c402da6f&idTelephone=11110000";
+//
+//
+//        for (int j = 1; j < 100; j++) {
+//            response = new ResponseObject();
+//            url = url + j;
+//
+//            response = Utilities.getResponse(MainActivity.this, url, 10000);
+//            System.out.println(j + " " + response.getResponseCode());
+//            lista.add(response);
+//        }
+//
+//
+//        System.out.println();
+//
+//            url = "http://idus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getToken.php?idApp=BuyIdus";
+////            url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/findtelephone.php?token=4cba21f9171fade0755cdbe72834821a&idTelephone=78521";
+////        url = "http://widus-app-bygvs.dyndns.info:8086/WebServiceIdusApp/getCustomer.php?token=14cba21f9171fade0755cdbe72834821a&idCustomer=526CLIENTE0091";
+////        response =  Utilities.getResponse(getApplicationContext(), url, 2000);
+//
+//        token = "1";
+//        id = "1";
+//
+//
+//
+//        token = Utilities.getData(sharedPreferences, "token");
+//
+//        Utilities.saveData(sharedPreferences, "token", "12132154");
+//
+//        token = Utilities.getData(sharedPreferences, "token");
+//
+//        Utilities.deleteData(sharedPreferences, "token");
+//
+//        token = Utilities.getData(sharedPreferences, "token");
+//
+//        response = getCustomer(id);
+//
+//        System.out.println("llego");
     }
 
     private void testScreen() {
@@ -201,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
         ResponseObject responseToken;
         String idPhone, idCustomer;
         List<String> permissions = new ArrayList<>();
+
 
 //        testingAPI();
 //        testScreen();
@@ -293,20 +395,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("primer response code findphone " + responsePhone.getResponseCode());
         }
 
-//        try
-//        {
-//            progressBar.setVisibility(View.GONE);
-//            Thread.sleep(5000);
-//        }
-//        catch(InterruptedException ex)
-//        {
-//            Thread.currentThread().interrupt();
-//        }
-
-
-//        testScreen();
-
-
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -395,10 +483,10 @@ public class MainActivity extends AppCompatActivity {
 
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (!MainActivity.this.isFinishing())
-                        Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Permiso Concedido", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!MainActivity.this.isFinishing())
-                        Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Permiso Denegado", Toast.LENGTH_SHORT).show();
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
