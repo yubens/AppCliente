@@ -1,188 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    android:layout_height="match_parent">
 
-
-        <EditText
-            android:id="@+id/editCustomerId"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerId"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/editCustomerName"
+        <!-- Header aligned to top -->
+        <RelativeLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerName"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editCustomerId" />
+            android:layout_alignParentTop="true"
+            android:background="#AFA7EF"
+            android:gravity="center">
 
-        <EditText
-            android:id="@+id/editGivenAddress"
-            android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/editDescription"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:hint="@string/description"
+                            android:inputType="textPersonName" />
+
+                        <ImageButton
+                            android:id="@+id/imgButFindDesc"
+                            android:layout_width="38dp"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:scaleType="centerCrop"
+                            app:srcCompat="@drawable/search" />
+                </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <!-- Footer aligned to bottom -->
+        <RelativeLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerGivenAddress"
-            android:importantForAutofill="no"
-            android:inputType="textPostalAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editCustomerName" />
+            android:layout_alignParentBottom="true"
+            android:background="#6AED83"
+            android:gravity="center">
 
+                <Button
+                    android:id="@+id/btnWatch"
+                    style="@style/IdusButton"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/btnWatch"
+                    android:textSize="14sp" />
+        </RelativeLayout>
 
-        <EditText
-            android:id="@+id/editGivenEmail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerGivenEmail"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editGivenAddress" />
+        <!-- Content below header and above footer -->
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/footer"
+            android:layout_below="@id/header"
+            android:gravity="center">
 
-        <EditText
-            android:id="@+id/editGivenPhone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerGivenPhone"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editGivenEmail" />
+                <ListView
+                    android:id="@+id/listProd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@null" />
 
-        <EditText
-            android:id="@+id/editAddress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerAddress"
-            android:importantForAutofill="no"
-            android:inputType="textPostalAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editGivenPhone" />
+        </RelativeLayout>
 
-        <EditText
-            android:id="@+id/editEmail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerEmail"
-            android:importantForAutofill="no"
-            android:inputType="textEmailAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editAddress" />
-
-        <EditText
-            android:id="@+id/editPhone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerPhone"
-            android:importantForAutofill="no"
-            android:inputType="phone"
-            android:maxLength="10"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editEmail" />
-
-        <EditText
-            android:id="@+id/editPass"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/helpPass"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editPhone" />
-
-        <EditText
-            android:id="@+id/editPassRep"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            android:ems="10"
-            android:hint="@string/customerPassRep"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editPass" />
-
-        <Button
-            android:id="@+id/btnConfirm"
-            style="@style/IdusButton"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="48dp"
-            android:text="@string/btnConfirm"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editPassRep" />
-
-
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

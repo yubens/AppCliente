@@ -1,6 +1,7 @@
 package ar.com.idus.www.appcliente;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +40,7 @@ import ar.com.idus.www.appcliente.models.Product;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.OrderAdapter;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
+import ar.com.idus.www.appcliente.utilities.SoftInputAssist;
 import ar.com.idus.www.appcliente.utilities.Utilities;
 
 public class OrderActivity extends AppCompatActivity {
@@ -62,15 +65,18 @@ public class OrderActivity extends AppCompatActivity {
     Date date;
     int itemOrder;
     SharedPreferences sharedPreferences;
+    SoftInputAssist softInputAssist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         Bundle bundle;
+
+
 
         editDescription = findViewById(R.id.editDescription);
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
@@ -110,6 +116,8 @@ public class OrderActivity extends AppCompatActivity {
             return;
         }
 
+        softInputAssist = new SoftInputAssist(this);
+
         ResponseObject auxResponseProducts = getProducts(getString(R.string.defaultProduct), false);
 
         if (auxResponseProducts != null) {
@@ -139,6 +147,8 @@ public class OrderActivity extends AppCompatActivity {
                     showMsg(getString(R.string.msgErrMinLength));
                     return;
                 }
+
+                closeKeyboard();
 
                 ResponseObject auxResponseProducts = getProducts(editDescription.getText().toString(), false);
 
@@ -234,6 +244,33 @@ public class OrderActivity extends AppCompatActivity {
 //
 //            }
 //        });
+    }
+
+    @Override
+    protected void onResume() {
+        softInputAssist.onResume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        softInputAssist.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        softInputAssist.onDestroy();
+        super.onDestroy();
+    }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+
+        if (view != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override

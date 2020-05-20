@@ -479,8 +479,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        callRegister();
-//        callDistributor();
+//        callRegister();
+        callDistributor();
     }
 
     private void callDistributor() {
