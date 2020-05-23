@@ -11,6 +11,7 @@ public class BodyOrder implements Serializable {
     private float price;
     private String name;
     private float total;
+    private int multiple;
 
     public String getIdItem() {
         return idItem;
@@ -74,5 +75,13 @@ public class BodyOrder implements Serializable {
 
     public void setUpdatedStock(int updatedStock) {
         this.updatedStock = updatedStock;
+    }
+
+    public int getMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(int multiple) {
+        this.multiple = multiple;
     }
 }

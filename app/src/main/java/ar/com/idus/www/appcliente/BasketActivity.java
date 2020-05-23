@@ -91,7 +91,7 @@ public class BasketActivity extends AppCompatActivity {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         listView = findViewById(R.id.listBody);
-        adapter = new BasketAdapter(BasketActivity.this, R.layout.basket_item, headOrder.getBodyOrders(), txtTotal);
+        adapter = new BasketAdapter(BasketActivity.this, R.layout.basket_item, headOrder.getBodyOrders(), txtTotal, customer, company);
         listView.setAdapter(adapter);
 
         formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

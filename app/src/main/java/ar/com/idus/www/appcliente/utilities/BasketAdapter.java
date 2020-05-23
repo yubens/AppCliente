@@ -3,6 +3,7 @@ package ar.com.idus.www.appcliente.utilities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,11 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 
+import ar.com.idus.www.appcliente.DistributorActivity;
 import ar.com.idus.www.appcliente.R;
 import ar.com.idus.www.appcliente.models.BodyOrder;
+import ar.com.idus.www.appcliente.models.Company;
+import ar.com.idus.www.appcliente.models.Customer;
 
 
 public class BasketAdapter extends ArrayAdapter<BodyOrder> {
@@ -27,6 +31,8 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
     private Activity context;
     private LayoutInflater inflater;
     private TextView txtTotal;
+    private Customer customer;
+    private Company company;
 
     static class ViewHolder {
         TextView txtName;
@@ -40,12 +46,14 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
 
     }
 
-    public BasketAdapter(@NonNull Context context, int resource, ArrayList<BodyOrder> orders, TextView txtTotal) {
+    public BasketAdapter(@NonNull Context context, int resource, ArrayList<BodyOrder> orders, TextView txtTotal, Customer customer, Company company) {
         super(context, resource, orders);
         this.context = (Activity) context;
         this.orders = orders;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.txtTotal = txtTotal;
+        this.company = company;
+        this.customer = customer;
     }
 
     @NonNull
@@ -101,6 +109,7 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         holder.txtSubtotal.setText(total);
         holder.txtQuantity.setText(quantity);
         holder.txtPrice.setText(price);
+//        holder.txtPrice.setText(String.valueOf(order.getUpdatedStock()));
 
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,9 +125,9 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
                     return;
                 }
 
-                actualBody.setQuantity(actualBody.getQuantity() + 1);
-                actualBody.setUpdatedStock(actualBody.getUpdatedStock() - 1);
-                actualBody.setTotal(actualBody.getTotal() + actualBody.getPrice());
+                actualBody.setQuantity(actualBody.getQuantity() + actualBody.getMultiple());
+                actualBody.setUpdatedStock(actualBody.getUpdatedStock() - actualBody.getMultiple());
+                actualBody.setTotal(actualBody.getTotal() + (actualBody.getPrice() * actualBody.getMultiple()));
                 total = String.format("%.2f", actualBody.getTotal());
                 quantity = String.valueOf(actualBody.getQuantity());
                 holder.txtSubtotal.setText(total);
@@ -134,11 +143,35 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
                 BodyOrder actualBody = orders.get(pos);
                 String total, quantity;
 
-                if (actualBody.getQuantity() - 1 == 0) {
+                if (orders.size() == 1 && actualBody.getQuantity() - actualBody.getMultiple() == 0) {
                     AlertDialog.Builder alertBuilder;
-                    alertBuilder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+                    alertBuilder = new AlertDialog.Builder(context);
+                    alertBuilder.setMessage(R.string.msgDeleteLastItem)
+                            .setCancelable(false)
+                            .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(context, DistributorActivity.class);
+                                    intent.putExtra("customer", customer);
+                                    intent.putExtra("company", company);
+                                    context.startActivity(intent);
+                                }
+                            });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+                    return;
+                }
+
+                if (actualBody.getQuantity() - actualBody.getMultiple() == 0) {
+                    AlertDialog.Builder alertBuilder;
+                    alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setMessage(R.string.msgDeleteItem)
-                            .setTitle(R.string.alertWarning)
                             .setCancelable(false)
                             .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
                                 @Override
@@ -159,9 +192,9 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
                     return;
                 }
 
-                actualBody.setQuantity(actualBody.getQuantity() - 1);
-                actualBody.setUpdatedStock(actualBody.getUpdatedStock() + 1);
-                actualBody.setTotal(actualBody.getTotal() - actualBody.getPrice());
+                actualBody.setQuantity(actualBody.getQuantity() - actualBody.getMultiple());
+                actualBody.setUpdatedStock(actualBody.getUpdatedStock() + actualBody.getMultiple());
+                actualBody.setTotal(actualBody.getTotal() - (actualBody.getPrice() * actualBody.getMultiple()));
                 total = String.format("%.2f", actualBody.getTotal());
                 quantity = String.valueOf(actualBody.getQuantity());
                 holder.txtSubtotal.setText(total);

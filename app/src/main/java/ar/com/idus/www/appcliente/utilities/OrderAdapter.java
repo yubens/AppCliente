@@ -124,7 +124,7 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         loadImage(holder.imgItem);
 
         holder.txtItemName.setText(product.getName());
-        multiple = (product.getMultiple().equals("0") ?  "1" : product.getMultiple()) + context.getString(R.string.txtMultiple);
+        multiple = product.getMultiple() + context.getString(R.string.txtMultiple);
         holder.txtItemMultiple.setText(multiple);
         stock = Integer.valueOf(product.getStock()) > 0 ? context.getString(R.string.avilableProd) : context.getString(R.string.notAvailableProd) ;
         holder.txtItemStock.setText(stock);
@@ -179,6 +179,7 @@ public class OrderAdapter extends ArrayAdapter<Product> {
             @Override
             public void onClick(View view) {
                 Product productChosen;
+                int multiple;
 
                 body = new BodyOrder();
                 int pos = holder.btnAddItem.getId();
@@ -192,10 +193,13 @@ public class OrderAdapter extends ArrayAdapter<Product> {
                     return;
                 }
 
+                multiple = Integer.valueOf(productChosen.getMultiple());
+
                 body.setName(productChosen.getName());
                 body.setIdProduct(productChosen.getIdProduct());
                 body.setPrice(productChosen.getRealPrice());
-                body.setQuantity(1);
+                body.setQuantity(multiple);
+                body.setMultiple(multiple);
                 body.setTotal(body.getQuantity() * body.getPrice());
 
                 if (!updateBody(productChosen))
@@ -284,13 +288,14 @@ public class OrderAdapter extends ArrayAdapter<Product> {
 
     private boolean updateBody(Product productChosen) {
         int stock = Integer.valueOf(productChosen.getStock());
+        int multiple = Integer.valueOf(productChosen.getMultiple());
 
         if (listOrder.isEmpty()) {
-            body.setUpdatedStock(stock - 1);
+            body.setUpdatedStock(stock - multiple);
             return false;
         }
 
-        body.setUpdatedStock(stock - 1);
+        body.setUpdatedStock(stock - multiple);
 
         for (BodyOrder item: listOrder) {
             if (item.getIdProduct().equals(body.getIdProduct())) {

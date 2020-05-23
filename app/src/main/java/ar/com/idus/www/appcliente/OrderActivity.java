@@ -292,7 +292,6 @@ public class OrderActivity extends AppCompatActivity {
                     case Constants.OK:
                         checkListOrders(responseListOrders.getResponseData());
                         callOrderInquiry();
-                        System.out.println();
                         break;
 
                     case Constants.SHOW_ERROR:
@@ -470,7 +469,7 @@ public class OrderActivity extends AppCompatActivity {
             if (product.getStock() == null)
                 product.setStock("0");
 
-            if (product.getMultiple() == null)
+            if (product.getMultiple() == null || product.getMultiple().equals("0"))
                 product.setMultiple("1");
         }
 
