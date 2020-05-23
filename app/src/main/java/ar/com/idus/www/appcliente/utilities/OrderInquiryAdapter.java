@@ -63,7 +63,7 @@ public class OrderInquiryAdapter extends ArrayAdapter<OrderState> {
             f = 0f;
 
         total = "Total $ " + String.format("%.2f", f);
-        voucher = "Comprobante: " + order.getId_order();
+        voucher = "Comprobante: \n" + order.getId_order();
         dateState = "Fecha: " + order.getDate_order() + "    Estado: " + order.getState();
 
 
