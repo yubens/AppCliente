@@ -19,18 +19,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Company;
@@ -104,70 +100,71 @@ public class BasketActivity extends AppCompatActivity {
                 AlertDialog.Builder alertBuilder;
                 alertBuilder = new AlertDialog.Builder(BasketActivity.this);
                 alertBuilder.setMessage(R.string.msgConfirmOrder)
-                        .setCancelable(false)
-                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ResponseObject responseSendOrder = sendOrder();
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ResponseObject responseSendOrder = sendOrder();
 
-                                if (responseSendOrder != null) {
-                                    switch (responseSendOrder.getResponseCode()) {
-                                        case Constants.OK:
-                                            ResponseObject responseSendBody = sendBody();
+                            if (responseSendOrder != null) {
+                                switch (responseSendOrder.getResponseCode()) {
+                                    case Constants.OK:
+                                        ResponseObject responseSendBody = sendBody();
 
-                                            if (responseSendBody != null) {
-                                                switch (responseSendBody.getResponseCode()) {
-                                                    case Constants.OK:
-                                                        ResponseObject responseConfirm = confirmOrder();
+                                        if (responseSendBody != null) {
+                                            switch (responseSendBody.getResponseCode()) {
+                                                case Constants.OK:
+                                                    ResponseObject responseConfirm = confirmOrder();
 
-                                                        if (responseConfirm != null) {
-                                                            switch (responseSendBody.getResponseCode()) {
-                                                                case Constants.OK:
-                                                                    showMsg(getString(R.string.msgSuccSendOrder));
-                                                                    callDistributor();
-                                                                    break;
+                                                    if (responseConfirm != null) {
+                                                        switch (responseSendBody.getResponseCode()) {
+                                                            case Constants.OK:
+                                                                showMsg(getString(R.string.msgSuccSendOrder));
+                                                                callDistributor();
+                                                                break;
 
-                                                                case Constants.SHOW_ERROR:
-                                                                    showMsg(responseConfirm.getResponseData());
-                                                                    break;
+                                                            case Constants.SHOW_ERROR:
+                                                                showMsg(responseConfirm.getResponseData());
+                                                                break;
 
-                                                                case Constants.SHOW_EXIT:
-                                                                    showExit(responseConfirm.getResponseData());
-                                                                    break;
-                                                            }
+                                                            case Constants.SHOW_EXIT:
+                                                                showExit(responseConfirm.getResponseData());
+                                                                break;
                                                         }
+                                                    }
 
-                                                        break;
+                                                    break;
 
-                                                    case Constants.SHOW_ERROR:
-                                                        showMsg(responseSendBody.getResponseData());
-                                                        break;
+                                                case Constants.SHOW_ERROR:
+                                                    showMsg(responseSendBody.getResponseData());
+                                                    break;
 
-                                                    case Constants.SHOW_EXIT:
-                                                        showExit(responseSendBody.getResponseData());
-                                                        break;
-                                                }
+                                                case Constants.SHOW_EXIT:
+                                                    showExit(responseSendBody.getResponseData());
+                                                    break;
                                             }
+                                        }
 
-                                            break;
+                                        break;
 
-                                        case Constants.SHOW_ERROR:
-                                            showMsg(responseSendOrder.getResponseData());
-                                            break;
+                                    case Constants.SHOW_ERROR:
+                                        showMsg(responseSendOrder.getResponseData());
+                                        break;
 
-                                        case Constants.SHOW_EXIT:
-                                            showExit(responseSendOrder.getResponseData());
-                                            break;
-                                    }
+                                    case Constants.SHOW_EXIT:
+                                        showExit(responseSendOrder.getResponseData());
+                                        break;
                                 }
                             }
-                        });
+                        }
+                    });
+
                 AlertDialog alert = alertBuilder.create();
                 alert.show();
             }
@@ -179,23 +176,21 @@ public class BasketActivity extends AppCompatActivity {
                 AlertDialog.Builder alertBuilder;
                 alertBuilder = new AlertDialog.Builder(BasketActivity.this);
                 alertBuilder.setMessage(R.string.msgCancelOrder)
-                        .setCancelable(false)
-                        .setNegativeButton(R.string.btnNo, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setPositiveButton(R.string.btnYes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                callDistributor();
-                            }
-                        });
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.btnNo, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton(R.string.btnYes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            callDistributor();
+                        }
+                    });
                 AlertDialog alert = alertBuilder.create();
                 alert.show();
-
-
             }
         });
 
@@ -214,17 +209,14 @@ public class BasketActivity extends AppCompatActivity {
         Location locationGPS = null, locationNet;
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
             if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 showMessageOK(getString(R.string.msgErrorGPS),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // TODO --> ABRIR PARA QUE ENCIENDA GPS
-                                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-//                                showExit(getString(R.string.msgErrorGPS));
-                            }
-                        });
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    });
             } else {
                 locationGPS = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
@@ -248,14 +240,12 @@ public class BasketActivity extends AppCompatActivity {
 
         if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showMessageOK(getString(R.string.msgErrorGPS),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // TODO --> ABRIR PARA QUE ENCIENDA GPS
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-//                                showExit(getString(R.string.msgErrorGPS));
-                        }
-                    });
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
             return;
         }
 
@@ -266,52 +256,43 @@ public class BasketActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        final List<String> permsDenied = new ArrayList<>();
 
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOCATION:
                 if (grantResults.length == 0)
                     return;
 
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Permiso Concedido", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Permiso Denegado", Toast.LENGTH_SHORT).show();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                            showMessageOK(getString(R.string.msgErrorManualConfig),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //TODO >>>>>> LLEVARLO A LA PANTALLA DE PERMISOS
-                                            finishAndRemoveTask();
-                                            moveTaskToBack(true);
-                                            android.os.Process.killProcess(android.os.Process.myPid());
-                                            System.exit(0);
-                                        }
-                                    });
+                        showMessageOK(getString(R.string.msgErrorManualConfig),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finishAndRemoveTask();
+                                    moveTaskToBack(true);
+                                    android.os.Process.killProcess(android.os.Process.myPid());
+                                    System.exit(0);
+                                }
+                            });
 
-                            return;
+                        return;
 
-                        }
-                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                                != PackageManager.PERMISSION_GRANTED) {
-                            // Permission is not granted
-
-                            showMessageOK(getString(R.string.msgErrorLocation),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                ActivityCompat.requestPermissions(BasketActivity.this,
-                                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                                        Constants.REQUEST_CODE_LOCATION);
-                                            }
-                                        }
-                                    });
-                        }
+                    }
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        showMessageOK(getString(R.string.msgErrorLocation),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        ActivityCompat.requestPermissions(BasketActivity.this,
+                                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                                Constants.REQUEST_CODE_LOCATION);
+                                    }
+                                }
+                            });
                     }
                 }
 
@@ -356,8 +337,6 @@ public class BasketActivity extends AppCompatActivity {
     private ResponseObject sendOrder() {
         ResponseObject responseObject, responseToken;
         idOrder = UUID.randomUUID().toString();
-
-//         geo = "-1;-1";
         String observations = editObs.getText().toString();
 
         if (geo == null)

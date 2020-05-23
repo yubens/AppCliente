@@ -1,20 +1,16 @@
 package ar.com.idus.www.appcliente;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-import ar.com.idus.www.appcliente.models.Client;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.models.Distributor;
 import ar.com.idus.www.appcliente.utilities.Constants;
@@ -34,7 +30,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         softInputAssist = new SoftInputAssist(this);
 
@@ -251,12 +246,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(), c);
         intent.putExtra("distributors", distributors);
-        startActivity(intent);
-    }
-
-    private void callOrder() {
-        Intent intent = new Intent(getApplicationContext(), OrderActivity.class);
-        intent.putExtra("customer", customer);
         startActivity(intent);
     }
 

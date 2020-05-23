@@ -12,19 +12,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-
 import java.util.ArrayList;
-
 import ar.com.idus.www.appcliente.DistributorActivity;
 import ar.com.idus.www.appcliente.R;
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Company;
 import ar.com.idus.www.appcliente.models.Customer;
-
 
 public class BasketAdapter extends ArrayAdapter<BodyOrder> {
     private ArrayList<BodyOrder> orders;
@@ -43,7 +39,6 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         TextView txtPrice;
         ImageButton btnAdd;
         ImageButton btnMinus;
-
     }
 
     public BasketAdapter(@NonNull Context context, int resource, ArrayList<BodyOrder> orders, TextView txtTotal, Customer customer, Company company) {
@@ -75,7 +70,6 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
             viewHolder.txtStringTotal = view.findViewById(R.id.txtTotalString);
             viewHolder.btnAdd = view.findViewById(R.id.btnAdd);
             viewHolder.btnMinus = view.findViewById(R.id.btnMinus);
-
             viewHolder.txtName.setTag(position);
             viewHolder.txtQuantity.setTag(position);
             viewHolder.txtPrice.setTag(position);
@@ -109,7 +103,6 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
         holder.txtSubtotal.setText(total);
         holder.txtQuantity.setText(quantity);
         holder.txtPrice.setText(price);
-//        holder.txtPrice.setText(String.valueOf(order.getUpdatedStock()));
 
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,22 +140,22 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
                     AlertDialog.Builder alertBuilder;
                     alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setMessage(R.string.msgDeleteLastItem)
-                            .setCancelable(false)
-                            .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                            .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(context, DistributorActivity.class);
-                                    intent.putExtra("customer", customer);
-                                    intent.putExtra("company", company);
-                                    context.startActivity(intent);
-                                }
-                            });
+                        .setCancelable(false)
+                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(context, DistributorActivity.class);
+                                intent.putExtra("customer", customer);
+                                intent.putExtra("company", company);
+                                context.startActivity(intent);
+                            }
+                        });
                     AlertDialog alert = alertBuilder.create();
                     alert.show();
                     return;
@@ -172,21 +165,21 @@ public class BasketAdapter extends ArrayAdapter<BodyOrder> {
                     AlertDialog.Builder alertBuilder;
                     alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setMessage(R.string.msgDeleteItem)
-                            .setCancelable(false)
-                            .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                            .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    orders.remove(pos);
-                                    calculateTotal();
-                                    notifyDataSetChanged();
-                                }
-                            });
+                        .setCancelable(false)
+                        .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                orders.remove(pos);
+                                calculateTotal();
+                                notifyDataSetChanged();
+                            }
+                        });
                     AlertDialog alert = alertBuilder.create();
                     alert.show();
                     return;

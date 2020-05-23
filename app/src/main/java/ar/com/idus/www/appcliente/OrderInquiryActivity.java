@@ -7,10 +7,8 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.models.Company;
@@ -24,9 +22,8 @@ public class OrderInquiryActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ArrayList<OrderState> listOrders;
     OrderInquiryAdapter adapter;
-    Button btnExit, btnNewOrder;
+    Button btnNewOrder;
     ListView listView;
-    TextView txtError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

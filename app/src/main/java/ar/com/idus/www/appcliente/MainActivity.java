@@ -2,44 +2,29 @@ package ar.com.idus.www.appcliente;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.google.gson.Gson;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
-
-import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Customer;
-import ar.com.idus.www.appcliente.models.HeadOrder;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.SoftInputAssist;
@@ -297,44 +282,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         softInputAssist = new SoftInputAssist(this);
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         ResponseObject responseToken;
         String idPhone, idCustomer;
-        List<String> permissions = new ArrayList<>();
-
 
 //        testingAPI();
 //        testScreen();
 
-
-//
         btnEnter = findViewById(R.id.btnEnter);
         txtIdCustomer = findViewById(R.id.txtIdCustomer);
         editIdCustomer = findViewById(R.id.editIdCustomer);
         editPassCustomer = findViewById(R.id.editPassCustomer);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-
-//        if (!checkPermission(Manifest.permission.READ_PHONE_STATE))
-//            permissions.add(Manifest.permission.READ_PHONE_STATE);
-//            requestPermission(Manifest.permission.READ_PHONE_STATE, Constants.REQUEST_CODE_STATE);
-
-//        if (!checkPermission(Manifest.permission.ACCESS_FINE_LOCATION))
-//            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-////            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.REQUEST_CODE_STATE);
-
-//        if (!permissions.isEmpty())
-//            requestPermission(permissions);
-
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            // Permission is not granted
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
-//                   1);
-//        }
-      //
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -342,12 +302,6 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.READ_PHONE_STATE},
                     Constants.REQUEST_CODE_STATE);
         }
-
-
-//        if (!Utilities.checkConnection(getApplicationContext())) {
-//            showExit(getString(R.string.msgErrInternet));
-//            return;
-//        }
 
         if(Utilities.getData(sharedPreferences, "token").equals(Constants.NO_RESULT_STR)) {
             responseToken = Utilities.getNewToken(getApplicationContext(), sharedPreferences);
@@ -411,7 +365,6 @@ public class MainActivity extends AppCompatActivity {
                 } else if (!firstTime && (id.isEmpty() || pass.isEmpty())){
                     showMsg(getString(R.string.msgErrorEmptyIdPass));
                 } else {
-
                     responseCustomer = getCustomer(id);
 
                     if (responseCustomer != null) {
@@ -453,79 +406,45 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private boolean checkPermission(String permission) {
-        if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            return false;
-        }
-        return true;
-
-//        return (ContextCompat.checkSelfPermission(this, permission)
-//                != PackageManager.PERMISSION_GRANTED);
-    }
-
-    private void requestPermission(List<String> permissions) {
-        ActivityCompat.requestPermissions(this,
-                permissions.toArray(new String[permissions.size()]),
-                Constants.REQUEST_CODE_STATE);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        final List<String> permsDenied = new ArrayList<>();
 
         switch (requestCode) {
             case Constants.REQUEST_CODE_STATE:
                 if (grantResults.length == 0)
                     return;
 
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (!MainActivity.this.isFinishing())
-                        Toast.makeText(getApplicationContext(), "Permiso Concedido", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (!MainActivity.this.isFinishing())
-                        Toast.makeText(getApplicationContext(), "Permiso Denegado", Toast.LENGTH_SHORT).show();
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.READ_PHONE_STATE)) {
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                Manifest.permission.READ_PHONE_STATE)) {
+                        showMessageOKCancel(getString(R.string.msgErrorManualConfig),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    onBackPressed();
+                                }
+                            });
 
-                            showMessageOKCancel(getString(R.string.msgErrorManualConfig),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //TODO >>>>>> LLEVARLO A LA PANTALLA DE PERMISOS
-//                                        Intent intent = new Intent();
-//                                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                                        Uri uri = Uri.fromParts("package", MainActivity.this.getPackageName(), null);
-//                                        intent.setData(uri);
-//                                        startActivity(intent);
-                                        onBackPressed();
-                                    }
-                                });
+                        return;
 
-                            return;
-
-                        }
-                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                // Permission is not granted
-
-                                showMessageOKCancel(getString(R.string.msgErrorState),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                ActivityCompat.requestPermissions(MainActivity.this,
-                                                        new String[]{Manifest.permission.READ_PHONE_STATE},
-                                                        Constants.REQUEST_CODE_STATE);
-                                            }
-                                        }
-                                    });
-                            }
                     }
+
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        showMessageOKCancel(getString(R.string.msgErrorState),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(MainActivity.this,
+                                            new String[]{Manifest.permission.READ_PHONE_STATE},
+                                            Constants.REQUEST_CODE_STATE);
+
+                                }
+                            });
+                    }
+
                 }
 
                 break;
@@ -534,11 +453,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(MainActivity.this)
-                .setMessage(message)
-                .setPositiveButton(getString(R.string.btnAccept), okListener)
-                .setCancelable(false)
-                .create()
-                .show();
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.btnAccept), okListener)
+            .setCancelable(false)
+            .create()
+            .show();
     }
 
     private void checkCustomer (String data, String id, String pass, boolean firstTime) {
@@ -559,6 +478,7 @@ public class MainActivity extends AppCompatActivity {
                 customer.getEmailOtorgado().isEmpty() || customer.getContrasena().isEmpty() || customer.getDireccionOtorgada().isEmpty() || customer.getTelefonoOtorgado().isEmpty() ||
                 isFirstEntry()) {
             callRegister();
+//            callDistributor();
             return;
         }
 

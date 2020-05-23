@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 
 import ar.com.idus.www.appcliente.R;
@@ -18,19 +16,16 @@ import ar.com.idus.www.appcliente.models.OrderState;
 
 public class OrderInquiryAdapter extends ArrayAdapter<OrderState> {
     private ArrayList<OrderState> orders;
-    private Context context;
     private LayoutInflater inflater;
 
     static class ViewHolder {
         TextView txtVoucher;
         TextView txtDateState;
         TextView txtTotal;
-
     }
 
     public OrderInquiryAdapter(@NonNull Context context, int resource, ArrayList<OrderState> orders) {
         super(context, resource, orders);
-        this.context = context;
         this.orders = orders;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -65,7 +60,6 @@ public class OrderInquiryAdapter extends ArrayAdapter<OrderState> {
         total = "Total $ " + String.format("%.2f", f);
         voucher = "Comprobante: \n" + order.getId_order();
         dateState = "Fecha: " + order.getDate_order() + "    Estado: " + order.getState();
-
 
         viewHolder.txtVoucher.setText(voucher);
         viewHolder.txtDateState.setText(dateState);

@@ -1,14 +1,11 @@
 package ar.com.idus.www.appcliente.utilities;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.EditText;
-import android.widget.Toast;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,11 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import ar.com.idus.www.appcliente.OrderActivity;
 import ar.com.idus.www.appcliente.R;
-import ar.com.idus.www.appcliente.models.Product;
-
 import static ar.com.idus.www.appcliente.R.string.msgErrToken;
 
 public abstract class Utilities {
@@ -48,7 +41,6 @@ public abstract class Utilities {
                     return true;
             }
 
-//            Toast.makeText(context, R.string.msgErrInternet, Toast.LENGTH_LONG).show();
             return false;
 
         } catch (Exception e) {
@@ -62,10 +54,6 @@ public abstract class Utilities {
         int color = error ? android.R.color.holo_red_light : R.color.colorPrimaryLight ;
         editText.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(color)));
         return error;
-    }
-
-    public static void showMsg(String msg, Context context) {
-//        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     public static void saveData(SharedPreferences sharedPreferences, String key, String data) {
@@ -84,28 +72,6 @@ public abstract class Utilities {
         editor.remove(key);
         editor.commit();
     }
-
-    public void generateRandom() {
-//        int leftLimit = 48; // numeral '0'
-//        int rightLimit = 122; // letter 'z'
-//        int targetStringLength = 10;
-//        Random random = new Random();
-//
-//        String generatedString;
-//        generatedString = random. ints(leftLimit, rightLimit + 1)
-//                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-//                .limit(targetStringLength)
-//                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-//                .toString();
-//
-//        System.out.println(generatedString);
-    }
-
-    public static void test() {
-
-    }
-
-
 
     public static ResponseObject getNewToken(Context context, SharedPreferences sharedPreferences) {
         ResponseObject responseObject;
@@ -166,7 +132,6 @@ public abstract class Utilities {
                     StringBuilder result = new StringBuilder();
                     HttpURLConnection cnx = null;
                     super.run();
-
 
                     try {
                         url = new URL(Constants.URL + "/getToken.php?idApp=BuyIdus");
@@ -255,10 +220,6 @@ public abstract class Utilities {
                                 resultCode.set(Constants.NO_DATA);
 
                             resultString.set(result.toString());
-
-
-//                            throw new Exception("hola");
-
                         }
 
 
@@ -282,10 +243,6 @@ public abstract class Utilities {
                 thread.join(waitTime);
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());
-
-//                throw  new InterruptedException("hi");
-
-//                token = resultString.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 responseObject.setResponseCode(Constants.EXCEPTION);
@@ -305,76 +262,51 @@ public abstract class Utilities {
         ResponseObject responseObject = new ResponseObject();
         final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
         final AtomicReference <String> resultString = new AtomicReference<>();
-//        ProgressDialog progressDialog = new ProgressDialog(context);
-
 
         if (checkConnection(context)) {
+                int status;
+                String line;
+                URL urlOpen;
+                StringBuilder result = new StringBuilder();
+                HttpURLConnection cnx = null;
 
-                    int status;
-                    String line;
-                    URL urlOpen;
-                    StringBuilder result = new StringBuilder();
-                    HttpURLConnection cnx = null;
+                try {
+                    urlOpen = new URL(Constants.URL + url);
+                    cnx = (HttpURLConnection) urlOpen.openConnection();
+                    status = cnx.getResponseCode();
 
+                    resultCode.set(status);
 
-                    try {
-                        urlOpen = new URL(Constants.URL + url);
-                        cnx = (HttpURLConnection) urlOpen.openConnection();
-                        status = cnx.getResponseCode();
+                    if (status == Constants.OK) {
+                        InputStream in = new BufferedInputStream(cnx.getInputStream());
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-
-
-                        resultCode.set(status);
-
-                        if (status == Constants.OK) {
-                            InputStream in = new BufferedInputStream(cnx.getInputStream());
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                            while ((line = reader.readLine()) != null) {
-                                result.append(line);
-                            }
-
-                            if (result.toString().equals("[]"))
-                                resultCode.set(Constants.NO_DATA);
-
-                            resultString.set(result.toString());
-
-
-//                            throw new Exception("hola");
-
+                        while ((line = reader.readLine()) != null) {
+                            result.append(line);
                         }
 
+                        if (result.toString().equals("[]"))
+                            resultCode.set(Constants.NO_DATA);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        resultString.set(e.getMessage());
-                        resultCode.set(Constants.EXCEPTION);
-
-                    } finally {
-                        if (cnx != null) {
-//                            resultString.set(result.toString());
-                            cnx.disconnect();
-                            responseObject.setResponseCode(resultCode.get());
-                            responseObject.setResponseData(resultString.get());
-                        }
-
+                        resultString.set(result.toString());
                     }
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    resultString.set(e.getMessage());
+                    resultCode.set(Constants.EXCEPTION);
 
-
+                } finally {
+                    if (cnx != null) {
+//                            resultString.set(result.toString());
+                        cnx.disconnect();
+                        responseObject.setResponseCode(resultCode.get());
+                        responseObject.setResponseData(resultString.get());
+                    }
+                }
 
                 responseObject.setResponseCode(resultCode.get());
                 responseObject.setResponseData(resultString.get());
-
-//                throw  new InterruptedException("hi");
-
-//                token = resultString.get();
-
-
-//            } finally {
-//                if (progressDialog.isShowing())
-//                    progressDialog.dismiss();
-//            }
 
             return responseObject;
 
@@ -426,7 +358,6 @@ public abstract class Utilities {
 
             try {
                 thread.start();
-//                thread.wait(1000);
                 thread.join(waitTime);
                 responseObject = new ResponseObject();
                 responseObject.setResponseCode(resultCode.get());
