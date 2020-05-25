@@ -48,7 +48,7 @@
     <string name="customerEmail">Email <font color='red'>*</font></string>
     <string name="customerPhone">Celular con codigo de area (sin 0 y sin 15) <font color='red'>*</font></string>
     <string name="customerPass">Ingrese Contraseña</string>
-    <string name="helpPass"><font size="12">Contraseña (min 6 digitos, 1 mayuscula, 1 minuscula y 1 numero) <font color='red'>*</font></font></string>
+    <string name="helpPass">Contraseña <font color='red'>*</font></string>
     <string name="customerPassRep">Repita Contraseña <font color='red'>*</font></string>
     <string name="distribSelect">Elija el disribuidor con el que desea trabajar</string>
     <string name="distribName">Nombre del distribuidor</string>
@@ -79,6 +79,7 @@
     <string name="msgErrDataIn">Verifique los datos ingresados</string>
     <string name="msgErrPass">Ambas contraseñas deben coincidir</string>
     <string name="msgErrWrongPass">La contraseña ingresada no es la correcta</string>
+    <string name="msgHelpPass">La contraseña debe estar compuesta de al menos 6 digitos, incluyendo 1 mayuscula, 1 minuscula y 1 numero</string>
     <string name="msgErrToken">No pudo obtenerse el token de seguridad, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
     <string name="msgErrFind">No pudo verificarse el dispositivo, por favor intente abrir la aplicacion nuevamente en unos minutos</string>
     <string name="msgErrException">Se produjo una excepcion, por favor intente abrir la aplicacion nuevamente en unos minutos. </string>

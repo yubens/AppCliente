@@ -99,6 +99,9 @@ public class RegisterActivity extends AppCompatActivity {
                     if (errorEmail || errorPhone || errorPass)
                         Toast.makeText(getApplicationContext(), R.string.msgErrDataIn, Toast.LENGTH_SHORT).show();
 
+                    if (errorPass)
+                        editPass.setError(getString(R.string.msgHelpPass));
+
                     else if (!pass.equals(passRep))
                         Toast.makeText(getApplicationContext(), R.string.msgErrPass, Toast.LENGTH_SHORT).show();
                     else {
@@ -260,7 +263,7 @@ public class RegisterActivity extends AppCompatActivity {
         return phone.length() < 10 || phone.startsWith("0") || phone.startsWith("15");
     }
 
-    private boolean checkPass (String pass) {
+    private boolean checkPass(String pass) {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$";
         Pattern pattern = Pattern.compile(regex);
 
