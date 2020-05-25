@@ -110,58 +110,85 @@ public class BasketActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.btnAccept, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ResponseObject responseSendOrder = sendOrder();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(BasketActivity.this);
+                            builder.setCancelable(false); // if you want user to wait for some process to finish,
+                            builder.setView(R.layout.layout_loading_dialog);
+                            final AlertDialog processDialog = builder.create();
+                            processDialog.show();
 
-                            if (responseSendOrder != null) {
-                                switch (responseSendOrder.getResponseCode()) {
-                                    case Constants.OK:
-                                        ResponseObject responseSendBody = sendBody();
 
-                                        if (responseSendBody != null) {
-                                            switch (responseSendBody.getResponseCode()) {
-                                                case Constants.OK:
-                                                    ResponseObject responseConfirm = confirmOrder();
+                            Thread thread = new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
 
-                                                    if (responseConfirm != null) {
-                                                        switch (responseSendBody.getResponseCode()) {
-                                                            case Constants.OK:
-                                                                showMsg(getString(R.string.msgSuccSendOrder));
-                                                                callDistributor();
-                                                                break;
+                                    ResponseObject responseSendOrder = sendOrder();
 
-                                                            case Constants.SHOW_ERROR:
-                                                                showMsg(responseConfirm.getResponseData());
-                                                                break;
+                                    if (responseSendOrder != null) {
+                                        switch (responseSendOrder.getResponseCode()) {
+                                            case Constants.OK:
+                                                ResponseObject responseSendBody = sendBody();
 
-                                                            case Constants.SHOW_EXIT:
-                                                                showExit(responseConfirm.getResponseData());
-                                                                break;
-                                                        }
+                                                if (responseSendBody != null) {
+                                                    switch (responseSendBody.getResponseCode()) {
+                                                        case Constants.OK:
+                                                            ResponseObject responseConfirm = confirmOrder();
+
+                                                            if (responseConfirm != null) {
+                                                                switch (responseConfirm.getResponseCode()) {
+                                                                    case Constants.OK:
+                                                                        showMsg(getString(R.string.msgSuccSendOrder));
+                                                                        callDistributor();
+                                                                        break;
+
+                                                                    case Constants.SHOW_ERROR:
+                                                                        showMsg(responseConfirm.getResponseData());
+                                                                        break;
+
+                                                                    case Constants.SHOW_EXIT:
+                                                                        showExit(responseConfirm.getResponseData());
+                                                                        break;
+                                                                }
+                                                            }
+
+                                                            break;
+
+                                                        case Constants.SHOW_ERROR:
+                                                            showMsg(responseSendBody.getResponseData());
+                                                            break;
+
+                                                        case Constants.SHOW_EXIT:
+                                                            showExit(responseSendBody.getResponseData());
+                                                            break;
                                                     }
+                                                }
 
-                                                    break;
+                                                break;
 
-                                                case Constants.SHOW_ERROR:
-                                                    showMsg(responseSendBody.getResponseData());
-                                                    break;
+                                            case Constants.SHOW_ERROR:
+                                                showMsg(responseSendOrder.getResponseData());
+                                                break;
 
-                                                case Constants.SHOW_EXIT:
-                                                    showExit(responseSendBody.getResponseData());
-                                                    break;
-                                            }
+                                            case Constants.SHOW_EXIT:
+                                                showExit(responseSendOrder.getResponseData());
+                                                break;
                                         }
+                                    }
 
-                                        break;
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (processDialog.isShowing())
+                                                processDialog.cancel();
 
-                                    case Constants.SHOW_ERROR:
-                                        showMsg(responseSendOrder.getResponseData());
-                                        break;
 
-                                    case Constants.SHOW_EXIT:
-                                        showExit(responseSendOrder.getResponseData());
-                                        break;
+                                        }
+                                    });
                                 }
-                            }
+                            };
+
+                            thread.start();
+
                         }
                     });
 
@@ -309,9 +336,14 @@ public class BasketActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void showMsg(String msg) {
-        if (!BasketActivity.this.isFinishing())
-            Toast.makeText(BasketActivity.this, msg, Toast.LENGTH_LONG).show();
+    private void showMsg(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!BasketActivity.this.isFinishing())
+                    Toast.makeText(BasketActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void calculateTotal() {

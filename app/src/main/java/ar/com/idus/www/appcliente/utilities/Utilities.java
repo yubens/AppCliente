@@ -227,8 +227,8 @@ public abstract class Utilities {
                 } finally {
                     if (cnx != null) {
                         cnx.disconnect();
-                        responseObject.setResponseCode(resultCode.get());
-                        responseObject.setResponseData(resultString.get());
+//                        responseObject.setResponseCode(resultCode.get());
+//                        responseObject.setResponseData(resultString.get());
                     }
                 }
 

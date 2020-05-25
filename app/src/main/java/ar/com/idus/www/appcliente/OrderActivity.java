@@ -185,6 +185,9 @@ public class OrderActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (dialog.isShowing())
+                                dialog.cancel();
+
                             if (responseListOrders != null) {
                                 switch (responseListOrders.getResponseCode()) {
                                     case Constants.OK:
@@ -250,6 +253,9 @@ public class OrderActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (dialog.isShowing())
+                            dialog.cancel();
+
                         if (auxResponseProducts != null) {
                             switch (auxResponseProducts.getResponseCode()) {
                                 case Constants.OK:
@@ -266,9 +272,6 @@ public class OrderActivity extends AppCompatActivity {
                                     showExit(auxResponseProducts.getResponseData());
                                     break;
                             }
-
-                            if (dialog.isShowing())
-                                dialog.cancel();
                         }
                     }
                 });
