@@ -1,14 +1,10 @@
 package ar.com.idus.www.appcliente;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import java.text.DecimalFormat;
@@ -103,26 +100,7 @@ public class OrderActivity extends AppCompatActivity {
 
         softInputAssist = new SoftInputAssist(this);
 
-        showWaiting();
-        ResponseObject auxResponseProducts = getProducts(getString(R.string.defaultProduct), false);
-
-        if (auxResponseProducts != null) {
-            switch (auxResponseProducts.getResponseCode()) {
-                case Constants.OK:
-                    checkProducts(auxResponseProducts.getResponseData());
-                    orderAdapter = new OrderAdapter(OrderActivity.this, R.layout.order_item, productList, listOrder);
-                    listView.setAdapter(orderAdapter);
-                    break;
-
-                case Constants.SHOW_ERROR:
-                    showMsg(auxResponseProducts.getResponseData());
-                    break;
-
-                case Constants.SHOW_EXIT:
-                    showExit(auxResponseProducts.getResponseData());
-                    break;
-            }
-        }
+        searchProducts("menta");
 
         imgButFindDesc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,25 +114,7 @@ public class OrderActivity extends AppCompatActivity {
 
                 closeKeyboard();
 
-                ResponseObject auxResponseProducts = getProducts(editDescription.getText().toString(), false);
-
-                if (auxResponseProducts != null) {
-                    switch (auxResponseProducts.getResponseCode()) {
-                        case Constants.OK:
-                            checkProducts(auxResponseProducts.getResponseData());
-                            orderAdapter = new OrderAdapter(OrderActivity.this, R.layout.order_item, productList, listOrder);
-                            listView.setAdapter(orderAdapter);
-                            break;
-
-                        case Constants.SHOW_ERROR:
-                            showMsg(auxResponseProducts.getResponseData());
-                            break;
-
-                        case Constants.SHOW_EXIT:
-                            showExit(auxResponseProducts.getResponseData());
-                            break;
-                    }
-                }
+                searchProducts(editDescription.getText().toString());
             }
         });
 
@@ -211,56 +171,46 @@ public class OrderActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.optWatchOrders) {
-            ResponseObject responseListOrders = getListOrders();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(false); // if you want user to wait for some process to finish,
+            builder.setView(R.layout.layout_loading_dialog);
+            final AlertDialog dialog = builder.create();
+            dialog.show();
 
-            if (responseListOrders != null) {
-                switch (responseListOrders.getResponseCode()) {
-                    case Constants.OK:
-                        checkListOrders(responseListOrders.getResponseData());
-                        callOrderInquiry();
-                        break;
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    final ResponseObject responseListOrders = getListOrders();
 
-                    case Constants.SHOW_ERROR:
-                        showMsg(responseListOrders.getResponseData());
-                        break;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (responseListOrders != null) {
+                                switch (responseListOrders.getResponseCode()) {
+                                    case Constants.OK:
+                                        checkListOrders(responseListOrders.getResponseData());
+                                        callOrderInquiry();
+                                        break;
 
-                    case Constants.SHOW_EXIT:
-                        showExit(responseListOrders.getResponseData());
-                        break;
+                                    case Constants.SHOW_ERROR:
+                                        showMsg(responseListOrders.getResponseData());
+                                        break;
+
+                                    case Constants.SHOW_EXIT:
+                                        showExit(responseListOrders.getResponseData());
+                                        break;
+                                }
+                            }
+                        }
+                    });
                 }
-            }
+            };
+
+            thread.start();
         }
 
         return super.onContextItemSelected(item);
     }
-
-    private TextWatcher watcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            float amount, result;
-            String total = "";
-//            if (s.length() > 0) {
-//                amount = Float.parseFloat(s.toString());
-//                result = chosenProduct.getRealPrice() * amount;
-//                total = getString(R.string.txtTotal ) + " " + String.format("%.2f", result);
-//                txtTotal.setText(total);
-//            }
-//
-//            if(editQuantity.getText().toString().isEmpty()){
-//                txtTotal.setText(R.string.txtTotal);
-//            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
 
     private void setHeadOrder() {
         headOrder.setBodyOrders(listOrder);
@@ -285,39 +235,55 @@ public class OrderActivity extends AppCompatActivity {
         productList = aux;
     }
 
-    private void showWaiting() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle("Buscando...");
-        progress.setMessage("Por favor espere...");
-        progress.show();
+    private void searchProducts(final String data) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+        builder.setCancelable(false); // if you want user to wait for some process to finish,
+        builder.setView(R.layout.layout_loading_dialog);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-        Runnable progressRunnable = new Runnable() {
-
+        Thread thread = new Thread() {
             @Override
             public void run() {
-                progress.cancel();
+                final ResponseObject auxResponseProducts = getProducts(data);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (auxResponseProducts != null) {
+                            switch (auxResponseProducts.getResponseCode()) {
+                                case Constants.OK:
+                                    checkProducts(auxResponseProducts.getResponseData());
+                                    orderAdapter = new OrderAdapter(OrderActivity.this, R.layout.order_item, productList, listOrder);
+                                    listView.setAdapter(orderAdapter);
+                                    break;
+
+                                case Constants.SHOW_ERROR:
+                                    showMsg(auxResponseProducts.getResponseData());
+                                    break;
+
+                                case Constants.SHOW_EXIT:
+                                    showExit(auxResponseProducts.getResponseData());
+                                    break;
+                            }
+
+                            if (dialog.isShowing())
+                                dialog.cancel();
+                        }
+                    }
+                });
             }
         };
 
-        Handler pdCanceller = new Handler();
-        pdCanceller.postDelayed(progressRunnable, 1000);
+        thread.start();
     }
 
-    private ResponseObject getProducts(String data, boolean isCode) {
-        showWaiting();
-
-        String prodDesc = "", prodCode = "";
-
-        if (isCode)
-            prodCode = data;
-        else
-            prodDesc = data;
-
+    private ResponseObject getProducts(final String data) {
         String url = "/getProduct.php?token=" + Utilities.getData(sharedPreferences, "token") +
-                        "&idCompany=" + customer.getEmpresaId() + "&codePriceList=" + customer.getCodigoLista() +
-                        "&findDesc=" + prodDesc + "&findCode=" + prodCode;
+                "&idCompany=" + customer.getEmpresaId() + "&codePriceList=" + customer.getCodigoLista() +
+                "&findDesc=" + data + "&findCode=";
 
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
+        ResponseObject responseObject = Utilities.getResponse2(getApplicationContext(), url);
         ResponseObject responseToken;
 
         int code = responseObject.getResponseCode();
@@ -338,13 +304,13 @@ public class OrderActivity extends AppCompatActivity {
             } else {
                 url = "/getProduct.php?token=" +  responseToken.getResponseData() +
                         "&idCompany=" + customer.getEmpresaId() + "&codePriceList=" + customer.getCodigoLista() +
-                        "&findDesc=" + prodDesc + "&findCode=" + prodCode;
-                responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
+                        "&findDesc=" + data + "&findCode=";
+                responseObject = Utilities.getResponse2(getApplicationContext(), url);
 
                 code = responseObject.getResponseCode();
 
                 if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-                    responseObject = Utilities.getResponse(getApplicationContext(), url, 0);
+                    responseObject = Utilities.getResponse2(getApplicationContext(), url);
             }
         }
 
@@ -391,7 +357,7 @@ public class OrderActivity extends AppCompatActivity {
         String url = "/getB2BOrdersState.php?token=" + Utilities.getData(sharedPreferences, "token") +
                 "&idCustomer=" +  customer.getIdCliente();
 
-        ResponseObject responseObject = Utilities.getResponse(getApplicationContext(), url, 5000);
+        ResponseObject responseObject = Utilities.getResponse2(getApplicationContext(), url);
         ResponseObject responseToken;
 
         int code = responseObject.getResponseCode();
@@ -477,31 +443,6 @@ public class OrderActivity extends AppCompatActivity {
         intent.putExtra("order", headOrder);
         intent.putExtra("company", company);
         startActivity(intent);
-    }
-
-    private HeadOrder testing (HeadOrder headOrder) {
-        BodyOrder order;
-        ArrayList<BodyOrder> list = new ArrayList<>();
-
-        for (int i = 1 ; i < 31; i++) {
-            order = new BodyOrder();
-            order.setUpdatedStock(i);
-            order.setName("Producto " + i);
-
-            if (i%2 == 0)
-                order.setPrice(10);
-            else
-                order.setPrice(20);
-
-            order.setQuantity(i);
-            order.setTotal(i * order.getPrice());
-            order.setIdProduct("ID " + i);
-            list.add(order);
-        }
-
-        headOrder.setBodyOrders(list);
-        return  headOrder;
-
     }
 
     private void callOrderInquiry () {

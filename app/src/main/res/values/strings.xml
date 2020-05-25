@@ -33,6 +33,7 @@
     <string name="btnAccept">Aceptar</string>
     <string name="btnYes">Si</string>
     <string name="btnNo">No</string>
+    <string name="processing">Procesando&#8230; Por favor espere</string>
 
     <string name="distribId">Ingrese el ID enviado por la distribuidora</string>
     <string name="distribInfo">Usted está trabajando con</string>

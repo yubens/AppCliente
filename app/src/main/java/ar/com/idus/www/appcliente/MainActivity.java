@@ -10,11 +10,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -24,11 +24,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import ar.com.idus.www.appcliente.models.Customer;
 import ar.com.idus.www.appcliente.utilities.Constants;
 import ar.com.idus.www.appcliente.utilities.ResponseObject;
 import ar.com.idus.www.appcliente.utilities.SoftInputAssist;
 import ar.com.idus.www.appcliente.utilities.Utilities;
+
 
 public class MainActivity extends AppCompatActivity {
     Button btnEnter;
@@ -37,11 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Customer customer;
     SharedPreferences sharedPreferences;
     boolean firstEntry = false;
-    ProgressBar progressBar;
     SoftInputAssist softInputAssist;
-
-     ProgressDialog progressDialog2;
-
 
 
     public boolean isFirstEntry() {
@@ -74,37 +73,140 @@ public class MainActivity extends AppCompatActivity {
 
         protected ResponseObject doInBackground(Void... params) {
             // call upload photo here.
-            String url = "/getProduct.php?token=cb70172573a55f95c288b327e6559cf7 &idCompany=7f9a1a82-3715-4a15-bba5-39074617e5db&codePriceList=50&findDesc=beld&findCode=";
+            String url = "/getProduct.php?token=c00e4bbaaaea8a191c7d234be7d5a48b&idCompany=7f9a1a82-3715-4a15-bba5-39074617e5db&codePriceList=50&findDesc=beld&findCode=";
 
-            ResponseObject responseObject = Utilities.getResponse2(MainActivity.this, url, 0);
+            return Utilities.getResponse2(MainActivity.this, url);
 
-            return responseObject;
         }
 
     }
 
-
     public void testingAPI() {
+        final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
+        final AtomicInteger resultCode2 = new AtomicInteger(Constants.NO_DATA);
+        final AtomicReference<String> resultString = new AtomicReference<>();
+        final AtomicReference<String> resultString2 = new AtomicReference<>();
+        final ProgressDialog progress2 = new ProgressDialog(this);
+        progress2.setTitle("Connecting");
+        progress2.setMessage("Please wait while we connect to devices...");
+        progress2.show();
 
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle("Connecting");
-        progress.setMessage("Please wait while we connect to devices...");
-        progress.show();
+        final String url = "/getProduct.php?token=8f4db412b1969ec580ebe6de1b7b472c&idCompany=7f9a1a82-3715-4a15-bba5-39074617e5db&codePriceList=50&findDesc=beld&findCode=";
 
-        Runnable progressRunnable = new Runnable() {
+//        Runnable progressRunnable = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                progress.cancel();
+//            }
+//        };
 
+        ResponseObject respuestaFinal;
+
+        final Handler pdCanceller = new Handler() {
             @Override
-            public void run() {
-                progress.cancel();
+            public void handleMessage(Message msg) {
+                if (progress2.isShowing()) {
+                    progress2.cancel();
+                    System.out.println("dialogo cancelado");
+                    Bundle data = msg.getData();
+                    resultCode2.set(data.getInt("code"));
+                    resultString2.set(data.getString("data"));
+                }
+
+                super.handleMessage(msg);
             }
         };
+//        pdCanceller.postDelayed(progressRunnable, 3000);
 
-        Handler pdCanceller = new Handler();
-        pdCanceller.postDelayed(progressRunnable, 3000);
+//        try {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    //heavy job here
+//                    //send message to main thread
+//                    try {
+//                        Thread.sleep(3000);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    ResponseObject responseObject = Utilities.getResponse2(MainActivity.this, url, 0);
+//                    System.out.println("acaaaaaaaaaaaaaaaa " + responseObject.getResponseData());
+//                    pdCanceller.sendEmptyMessage(0);
+//                }
+//            }).start();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-//        ResponseObject object = new GetProducts().execute();
+        try {
+            Thread t =  new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //heavy job here
+                    //send message to main thread
+                    try {
+                        Thread.sleep(10000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    ResponseObject responseObject = Utilities.getResponse2(MainActivity.this, url);
+                    System.out.println("acaaaaaaaaaaaaaaaa " + responseObject.getResponseData());
+                    pdCanceller.sendEmptyMessage(0);
+                }
+            });
+
+
+            t.join(0);
+            t.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+//        final ResponseObject responseObject;
+
+
+//        Thread thread = new Thread() {
+//            @Override
+//            public void run() {
+//                try{
+//                    sleep(2000);
+//                    ResponseObject responseObject = Utilities.getResponse2(MainActivity.this, url, 0);
+//                    System.out.println("acaaaaaaaaaaaaaaaa " + responseObject.getResponseData());
+//                    resultCode.set(responseObject.getResponseCode());
+//                    resultString.set(responseObject.getResponseData());
+//                    pdCanceller.sendEmptyMessage(0);
+//                }catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        };
+//
+//        try {
+//            thread.start();
+//            thread.join(0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+
+
+        System.out.println("yooooooooooooooooooooooooo paseeee");
+
+
+
+
+//        new GetProducts().execute();
 
 //        final ProgressDialog progressDialog2 = new ProgressDialog(MainActivity.this);
+
 //
 //        progressDialog2.setCancelable(false);
 //        progressDialog2.setTitle("Buscando...");
@@ -286,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
         ResponseObject responseToken;
         String idPhone, idCustomer;
 
+//        Utilities.testingAPI(MainActivity.this, handler, dialog);
 //        testingAPI();
 //        testScreen();
 
@@ -297,7 +400,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_PHONE_STATE},
                     Constants.REQUEST_CODE_STATE);

@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import ar.com.idus.www.appcliente.R;
+
 import static ar.com.idus.www.appcliente.R.string.msgErrToken;
 
 public abstract class Utilities {
@@ -67,7 +68,7 @@ public abstract class Utilities {
         return sharedPreferences.getString(key, Constants.NO_RESULT_STR);
     }
 
-    public static void deleteData (SharedPreferences sharedPreferences, String key) {
+    public static void deleteData(SharedPreferences sharedPreferences, String key) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(key);
         editor.commit();
@@ -84,7 +85,7 @@ public abstract class Utilities {
         code = responseObject.getResponseCode();
 
         if (code == Constants.SERVER_ERROR || code == Constants.EXCEPTION || code == Constants.NO_DATA)
-            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 5000);
+            responseObject = getResponse(context, "/getToken.php?idApp=BuyIdus", 0);
 
         if (responseObject != null) {
             switch (responseObject.getResponseCode()) {
@@ -118,73 +119,6 @@ public abstract class Utilities {
         return responseObject;
     }
 
-    public static String getToken(final Context context) {
-        String token = Constants.NO_RESULT_STR;
-        final AtomicReference <String> tokenString = new AtomicReference<>();
-
-        if (checkConnection(context)) {
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    URL url;
-                    int response;
-                    String linea;
-                    StringBuilder result = new StringBuilder();
-                    HttpURLConnection cnx = null;
-                    super.run();
-
-                    try {
-                        url = new URL(Constants.URL + "/getToken.php?idApp=BuyIdus");
-                        cnx = (HttpURLConnection) url.openConnection();
-
-                        response = cnx.getResponseCode();
-
-                        if (response == Constants.OK) {
-                            InputStream in = new BufferedInputStream(cnx.getInputStream());
-                            BufferedReader leer = new BufferedReader(new InputStreamReader(in));
-
-                            while ((linea = leer.readLine()) != null) {
-                                result.append(linea);
-                            }
-
-                            System.out.println("token generado " + result);
-                            tokenString.set(result.toString());
-
-                        } else
-                            tokenString.set(Constants.NO_RESULT_STR);
-
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        tokenString.set(Constants.NO_RESULT_STR);
-
-                    } finally {
-                        if (cnx != null) {
-                            tokenString.set(result.toString());
-                            cnx.disconnect();
-                        }
-
-                    }
-                }
-            };
-
-            try {
-                thread.start();
-                thread.join(1000);
-                token = tokenString.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return  token;
-
-        } else
-            return token;
-
-    }
-
-
-
     public static ResponseObject getResponse(Context context, final String url, long waitTime) {
         ResponseObject responseObject = new ResponseObject();
         final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
@@ -205,7 +139,6 @@ public abstract class Utilities {
                         urlOpen = new URL(Constants.URL + url);
                         cnx = (HttpURLConnection) urlOpen.openConnection();
                         status = cnx.getResponseCode();
-
                         resultCode.set(status);
 
                         if (status == Constants.OK) {
@@ -222,7 +155,6 @@ public abstract class Utilities {
                             resultString.set(result.toString());
                         }
 
-
                     } catch (Exception e) {
                         e.printStackTrace();
                         resultString.set(e.getMessage());
@@ -230,10 +162,8 @@ public abstract class Utilities {
 
                     } finally {
                         if (cnx != null) {
-//                            resultString.set(result.toString());
                             cnx.disconnect();
                         }
-
                     }
                 }
             };
@@ -247,7 +177,6 @@ public abstract class Utilities {
                 e.printStackTrace();
                 responseObject.setResponseCode(Constants.EXCEPTION);
                 responseObject.setResponseData(e.getMessage());
-
             }
 
             return responseObject;
@@ -258,7 +187,7 @@ public abstract class Utilities {
         return responseObject;
     }
 
-    public static ResponseObject getResponse2(Context context, final String url, long waitTime) {
+    public static ResponseObject getResponse2(Context context, final String url) {
         ResponseObject responseObject = new ResponseObject();
         final AtomicInteger resultCode = new AtomicInteger(Constants.NO_DATA);
         final AtomicReference <String> resultString = new AtomicReference<>();
@@ -274,7 +203,6 @@ public abstract class Utilities {
                     urlOpen = new URL(Constants.URL + url);
                     cnx = (HttpURLConnection) urlOpen.openConnection();
                     status = cnx.getResponseCode();
-
                     resultCode.set(status);
 
                     if (status == Constants.OK) {
@@ -298,7 +226,6 @@ public abstract class Utilities {
 
                 } finally {
                     if (cnx != null) {
-//                            resultString.set(result.toString());
                         cnx.disconnect();
                         responseObject.setResponseCode(resultCode.get());
                         responseObject.setResponseData(resultString.get());
@@ -336,9 +263,7 @@ public abstract class Utilities {
                         urlOpen = new URL(Constants.URL + url);
                         cnx = (HttpURLConnection) urlOpen.openConnection();
                         cnx.setRequestMethod("PUT");
-
                         status = cnx.getResponseCode();
-
                         resultCode.set(status);
 
                     } catch (Exception e) {
@@ -351,7 +276,6 @@ public abstract class Utilities {
 //                            resultString.set(result.toString());
                             cnx.disconnect();
                         }
-
                     }
                 }
             };
@@ -376,5 +300,4 @@ public abstract class Utilities {
 
         return responseObject;
     }
-
 }
