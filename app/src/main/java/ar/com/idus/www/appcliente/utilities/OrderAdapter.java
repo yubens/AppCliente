@@ -1,8 +1,12 @@
 package ar.com.idus.www.appcliente.utilities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.InputStream;
 import java.util.ArrayList;
+
+import ar.com.idus.www.appcliente.MainActivity;
 import ar.com.idus.www.appcliente.R;
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Product;
+
+
 
 public class OrderAdapter extends ArrayAdapter<Product> {
     private Activity context;
@@ -25,6 +35,32 @@ public class OrderAdapter extends ArrayAdapter<Product> {
     private Product product;
     ArrayList<BodyOrder> listOrder;
     BodyOrder body;
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                System.out.println("Error " + e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
+
 
     static class ViewHolder {
         TextView txtItemName;
@@ -38,6 +74,8 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         ImageView imgItem;
         ImageButton btnAddItem;
     }
+
+
 
 
     public OrderAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Product> productList, ArrayList<BodyOrder> listOrder) {
@@ -106,8 +144,16 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         holder.btnAddItem.setId(position);
         holder.txtItemQuantity.setId(position);
         holder.txtItemTotal.setId(position);
+        holder.imgItem.setId(position);
 
-        loadImage(holder.imgItem);
+        String url;
+
+        if ((holder.imgItem.getId()) % 2 == 0)
+            url = "https://i.pinimg.com/originals/f7/02/24/f702246874366e13eafb879746655ed7.jpg";
+        else
+            url = "https://http2.mlstatic.com/bandera-escudo-club-boca-juniors-2mtsx120-viene-bien-D_NQ_NP_726893-MLA40857773831_022020-F.jpg";
+
+//        loadImage(holder.imgItem, url);
 
         holder.txtItemName.setText(product.getName());
         multiple = product.getMultiple() + context.getString(R.string.txtMultiple);
@@ -197,7 +243,9 @@ public class OrderAdapter extends ArrayAdapter<Product> {
         return view;
     }
 
-    private void loadImage(ImageView imageView) {
+    private void loadImage(ImageView imageView, String url) {
+        new DownloadImageTask(imageView)
+                .execute(url);
     }
 
     private boolean updateBody(Product productChosen) {

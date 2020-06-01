@@ -12,7 +12,7 @@
     <string name="btnConfirm">Confirmar Datos</string>
     <string name="btnNewOrder">Pedido Nuevo</string>
     <string name="btnAdd">Agregar al carrito</string>
-    <string name="btnWatch">Ver el carrito</string>
+    <string name="btnWatch">Ver el Carrito</string>
     <string name="btnCancel">Cancelar</string>
     <string name="btnSendOrder">Enviar Pedido</string>
     <string name="editCode">Código</string>
@@ -20,7 +20,7 @@
     <string name="txtSalePrice">Precio Venta:</string>
     <string name="txtPrice">Precio:</string>
     <string name="txtMultiple">u min de vta</string>
-    <string name="txtTotal">Total $ </string>
+    <string name="txtTotal">Total $   </string>
     <string name="txtSign">$</string>
     <string name="txtUnits">unidad(es) agregada(s)</string>
     <string name="txtStock">Stock: </string>

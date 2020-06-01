@@ -63,7 +63,7 @@ public class OrderActivity extends AppCompatActivity {
 
         editDescription = findViewById(R.id.editDescription);
         imgButFindDesc = findViewById(R.id.imgButFindDesc);
-        btnWatch = findViewById(R.id.btnWatch);
+//        btnWatch = findViewById(R.id.btnWatch);
         listView = findViewById(R.id.listProd);
         productList = new ArrayList<>();
         chosenProductsList = new ArrayList<>();
@@ -118,18 +118,18 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
-        btnWatch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listOrder.isEmpty()) {
-                    showMsg(getString(R.string.msgErrEmptyBasket));
-                    return;
-                }
-
-                setHeadOrder();
-                callBasket();
-            }
-        });
+//        btnWatch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (listOrder.isEmpty()) {
+//                    showMsg(getString(R.string.msgErrEmptyBasket));
+//                    return;
+//                }
+//
+//                setHeadOrder();
+//                callBasket();
+//            }
+//        });
 
     }
 
@@ -210,6 +210,14 @@ public class OrderActivity extends AppCompatActivity {
             };
 
             thread.start();
+        } else if (id == R.id.optWatchBasket) {
+            if (listOrder.isEmpty()) {
+                showMsg(getString(R.string.msgErrEmptyBasket));
+                return false;
+            }
+
+            setHeadOrder();
+            callBasket();
         }
 
         return super.onContextItemSelected(item);

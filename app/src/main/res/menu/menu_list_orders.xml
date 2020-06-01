@@ -13,6 +13,11 @@
                 android:title="@string/menuWatchOrders"
                 app:showAsAction="ifRoom|withText" />
 
+            <item
+                android:id="@+id/optWatchBasket"
+                android:title="@string/btnWatch"
+                app:showAsAction="ifRoom|withText" />
+
         </menu>
     </item>
 
