@@ -1,7 +1,6 @@
 package ar.com.idus.www.appcliente.utilities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,11 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import ar.com.idus.www.appcliente.MainActivity;
 import ar.com.idus.www.appcliente.R;
 import ar.com.idus.www.appcliente.models.BodyOrder;
 import ar.com.idus.www.appcliente.models.Product;
@@ -31,7 +27,6 @@ import ar.com.idus.www.appcliente.models.Product;
 public class OrderAdapter extends ArrayAdapter<Product> {
     private Activity context;
     private ArrayList<Product> productList;
-    private LayoutInflater inflater;
     private Product product;
     ArrayList<BodyOrder> listOrder;
     BodyOrder body;
